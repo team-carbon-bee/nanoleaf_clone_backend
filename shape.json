@@ -1,0 +1,37 @@
+{
+    "shape" : {
+        "triangle" : {
+            "leftConnection" : {
+                "triangle" : {
+                    "leftConnection" : {
+                        "triangle" : {
+                            "leftConnection" : null,
+                            "rightConnection" : null
+                        }
+                    },
+                    "rightConnection" : null
+                }
+            },
+            "rightConnection" : {
+                "triangle" : {
+                    "leftConnection" : {
+                        "triangle" : {
+                            "leftConnection" : null,
+                            "rightConnection" : null
+                        }
+                    },
+                    "rightConnection" : {
+                        "triangle" : {
+                            "leftConnection" : null,
+                            "rightConnection" : null
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "parameters" : {
+        "ledPerTriangle" : 21,
+        "ledModel" : "rgb"
+    }
+}
