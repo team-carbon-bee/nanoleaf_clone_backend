@@ -2,11 +2,13 @@
 
 #include <Arduino.h>
 
-class ShapeProvider
+class ConfigurationProvider
 {
     public:
-        ShapeProvider();
-        virtual ~ShapeProvider();
+        ConfigurationProvider();
+        virtual ~ConfigurationProvider();
+
+        void setup();
 
         void loadFromFlash();
         void load();
