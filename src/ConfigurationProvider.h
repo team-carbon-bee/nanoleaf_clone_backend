@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
+
+#include "Assembly.h"
 
 class ConfigurationProvider
 {
@@ -11,9 +14,15 @@ class ConfigurationProvider
         void setup();
 
         void loadFromFlash();
-        void load();
+        void saveToFlash();
+        void load(const String & data);
+
+        void createDefaultConfiguration();
 
     private:
-        void parseJson();
+        void parseJson(const String & data);
+        Shape *createChilds(JsonObject & jsonObject);
+        static const String ConfigurationFilename;
+        Assembly _assembly;
 
 };

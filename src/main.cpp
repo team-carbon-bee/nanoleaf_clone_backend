@@ -1,9 +1,14 @@
 #include <Arduino.h>
 
-void setup() {
-  // put your setup code here, to run once:
+#include "ConfigurationProvider.h"
+
+ConfigurationProvider _configuration;
+
+void setup() 
+{
+  _configuration.loadFromFlash();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  
 }
