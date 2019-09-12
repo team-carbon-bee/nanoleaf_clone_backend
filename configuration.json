@@ -38,6 +38,8 @@
     },
     "parameters" : {
         "ledPerTriangle" : 21,
-        "ledModel" : "rgb"
+        "ledModel" : "rgb",
+        "hostname" : "nanoleaf_clone"
+
     }
 }

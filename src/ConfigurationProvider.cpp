@@ -1,11 +1,11 @@
 #include <FS.h>
 #include "SPIFFS.h"
-#include "Assembly.h"
 #include "ConfigurationProvider.h"
 
 const String ConfigurationProvider::ConfigurationFilename = "/configuration.json";
 
 ConfigurationProvider::ConfigurationProvider()
+    : _assembly(NULL)
 {
 }
 
@@ -43,12 +43,36 @@ void ConfigurationProvider::loadFromFlash()
 
 void ConfigurationProvider::createDefaultConfiguration()
 {
-    //TODO : create empty structure with only one shape
+    _assembly = NULL;
+
+    _parameters.ledPerTriangle = 21;
+    _parameters.ledModel = "rgb";
+    _parameters.hostname = "nanoleaf_clone";
 }
 
 void ConfigurationProvider::saveToFlash()
 {
-    //TODO : save structure to flash
+    // Delete existing file, otherwise the configuration is appended to the file
+    SPIFFS.remove(ConfigurationFilename);
+
+    // Open file for writing
+    File file = SPIFFS.open(ConfigurationFilename, FILE_WRITE);
+    if (!file) {
+        Serial.println(F("Failed to create file"));
+        return;
+    }
+    
+    //we browse the tree to generate the json
+    DynamicJsonDocument doc(DynamicJsonDocumentMaxSize);
+    doc["assembly"] = createJsonFromShape(_assembly);
+
+    JsonObject parameters;
+    parameters["ledPerTriangle"] = _parameters.ledPerTriangle;
+    parameters["ledModel"] = _parameters.ledModel;
+    parameters["hostname"] = _parameters.hostname;
+
+    doc["parameters"] = parameters;
+    serializeJson(doc, file);
 }
 
 void ConfigurationProvider::load(const String & data)
@@ -59,7 +83,7 @@ void ConfigurationProvider::load(const String & data)
 void ConfigurationProvider::parseJson(const String & data)
 {
     //deserializeJson
-    DynamicJsonDocument doc(1024);
+    DynamicJsonDocument doc(DynamicJsonDocumentMaxSize);
     DeserializationError error = deserializeJson(doc, data);
     if (error) 
     {
@@ -70,11 +94,19 @@ void ConfigurationProvider::parseJson(const String & data)
 
     //iterate and create structure
     JsonObject obj = doc["assembly"].as<JsonObject>();
-    _assembly.root(createChilds(obj));
+    _assembly = createShapeFromJSon(obj);
+
+    JsonObject parameters = doc["parameters"].as<JsonObject>();
+    _parameters.ledPerTriangle = parameters["ledPerTriangle"].as<int>();
+    _parameters.ledModel = parameters["ledModel"].as<String>();
+    _parameters.hostname = parameters["hostname"].as<String>();
 }
 
-Shape *ConfigurationProvider::createChilds(JsonObject & jsonObject)
+Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject)
 {
+    if (jsonObject.isNull())
+        return NULL;
+
     String shapeType = jsonObject["type"];
     if (shapeType == "triangle")
     {
@@ -82,9 +114,10 @@ Shape *ConfigurationProvider::createChilds(JsonObject & jsonObject)
         current->kind = triangle;
         current->connections = (Shape**)malloc(sizeof(Shape *) * 2);
         JsonObject leftConnection = jsonObject["leftConnection"].as<JsonObject>();
-        current->connections[0] = createChilds(leftConnection);
+        current->connections[0] = createShapeFromJSon(leftConnection);
         JsonObject rightConnection = jsonObject["rightConnection"].as<JsonObject>();
-        current->connections[1] = createChilds(rightConnection);
+        current->connections[1] = createShapeFromJSon(rightConnection);
+        current->content = NULL;
         return current;
     }
     else
@@ -93,4 +126,28 @@ Shape *ConfigurationProvider::createChilds(JsonObject & jsonObject)
         Serial.println(shapeType);
         return NULL;
     }
+}
+
+JsonObject ConfigurationProvider::createJsonFromShape(Shape * shape)
+{
+    JsonObject obj;
+    if (shape == NULL)
+        return obj;
+    JsonObject jsonShape;
+    jsonShape["type"] = shapeKindToString(shape->kind);
+    
+    switch (shape->kind)
+    {
+        case triangle:
+            jsonShape["leftConnection"] = createJsonFromShape(shape->connections[0]);
+            jsonShape["rightConnection"] = createJsonFromShape(shape->connections[1]);
+        break;
+
+        case unknown:
+            //nothing to do
+        break;
+    }
+
+    obj["shape"] = jsonShape;
+    return obj;
 }

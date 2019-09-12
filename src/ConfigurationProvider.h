@@ -3,11 +3,19 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
-#include "Assembly.h"
+#include "ShapeObjects.h"
 
 class ConfigurationProvider
 {
     public:
+        typedef struct
+        {
+            String hostname;
+            int ledPerTriangle;
+            String ledModel;
+
+        } Parameters;
+        
         ConfigurationProvider();
         virtual ~ConfigurationProvider();
 
@@ -21,8 +29,14 @@ class ConfigurationProvider
 
     private:
         void parseJson(const String & data);
-        Shape *createChilds(JsonObject & jsonObject);
+        Shape *createShapeFromJSon(JsonObject & jsonObject);
+        JsonObject createJsonFromShape(Shape * shape);
+
+
         static const String ConfigurationFilename;
-        Assembly _assembly;
+        Shape * _assembly;
+        Parameters _parameters;
+
+        static const int DynamicJsonDocumentMaxSize = 3 * 1024;
 
 };
