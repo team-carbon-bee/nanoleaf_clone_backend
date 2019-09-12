@@ -151,3 +151,13 @@ JsonObject ConfigurationProvider::createJsonFromShape(Shape * shape)
     obj["shape"] = jsonShape;
     return obj;
 }
+
+const ConfigurationProvider::Parameters & ConfigurationProvider::parameters() const
+{
+    return _parameters;
+}
+
+ConfigurationProvider::Parameters & ConfigurationProvider::parameters()
+{
+    return _parameters;
+}

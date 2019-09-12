@@ -27,6 +27,9 @@ class ConfigurationProvider
 
         void createDefaultConfiguration();
 
+        const Parameters & parameters() const;
+        Parameters & parameters();
+
     private:
         void parseJson(const String & data);
         Shape *createShapeFromJSon(JsonObject & jsonObject);
