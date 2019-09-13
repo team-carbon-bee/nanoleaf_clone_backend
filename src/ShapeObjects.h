@@ -19,5 +19,4 @@ typedef struct Shape
 } Shape;
 
 String shapeKindToString(const ShapeKind kind);
-
 ShapeKind stringToShapeKind(const String & kind);

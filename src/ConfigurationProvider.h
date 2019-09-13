@@ -30,6 +30,8 @@ class ConfigurationProvider
         const Parameters & parameters() const;
         Parameters & parameters();
 
+        Shape * assembly();
+
     private:
         void parseJson(const String & data);
         Shape *createShapeFromJSon(JsonObject & jsonObject);

@@ -15,7 +15,7 @@ ConfigurationProvider::~ConfigurationProvider()
 
 void ConfigurationProvider::setup()
 {
-    if (!SPIFFS.begin()) 
+    if (!SPIFFS.begin(true)) 
     {
         Serial.println("Unable to begin SPIFFS");
     }
@@ -23,7 +23,9 @@ void ConfigurationProvider::setup()
 
 void ConfigurationProvider::loadFromFlash()
 {
-    File file = SPIFFS.open(ConfigurationFilename, "r");
+    //TODO : restore when wifi ok and validated
+    createDefaultConfiguration();
+    /*File file = SPIFFS.open(ConfigurationFilename, "r");
     if (!file)
     {
         Serial.println("Exception during opening system configuration, resetting to factory settings");
@@ -38,12 +40,17 @@ void ConfigurationProvider::loadFromFlash()
         configurationFileAsString +=(char)file.read();
     }
 
-    parseJson(configurationFileAsString);
+    parseJson(configurationFileAsString);*/
 }
 
 void ConfigurationProvider::createDefaultConfiguration()
 {
-    _assembly = NULL;
+    _assembly = new Shape();
+    _assembly->kind = triangle;
+    _assembly->content = NULL;
+    _assembly->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    _assembly->connections[0] = NULL;
+    _assembly->connections[1] = NULL;
 
     _parameters.ledPerTriangle = 21;
     _parameters.ledModel = "rgb";
@@ -53,7 +60,8 @@ void ConfigurationProvider::createDefaultConfiguration()
 void ConfigurationProvider::saveToFlash()
 {
     // Delete existing file, otherwise the configuration is appended to the file
-    SPIFFS.remove(ConfigurationFilename);
+    if (SPIFFS.exists(ConfigurationFilename))
+        SPIFFS.remove(ConfigurationFilename);
 
     // Open file for writing
     File file = SPIFFS.open(ConfigurationFilename, FILE_WRITE);
@@ -84,6 +92,8 @@ void ConfigurationProvider::parseJson(const String & data)
 {
     //deserializeJson
     DynamicJsonDocument doc(DynamicJsonDocumentMaxSize);
+    Serial.print("parseJson : ");
+    Serial.println(data);
     DeserializationError error = deserializeJson(doc, data);
     if (error) 
     {
@@ -160,4 +170,9 @@ const ConfigurationProvider::Parameters & ConfigurationProvider::parameters() co
 ConfigurationProvider::Parameters & ConfigurationProvider::parameters()
 {
     return _parameters;
+}
+
+Shape * ConfigurationProvider::assembly()
+{
+    return _assembly;
 }
