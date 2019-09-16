@@ -21,5 +21,6 @@ void Animator::loop()
         //TODO select animation
         _currentAnimation = _animationFactory->animations().First();
     }
+    Serial.println("looping animation");
     _currentAnimation->loop();
 }

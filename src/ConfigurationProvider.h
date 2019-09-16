@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 
 #include "ShapeObjects.h"
+#include "PixelObjects.h"
 
 class ConfigurationProvider
 {
@@ -12,7 +13,7 @@ class ConfigurationProvider
         {
             String hostname;
             int ledPerTriangle;
-            String ledModel;
+            PixelKind ledModel;
 
         } Parameters;
         

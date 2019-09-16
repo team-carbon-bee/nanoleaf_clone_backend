@@ -3,9 +3,9 @@
 #include "AnimationFactory.h"
 
 AnimationFactory::AnimationFactory(ConfigurationProvider & configuration, ShapeHelper & shapeHelper, 
-                                   Adafruit_NeoPixel * ledDriver)
-    : _configuration(configuration), _shapeHelper(shapeHelper), _ledDriver(ledDriver), 
-      _linearReferenceSystem(_configuration, _shapeHelper, _ledDriver)
+                                   PixelHelper & pixelHelper, Adafruit_NeoPixel * ledDriver)
+    : _configuration(configuration), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _ledDriver(ledDriver), 
+      _linearReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver)
 {
 }
 
@@ -25,6 +25,8 @@ void AnimationFactory::setup()
     //setup all animations
     if (_animations.moveToStart())
     {
+        Serial.printf("pointer at setup : %d\n", (int)(_animations.First()));
+        //TODO : while ()
         _animations.getCurrent()->setup();
     }
 }

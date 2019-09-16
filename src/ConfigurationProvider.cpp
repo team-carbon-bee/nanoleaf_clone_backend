@@ -53,7 +53,7 @@ void ConfigurationProvider::createDefaultConfiguration()
     _assembly->connections[1] = NULL;
 
     _parameters.ledPerTriangle = 21;
-    _parameters.ledModel = "rgb";
+    _parameters.ledModel = BGR;
     _parameters.hostname = "nanoleaf_clone";
 }
 
@@ -76,7 +76,7 @@ void ConfigurationProvider::saveToFlash()
 
     JsonObject parameters;
     parameters["ledPerTriangle"] = _parameters.ledPerTriangle;
-    parameters["ledModel"] = _parameters.ledModel;
+    parameters["ledModel"] = pixelKindToString(_parameters.ledModel);
     parameters["hostname"] = _parameters.hostname;
 
     doc["parameters"] = parameters;
@@ -108,7 +108,7 @@ void ConfigurationProvider::parseJson(const String & data)
 
     JsonObject parameters = doc["parameters"].as<JsonObject>();
     _parameters.ledPerTriangle = parameters["ledPerTriangle"].as<int>();
-    _parameters.ledModel = parameters["ledModel"].as<String>();
+    _parameters.ledModel = stringToPixelKind(parameters["ledModel"].as<String>());
     _parameters.hostname = parameters["hostname"].as<String>();
 }
 

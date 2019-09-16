@@ -7,6 +7,7 @@
 #include "Animator.h"
 #include "ConfigurationProvider.h"
 #include "ShapeHelper.h"
+#include "PixelHelper.h"
 
 #define LED_PIN_NUMBER  2
 
@@ -14,6 +15,7 @@ ConfigurationProvider _configuration;
 WifiManager _wifiManager;
 
 ShapeHelper _shapeHelper(_configuration);
+PixelHelper _pixelHelper(_configuration);
 Adafruit_NeoPixel * _ledDriver;
 AnimationFactory * _animationFactory;
 Animator * _animator;
@@ -29,11 +31,11 @@ void setup()
   //_wifiManager.erase();// This will erase the stored passwords
 	//_wifiManager.setupScan();
 
-  _ledDriver = new Adafruit_NeoPixel(_shapeHelper.ledCount(), LED_PIN_NUMBER);
+  _ledDriver = new Adafruit_NeoPixel(_shapeHelper.ledCount(), LED_PIN_NUMBER, NEO_GRB + NEO_KHZ800);
   _ledDriver->clear();
   _ledDriver->begin();
   //TODO : manage RGBW strips
-  _animationFactory = new AnimationFactory(_configuration, _shapeHelper, _ledDriver);
+  _animationFactory = new AnimationFactory(_configuration, _shapeHelper, _pixelHelper, _ledDriver);
   _animationFactory->setup();
 
   _animator = new Animator(_configuration, _animationFactory);
@@ -51,5 +53,5 @@ void loop() {
   
   
   //TODO : manage time correctly
-  delay(1000);
+  delay(100);
 }
