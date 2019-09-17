@@ -5,6 +5,7 @@
 typedef enum 
 {
     BGR,
+    GRB,
     RGBW,
     unknownPixelKind
 } PixelKind;

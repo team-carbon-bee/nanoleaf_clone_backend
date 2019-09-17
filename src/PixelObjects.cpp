@@ -6,6 +6,8 @@ String pixelKindToString(const PixelKind kind)
     {
         case BGR :
             return "bgr";
+        case GRB :
+            return "grb";
         case RGBW :
             return "rgbw";
         default:
@@ -18,6 +20,8 @@ PixelKind stringToPixelKind(const String & kind)
 {
     if (kind == "bgr")
         return BGR;
+    if (kind == "grb")
+        return GRB;
     if (kind == "rgbw")
         return RGBW;
     return unknownPixelKind;

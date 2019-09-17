@@ -38,15 +38,21 @@ void PixelHelper::setPixel(uint8_t * memory, int pixelNumber, uint32_t color)
     switch (PixelKind())
     {
         case BGR:
-            memory[pixelNumber * _pixelSize] = (color & 0x000000FF);
-            memory[pixelNumber * _pixelSize + 1] = (color & 0x0000FF00) >> 8;
-            memory[pixelNumber * _pixelSize + 2] = (color & 0x00FF0000) >> 16;
-            break;
-        case RGBW:
             memory[pixelNumber * _pixelSize] = (color & 0x00FF0000) >> 16;
             memory[pixelNumber * _pixelSize + 1] = (color & 0x0000FF00) >> 8;
-            memory[pixelNumber * _pixelSize + 2] = (color & 0x0000FF);
-            memory[pixelNumber * _pixelSize + 3] = (color & 0xFF000000) >> 24;
+            memory[pixelNumber * _pixelSize + 2] = (color & 0x000000FF);
+            break;
+        case GRB:
+            Serial.println("grb");
+            memory[pixelNumber * _pixelSize] = (color & 0x000000FF);
+            memory[pixelNumber * _pixelSize + 1] = (color & 0x00FF0000) >> 16;
+            memory[pixelNumber * _pixelSize + 2] = (color & 0x0000FF00) >> 8;
+            break;
+        case RGBW:
+            memory[pixelNumber * _pixelSize] = (color & 0xFF000000) >> 24;
+            memory[pixelNumber * _pixelSize + 1] = (color & 0x0000FF);
+            memory[pixelNumber * _pixelSize + 2] = (color & 0x0000FF00) >> 8;
+            memory[pixelNumber * _pixelSize + 3] = (color & 0x00FF0000) >> 16;
             break;
     }
 }
@@ -57,15 +63,20 @@ uint32_t PixelHelper::getPixel(uint8_t * memory, int pixelNumber)
     switch (PixelKind())
     {
         case BGR:
+            result |= memory[pixelNumber * _pixelSize] << 16;
+            result |= memory[pixelNumber * _pixelSize + 1] << 8;
+            result |= memory[pixelNumber * _pixelSize + 2];
+            break;
+        case GRB:
             result |= memory[pixelNumber * _pixelSize];
-            result |= (memory[pixelNumber * _pixelSize + 1] << 8);
-            result |= (memory[pixelNumber * _pixelSize + 2] << 16);
+            result |= memory[pixelNumber * _pixelSize + 1] << 16;
+            result |= memory[pixelNumber * _pixelSize + 2] << 8;
             break;
         case RGBW:
-            result |= (memory[pixelNumber * _pixelSize + 2] << 16);
-            result |= (memory[pixelNumber * _pixelSize + 1] << 8);
-            result |= memory[pixelNumber * _pixelSize];
-            result |= (memory[pixelNumber * _pixelSize + 3] << 24);
+            result |= memory[pixelNumber * _pixelSize] << 16; 
+            result |= memory[pixelNumber * _pixelSize + 1] << 8;
+            result |= memory[pixelNumber * _pixelSize + 2];
+            result |= memory[pixelNumber * _pixelSize + 3] << 24;
             break;
     }
     return result;

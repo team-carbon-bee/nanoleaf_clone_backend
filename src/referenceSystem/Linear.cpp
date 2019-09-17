@@ -32,9 +32,7 @@ void Linear::driveLeds()
     Serial.print(") : ");
     for (int i = 0; i < _ledCount; ++i)
     {
-        Serial.printf("%02x", _pixels[3 * i + 0]);
-        Serial.printf("%02x", _pixels[3 * i + 1]);
-        Serial.printf("%02x ", _pixels[3 * i + 2]);
+        Serial.printf("%06x ", getPixel(i));
     }
     Serial.println("");
     _ledDriver->show();

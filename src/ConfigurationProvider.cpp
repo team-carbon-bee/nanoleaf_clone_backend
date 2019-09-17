@@ -53,7 +53,7 @@ void ConfigurationProvider::createDefaultConfiguration()
     _assembly->connections[1] = NULL;
 
     _parameters.ledPerTriangle = 21;
-    _parameters.ledModel = BGR;
+    _parameters.ledModel = GRB;
     _parameters.hostname = "nanoleaf_clone";
 }
 

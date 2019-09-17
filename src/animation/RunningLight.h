@@ -27,7 +27,7 @@ class RunningLight : public IAnimation
             _referenceSystem.clear();
             
             //we set the first pixel to on
-            _referenceSystem.setPixel(0, 0x0000FF00);
+            _referenceSystem.setPixel(0, 0x00FF0000);
             _referenceSystem.driveLeds(); 
         }
 
