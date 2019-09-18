@@ -25,9 +25,6 @@ class RunningLight : public IAnimation
         void setup()
         {
             _referenceSystem.clear();
-            
-            //we set the first pixel to on
-            _referenceSystem.setPixel(0, 0x00FF0000);
             _referenceSystem.driveLeds(); 
             _currentPosition = 0;
         }
@@ -59,7 +56,6 @@ class RunningLight : public IAnimation
             }
 
             //we go to the next led
-            
             _referenceSystem.setPixel(_currentPosition, RunningColor);
             
             _currentPosition++;
@@ -74,7 +70,7 @@ class RunningLight : public IAnimation
         int _currentPosition;
         static const int TrailLength = 4;
         static const int BrightnessStep = -1 * 255 / TrailLength;
-        static const Color RunningColor = 0x0000FF;
+        static const Color RunningColor = 0xFF0000;
 
 };
 

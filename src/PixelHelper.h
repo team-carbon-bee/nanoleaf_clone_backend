@@ -11,6 +11,8 @@ class PixelHelper
         PixelHelper(ConfigurationProvider & configuration);
         virtual ~PixelHelper();
 
+        void setup();
+
         PixelKind pixelKind() const;
 
         int pixelSize() const;

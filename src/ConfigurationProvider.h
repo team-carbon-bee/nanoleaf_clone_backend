@@ -14,7 +14,6 @@ class ConfigurationProvider
             String hostname;
             int ledPerTriangle;
             PixelKind ledModel;
-
         } Parameters;
         
         ConfigurationProvider();

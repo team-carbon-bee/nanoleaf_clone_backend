@@ -8,15 +8,19 @@
 PixelHelper::PixelHelper(ConfigurationProvider & configuration)
     : _configuration(configuration)
 {
+}
+
+PixelHelper::~PixelHelper()
+{
+}
+
+void PixelHelper::setup()
+{
     //we extract offsets from pixelKind for each color
     _whiteOffset = (pixelKind() >> 6) & 0b11; 
     _redOffset = (pixelKind() >> 4) & 0b11;
     _greenOffset = (pixelKind() >> 2) & 0b11;
     _blueOffset =  pixelKind()       & 0b11;
-}
-
-PixelHelper::~PixelHelper()
-{
 }
 
 PixelKind PixelHelper::pixelKind() const
@@ -33,7 +37,7 @@ int PixelHelper::pixelSize() const
 void PixelHelper::setPixel(uint8_t * memory, int n, Color color)
 {
     uint8_t *p = &memory[n * pixelSize()]; 
-    //if there is no white, the color will be overriden by red   
+    //if there is no white, the color will be overriden by red  
     p[_whiteOffset] = (uint8_t)(color >> 24);
     p[_redOffset] = (uint8_t)(color >> 16);
     p[_greenOffset] = (uint8_t)(color >>  8);

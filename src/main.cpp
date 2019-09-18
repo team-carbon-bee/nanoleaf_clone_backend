@@ -26,12 +26,12 @@ void setup()
   Serial.println("setup...");
   _configuration.setup();
   _configuration.loadFromFlash();
-
-  
+  _pixelHelper.setup();
   //_wifiManager.erase();// This will erase the stored passwords
 	//_wifiManager.setupScan();
-
-  _ledDriver = new Adafruit_NeoPixel(_shapeHelper.ledCount(), LED_PIN_NUMBER, NEO_GRB + NEO_KHZ800);
+  Serial.printf("ledModel = %d\n", _configuration.parameters().ledModel);
+  
+  _ledDriver = new Adafruit_NeoPixel(_shapeHelper.ledCount(), LED_PIN_NUMBER, _configuration.parameters().ledModel + NEO_KHZ800);
   _ledDriver->clear();
   _ledDriver->begin();
   //TODO : manage RGBW strips
