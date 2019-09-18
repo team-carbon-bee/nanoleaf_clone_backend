@@ -16,7 +16,6 @@ Linear::~Linear()
 
 void Linear::setup()
 {
-    //TODO : if (_configuration.parameters().ledModel == "rgb")
     _ledCount = _shapeHelper.ledCount();
     _pixels = (uint8_t *)malloc(sizeof(uint8_t) * _pixelHelper.pixelSize() * _ledCount);
     memset(_pixels, 0, _ledCount * _pixelHelper.pixelSize() * sizeof(uint8_t));
@@ -26,7 +25,7 @@ void Linear::driveLeds()
 {
     //we simply iterate local pixels to ledDriver pixels
     memcpy(_ledDriver->getPixels(), _pixels, _ledCount * _pixelHelper.pixelSize() * sizeof(uint8_t));
-    
+
     Serial.print("leds(");
     Serial.print(_ledCount);
     Serial.print(") : ");

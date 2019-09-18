@@ -5,18 +5,11 @@
 PixelHelper::PixelHelper(ConfigurationProvider & configuration)
     : _configuration(configuration)
 {
-    switch (PixelKind())
-    {
-        //24 bit pixel size (3 bytes)
-        default:
-        case BGR:
-            _pixelSize = 3;
-            break;
-        //32 bit pixel size (4 bytes)
-        case RGBW:
-            _pixelSize = 4;
-            break;
-    } 
+    //we extract offsets from pixelKind for each color
+    _whiteOffset = (pixelKind() >> 6) & 0b11; 
+    _redOffset = (pixelKind() >> 4) & 0b11;
+    _greenOffset = (pixelKind() >> 2) & 0b11;
+    _blueOffset =  pixelKind()       & 0b11;
 }
 
 PixelHelper::~PixelHelper()
@@ -30,54 +23,24 @@ PixelKind PixelHelper::pixelKind() const
 
 int PixelHelper::pixelSize() const
 {
-    return _pixelSize;
+    //There is 3 byte per pixel if white component has been defined with the same offset than the red one
+    return (_whiteOffset == _redOffset?3:4);
 }
 
-void PixelHelper::setPixel(uint8_t * memory, int pixelNumber, uint32_t color)
+void PixelHelper::setPixel(uint8_t * memory, int n, uint32_t color)
 {
-    switch (PixelKind())
-    {
-        case BGR:
-            memory[pixelNumber * _pixelSize] = (color & 0x00FF0000) >> 16;
-            memory[pixelNumber * _pixelSize + 1] = (color & 0x0000FF00) >> 8;
-            memory[pixelNumber * _pixelSize + 2] = (color & 0x000000FF);
-            break;
-        case GRB:
-            Serial.println("grb");
-            memory[pixelNumber * _pixelSize] = (color & 0x000000FF);
-            memory[pixelNumber * _pixelSize + 1] = (color & 0x00FF0000) >> 16;
-            memory[pixelNumber * _pixelSize + 2] = (color & 0x0000FF00) >> 8;
-            break;
-        case RGBW:
-            memory[pixelNumber * _pixelSize] = (color & 0xFF000000) >> 24;
-            memory[pixelNumber * _pixelSize + 1] = (color & 0x0000FF);
-            memory[pixelNumber * _pixelSize + 2] = (color & 0x0000FF00) >> 8;
-            memory[pixelNumber * _pixelSize + 3] = (color & 0x00FF0000) >> 16;
-            break;
-    }
+    uint8_t *p = &memory[n * pixelSize()]; 
+    //if there is no white, the color will be overriden by red   
+    p[_whiteOffset] = (uint8_t)(color >> 24);
+    p[_redOffset] = (uint8_t)(color >> 16);
+    p[_greenOffset] = (uint8_t)(color >>  8);
+    p[_blueOffset] = (uint8_t)color;
 }
 
-uint32_t PixelHelper::getPixel(uint8_t * memory, int pixelNumber)
+uint32_t PixelHelper::getPixel(uint8_t * memory, int n)
 {
-    uint32_t result = 0;
-    switch (PixelKind())
-    {
-        case BGR:
-            result |= memory[pixelNumber * _pixelSize] << 16;
-            result |= memory[pixelNumber * _pixelSize + 1] << 8;
-            result |= memory[pixelNumber * _pixelSize + 2];
-            break;
-        case GRB:
-            result |= memory[pixelNumber * _pixelSize];
-            result |= memory[pixelNumber * _pixelSize + 1] << 16;
-            result |= memory[pixelNumber * _pixelSize + 2] << 8;
-            break;
-        case RGBW:
-            result |= memory[pixelNumber * _pixelSize] << 16; 
-            result |= memory[pixelNumber * _pixelSize + 1] << 8;
-            result |= memory[pixelNumber * _pixelSize + 2];
-            result |= memory[pixelNumber * _pixelSize + 3] << 24;
-            break;
-    }
-    return result;
+    uint8_t *p = &memory[n * pixelSize()];  
+    if (pixelSize() == 3)
+        return (p[_redOffset] << 16) | (p[_greenOffset] << 8) | (p[_blueOffset]);
+    return (p[_redOffset] << 24) | (p[_redOffset] << 16) | (p[_greenOffset] << 8) | (p[_blueOffset]);
 }
