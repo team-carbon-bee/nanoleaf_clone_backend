@@ -29,24 +29,52 @@ class RunningLight : public IAnimation
             //we set the first pixel to on
             _referenceSystem.setPixel(0, 0x00FF0000);
             _referenceSystem.driveLeds(); 
+            _currentPosition = 0;
         }
 
         void loop()
         {
-            //we save last pixel value
-            uint32_t lastPx = _referenceSystem.getPixel(_referenceSystem.ledCount() - 1);
-            //we shift all data by one
-            for (int i = (_referenceSystem.ledCount() * _referenceSystem.pixelSize() - 1); i > 0; --i)
+            //Before the fade we know that all leds are off
+            int startFade = _currentPosition - TrailLength;
+
+            //we ensure that the last led is really off (could happen due to round values based on 255 / trailLength)
+            if (startFade - 1 < 0)
+                _referenceSystem.setPixel(_referenceSystem.ledCount() + startFade - 1, 0);
+            else
+                _referenceSystem.setPixel(startFade - 1, 0);
+
+            //we erase the end of the strip (for negative values)
+            for (int i = startFade; i < 0; ++i)
             {
-                _referenceSystem.pixels()[i] = _referenceSystem.pixels()[i-_referenceSystem.pixelSize()];
+                Color current = _referenceSystem.getPixel(_referenceSystem.ledCount() + i);
+                current = PixelHelper::brightenPixel(current, BrightnessStep);
+                _referenceSystem.setPixel(_referenceSystem.ledCount() + i, current);
             }
-            //and restore the last pixel saved on first pixel
-            _referenceSystem.setPixel(0, lastPx);
+
+            for (int i = max(startFade, 0); i < _currentPosition; ++i)
+            {
+                Color current = _referenceSystem.getPixel(i);
+                current = PixelHelper::brightenPixel(current, BrightnessStep);
+                _referenceSystem.setPixel(i, current);
+            }
+
+            //we go to the next led
+            
+            _referenceSystem.setPixel(_currentPosition, RunningColor);
+            
+            _currentPosition++;
+            if (_currentPosition == _referenceSystem.ledCount())
+                _currentPosition = 0;
+
             _referenceSystem.driveLeds();
         }
 
     private:
         referenceSystem::Linear & _referenceSystem;
+        int _currentPosition;
+        static const int TrailLength = 4;
+        static const int BrightnessStep = -1 * 255 / TrailLength;
+        static const Color RunningColor = 0x0000FF;
 
 };
 

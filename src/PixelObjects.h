@@ -47,5 +47,7 @@ typedef enum
     unknownPixelKind
 } PixelKind;
 
+typedef uint32_t Color;
+
 String pixelKindToString(const PixelKind kind);
 PixelKind stringToPixelKind(const String & kind);

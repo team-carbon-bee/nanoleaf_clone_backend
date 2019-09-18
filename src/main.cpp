@@ -53,5 +53,5 @@ void loop() {
   
   
   //TODO : manage time correctly
-  delay(100);
+  delay(20);
 }

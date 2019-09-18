@@ -1,3 +1,6 @@
+#define max(a,b) (a>=b?a:b)
+#define min(a,b) (a<=b?a:b)
+
 #include "PixelHelper.h"
 
 //Local pixels are always in uint32_t format following structure : WWRRGGBB
@@ -27,7 +30,7 @@ int PixelHelper::pixelSize() const
     return (_whiteOffset == _redOffset?3:4);
 }
 
-void PixelHelper::setPixel(uint8_t * memory, int n, uint32_t color)
+void PixelHelper::setPixel(uint8_t * memory, int n, Color color)
 {
     uint8_t *p = &memory[n * pixelSize()]; 
     //if there is no white, the color will be overriden by red   
@@ -37,10 +40,61 @@ void PixelHelper::setPixel(uint8_t * memory, int n, uint32_t color)
     p[_blueOffset] = (uint8_t)color;
 }
 
-uint32_t PixelHelper::getPixel(uint8_t * memory, int n)
+Color PixelHelper::getPixel(uint8_t * memory, int n)
 {
     uint8_t *p = &memory[n * pixelSize()];  
     if (pixelSize() == 3)
         return (p[_redOffset] << 16) | (p[_greenOffset] << 8) | (p[_blueOffset]);
     return (p[_redOffset] << 24) | (p[_redOffset] << 16) | (p[_greenOffset] << 8) | (p[_blueOffset]);
+}
+
+uint8_t PixelHelper::getRed(const Color & p)
+{
+    return (uint8_t)(p >> 16);
+}
+
+uint8_t PixelHelper::getGreen(const Color & p)
+{
+    return (uint8_t)(p >>  8);
+}
+
+uint8_t PixelHelper::getBlue(const Color & p)
+{
+    return (uint8_t)p;
+}
+
+uint8_t PixelHelper::getWhite(const Color & p)
+{
+    return (uint8_t)(p >> 24);
+}
+
+void PixelHelper::setRed(uint8_t value, Color & p)
+{
+    p = (p & 0xFF00FFFF) | (value << 16);
+}
+
+void PixelHelper::setGreen(uint8_t value, Color & p)
+{
+    p = (p & 0xFFFF00FF) | (value << 8);
+}
+
+void PixelHelper::setBlue(uint8_t value, Color & p)
+{
+    p = (p & 0xFFFFFF00) | value;
+}
+
+void PixelHelper::setWhite(uint8_t value, Color & p)
+{
+    p = (p & 0x00FFFFFF) | (value << 24);
+}
+
+const Color PixelHelper::brightenPixel(const Color & p, const int brightness)
+{
+    Color res = p;
+    setWhite(max(min(255, getWhite(p) + brightness), 0), res);
+    setRed(max(min(255, getRed(p) + brightness), 0), res);
+    setGreen(max(min(255, getGreen(p) + brightness), 0), res);
+    setBlue(max(min(255, getBlue(p) + brightness), 0), res);
+
+    return res;
 }
