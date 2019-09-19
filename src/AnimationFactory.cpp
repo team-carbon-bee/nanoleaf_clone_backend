@@ -1,6 +1,7 @@
 #include "animation/RunningLight.h"
 #include "animation/FullFading.h"
 #include "animation/FullColoredFading.h"
+#include "animation/IndependantRandomFading.h"
 
 #include "AnimationFactory.h"
 
@@ -21,10 +22,11 @@ void AnimationFactory::setup()
     _linearReferenceSystem.setup();
 
     //we create all animations
-    _animations.Append(new animation::RunningLight(_linearReferenceSystem));
+    
     _animations.Append(new animation::FullFading(_linearReferenceSystem));
     _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
-    
+    _animations.Append(new animation::IndependantRandomFading(_linearReferenceSystem));
+    _animations.Append(new animation::RunningLight(_linearReferenceSystem));
     //New animations come here !!!!
 
     //setup all animations
