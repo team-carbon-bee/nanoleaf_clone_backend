@@ -34,7 +34,7 @@ void setup()
   _ledDriver = new Adafruit_NeoPixel(_shapeHelper.ledCount(), LED_PIN_NUMBER, _configuration.parameters().ledModel + NEO_KHZ800);
   _ledDriver->clear();
   _ledDriver->begin();
-  //TODO : manage RGBW strips
+  
   _animationFactory = new AnimationFactory(_configuration, _shapeHelper, _pixelHelper, _ledDriver);
   _animationFactory->setup();
 
