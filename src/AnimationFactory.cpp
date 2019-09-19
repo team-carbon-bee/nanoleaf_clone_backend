@@ -1,4 +1,6 @@
 #include "animation/RunningLight.h"
+#include "animation/FullFading.h"
+#include "animation/FullColoredFading.h"
 
 #include "AnimationFactory.h"
 
@@ -20,14 +22,18 @@ void AnimationFactory::setup()
 
     //we create all animations
     _animations.Append(new animation::RunningLight(_linearReferenceSystem));
+    _animations.Append(new animation::FullFading(_linearReferenceSystem));
+    _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
+    
     //New animations come here !!!!
 
     //setup all animations
     if (_animations.moveToStart())
     {
-        Serial.printf("pointer at setup : %d\n", (int)(_animations.First()));
-        //TODO : while ()
-        _animations.getCurrent()->setup();
+        do 
+        {
+            _animations.getCurrent()->setup();
+        } while(_animations.next());
     }
 }
 

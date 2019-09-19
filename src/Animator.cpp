@@ -19,8 +19,8 @@ void Animator::loop()
     {
         //no animation in progress we chose one
         //TODO select animation
-        _currentAnimation = _animationFactory->animations().First();
+        _currentAnimation = _animationFactory->animations().Last();
     }
-    Serial.println("looping animation");
+    //Serial.println("looping animation");
     _currentAnimation->loop();
 }
