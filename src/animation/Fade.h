@@ -10,7 +10,7 @@ namespace animation
 class Fade
 {
     public:
-        Fade() : _configured(false), _finished(false)
+        Fade() : _configured(false), _finished(false), _target(0), _currentStep(0)
         {
         }
 
@@ -34,23 +34,23 @@ class Fade
             _blueQuantum = ((float)(PixelHelper::getBlue(dst) - _currentBlue)) / duration;
             _whiteQuantum = ((float)(PixelHelper::getWhite(dst) - _currentWhite)) / duration;
 
-            Serial.printf("src = %x, dst = %x\n", src, dst);
-            Serial.printf("_redQuantum = %f, _greenQuantum = %f, _blueQuantum = %f\n", _redQuantum, _greenQuantum, _blueQuantum);
-            
             _finished = false;
             _configured = true;
         }
 
         Color step()
         {
-            _currentRed += _redQuantum;
-            _currentGreen += _greenQuantum;
-            _currentBlue += _blueQuantum;
-            _currentWhite += _whiteQuantum;
+            if (not _finished)
+            {
+                _currentRed += _redQuantum;
+                _currentGreen += _greenQuantum;
+                _currentBlue += _blueQuantum;
+                _currentWhite += _whiteQuantum;
 
-            _currentStep--;
-            if (_currentStep == 0)
-                _finished = true;
+                _currentStep--;
+                if (_currentStep == 0)
+                    _finished = true;
+            }
 
             return Adafruit_NeoPixel::Color((uint8_t)_currentRed, (uint8_t)_currentGreen, (uint8_t)_currentBlue, (uint8_t)_currentWhite);
         }
@@ -63,6 +63,11 @@ class Fade
         bool isFinished() const
         {
             return _finished;
+        }
+
+        Color target() const
+        {
+            return _target;
         }
 
     private:
