@@ -26,14 +26,14 @@ void Linear::driveLeds()
     //we simply iterate local pixels to ledDriver pixels
     memcpy(_ledDriver->getPixels(), _pixels, _ledCount * _pixelHelper.pixelSize() * sizeof(uint8_t));
 
-    Serial.print("leds(");
+    /*Serial.print("leds(");
     Serial.print(_ledCount);
     Serial.print(") : ");
     for (int i = 0; i < _ledCount; ++i)
     {
         Serial.printf("%06x ", getPixel(i));
     }
-    Serial.println("");
+    Serial.println("");*/
     _ledDriver->show();
 }
 
@@ -50,6 +50,14 @@ int Linear::ledCount()
 void Linear::clear()
 {
     memset(_pixels, 0, _ledCount * sizeof(uint8_t) * _pixelHelper.pixelSize());
+}
+
+void Linear::fill(const Color c)
+{
+    for (int i = 0; i < _ledCount; ++i)
+    {
+        setPixel(i, c);
+    }
 }
 
 int Linear::pixelSize() const

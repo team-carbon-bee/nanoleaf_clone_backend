@@ -25,6 +25,7 @@ class Linear : public IReferenceSystem
         //cached value for performance reasons
         int ledCount();
         void clear();
+        void fill(const Color c);
 
         int pixelSize() const;
         void setPixel(int pixelNumber, uint32_t color);
