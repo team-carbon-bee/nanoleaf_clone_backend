@@ -23,6 +23,11 @@ class FullFading : public IAnimation
         {
         }
 
+        std::string name()
+        {
+            return "Full fading";
+        }
+
         void setup()
         {
             _referenceSystem.clear();
