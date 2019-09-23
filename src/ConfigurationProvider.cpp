@@ -45,11 +45,18 @@ void ConfigurationProvider::loadFromFlash()
 
 void ConfigurationProvider::createDefaultConfiguration()
 {
+    Shape *second = new Shape();
+    second->kind = triangle;
+    second->content = NULL;
+    second->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    second->connections[0] = NULL;
+    second->connections[1] = NULL;
+
     _assembly = new Shape();
     _assembly->kind = triangle;
     _assembly->content = NULL;
     _assembly->connections = (Shape**)malloc(sizeof(Shape *) * 2);
-    _assembly->connections[0] = NULL;
+    _assembly->connections[0] = second;
     _assembly->connections[1] = NULL;
 
     _parameters.ledPerTriangle = 21;
