@@ -1,0 +1,10 @@
+Guru Meditation Error: Core  1 panic'ed (IntegerDivideByZero). Exception was unhandled.
+Core 1 register dump:
+PC      : 0x400d1eb8  PS      : 0x00060330  A0      : 0x800d1f5b  A1      : 0x3ffb1ed0
+A2      : 0x00000000  A3      : 0x3ffb9750  A4      : 0x00000000  A5      : 0x3ffb9684
+A6      : 0x00000000  A7      : 0x00000000  A8      : 0x800d1eb6  A9      : 0x3ffb1eb0
+A10     : 0x00000000  A11     : 0x00000002  A12     : 0x00000000  A13     : 0x3ffb9798
+A14     : 0x00000000  A15     : 0x00000000  SAR     : 0x0000001e  EXCCAUSE: 0x00000006
+EXCVADDR: 0x00000000  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0xffffffff
+
+Backtrace: 0x400d1eb8:0x3ffb1ed0 0x400d1f58:0x3ffb1f00 0x400d1090:0x3ffb1f20 0x400d172d:0x3ffb1f40 0x400d1c0e:0x3ffb1f70 0x400d34d7:0x3ffb1fb0 0x40087911:0x3ffb1fd0
