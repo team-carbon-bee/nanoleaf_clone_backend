@@ -39,7 +39,6 @@ class FullColoredShapeFading : public IAnimation
 
         void loop()
         {
-            Serial.println("animation.loop");
             if ((not _fade.isConfigured()) || (_fade.isFinished()))
             {
                 //TODO : _referenceSystem->getRandomShape();

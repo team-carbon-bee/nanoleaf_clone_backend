@@ -17,7 +17,6 @@ LinearReferenceSystem::~LinearReferenceSystem()
 
 void LinearReferenceSystem::setup()
 {
-    Serial.printf("LinearReferenceSystem kind = %d\n", _configuration->assembly()->kind);
     _ledCount = _shapeHelper->ledCount();
     _pixels = (uint8_t *)malloc(sizeof(uint8_t) * _pixelHelper->pixelSize() * _ledCount);
     memset(_pixels, 0, _ledCount * _pixelHelper->pixelSize() * sizeof(uint8_t));

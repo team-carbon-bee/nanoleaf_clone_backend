@@ -26,7 +26,6 @@ void setup()
   _configuration = new ConfigurationProvider();
   _configuration->setup();
   _configuration->loadFromFlash();
-  Serial.printf("main kind = %d\n", _configuration->assembly()->kind);
   _shapeHelper = new ShapeHelper(_configuration);
   _shapeHelper->setup();
   _pixelHelper = new PixelHelper(_configuration);

@@ -60,8 +60,6 @@ void ConfigurationProvider::createDefaultConfiguration()
     _assembly->connections[1] = NULL;
     _assembly->parent = NULL;
 
-Serial.printf("createDefaultConfiguration kind = %d\n", assembly()->kind);
-
     //we affect parent to second
     second->parent = _assembly;
 
