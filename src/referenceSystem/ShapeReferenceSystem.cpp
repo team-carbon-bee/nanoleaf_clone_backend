@@ -17,9 +17,7 @@ ShapeReferenceSystem::~ShapeReferenceSystem()
 
 void ShapeReferenceSystem::setup()
 {
-    Serial.printf("ShapeReferenceSystem kind = %d\n", _configuration->assembly()->kind);
     _shapeCount = _shapeHelper->shapeCount();
-    Serial.printf("shapeCount = %d\n", _shapeCount);
     _assembly = _shapeHelper->duplicateShape(_configuration->assembly());
     
     //we iterate the duplicate tree to create content objects that will embed values of each leds of the shape
@@ -40,15 +38,28 @@ void ShapeReferenceSystem::createShapeDetailObjects(Shape * shape)
 
 void ShapeReferenceSystem::driveLeds()
 {
-    prepareDriveLeds(_assembly);
-    /*Serial.print("leds(");
-    Serial.print(_ledCount);
-    Serial.print(") : ");
-    for (int i = 0; i < _ledCount; ++i)
+    /*Serial.println("shape0");
+    for (int i = 0; i < _shapeHelper->ledCountOfThisShape(_assembly); ++i)
     {
-        Serial.printf("%06x ", getPixel(i));
+        Serial.printf("%06x ", getDetails(_assembly)->getPixel(i));
     }
-    Serial.println("");*/
+    Serial.println(".");
+    Serial.println("shape1");
+    for (int i = 0; i < _shapeHelper->ledCountOfThisShape(_assembly->connections[0]); ++i)
+    {
+        Serial.printf("%06x ", getDetails(_assembly->connections[0])->getPixel(i));
+    }
+    Serial.println(".");*/
+    prepareDriveLeds(_assembly);
+    
+    Serial.print("leds(");
+    Serial.print(_ledDriver->numPixels());
+    Serial.print(") : ");
+    for (int i = 0; i < _ledDriver->numPixels(); ++i)
+    {
+        Serial.printf("%06x ", _ledDriver->getPixelColor(i));
+    }
+    Serial.println("");
     _ledDriver->show();
 }
 
@@ -56,25 +67,21 @@ int ShapeReferenceSystem::prepareDriveLeds(Shape * node, const int offset)
 {
     if (node == NULL)
         return offset;
-    Serial.printf("1 : %d\n", offset);
     //we iterate each object taking a part of leds (numberOfLeds / (number of connections + 1) between each connection
     //memcpy(_ledDriver->getPixels(), _pixels, _ledCount * _pixelHelper.pixelSize() * sizeof(uint8_t));
-    int numberOfLedToTakeBetweenConnections = _shapeHelper->ledCountOfThisShape(node) / _shapeHelper->numberOfConnections(node);
-    Serial.println("plop");
+    int numberOfLedToTakeBetweenConnections = _shapeHelper->ledCountOfThisShape(node) / (_shapeHelper->numberOfConnections(node) + 1);
     int newOffset = offset;
     for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
     {
-        Serial.printf("2 : %d\n", offset);
-        memcpy(&(_ledDriver->getPixels()[newOffset]), 
+        memcpy(&(_ledDriver->getPixels()[newOffset * _pixelHelper->pixelSize()]), 
                &(getDetails(node)->pixels()[i * numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize()]), 
                numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize() * sizeof(uint8_t));
         newOffset += numberOfLedToTakeBetweenConnections;
 
         newOffset = prepareDriveLeds(node->connections[i], newOffset); 
     }
-    Serial.printf("3 : %d\n", offset);
     //we copy the end of the shape after the last connection
-    memcpy(&(_ledDriver->getPixels()[newOffset]), 
+    memcpy(&(_ledDriver->getPixels()[newOffset * _pixelHelper->pixelSize()]), 
                &(getDetails(node)->pixels()[_shapeHelper->numberOfConnections(node) * numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize()]), 
                numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize() * sizeof(uint8_t));
 
