@@ -17,7 +17,7 @@ namespace referenceSystem {
 class ShapeReferenceSystem : public IReferenceSystem
 {
     public:
-        ShapeReferenceSystem(ConfigurationProvider configuration, ShapeHelper & shapeHelper, PixelHelper & pixelHelper, Adafruit_NeoPixel * ledDriver);
+        ShapeReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver);
         virtual ~ShapeReferenceSystem();
 
         void setup();
@@ -36,9 +36,9 @@ class ShapeReferenceSystem : public IReferenceSystem
         ShapeDetails * getDetails(Shape * node);
         
     private:
-        ConfigurationProvider & _configuration;
-        ShapeHelper & _shapeHelper;
-        PixelHelper & _pixelHelper;
+        ConfigurationProvider * _configuration;
+        ShapeHelper * _shapeHelper;
+        PixelHelper * _pixelHelper;
         Adafruit_NeoPixel * _ledDriver;
         Shape * _assembly;
         int _shapeCount;

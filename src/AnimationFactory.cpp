@@ -6,11 +6,9 @@
 
 #include "AnimationFactory.h"
 
-AnimationFactory::AnimationFactory(ConfigurationProvider & configuration, ShapeHelper & shapeHelper, 
-                                   PixelHelper & pixelHelper, Adafruit_NeoPixel * ledDriver)
-    : _configuration(configuration), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _ledDriver(ledDriver), 
-      _linearReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver),
-      _shapeReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver)
+AnimationFactory::AnimationFactory(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
+                                   PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver)
+    : _configuration(configuration), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _ledDriver(ledDriver)
 {
 }
 
@@ -20,10 +18,14 @@ AnimationFactory::~AnimationFactory()
 
 void AnimationFactory::setup()
 {
+    Serial.printf("AnimationFactory kind = %d\n", _configuration->assembly()->kind);
     Serial.println("AnimationFactory::setup()");
+    
+    _linearReferenceSystem = new referenceSystem::LinearReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver);
+    _shapeReferenceSystem = new referenceSystem::ShapeReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver);
     //we configure all reference systems
-    _linearReferenceSystem.setup();
-    _shapeReferenceSystem.setup();
+    _linearReferenceSystem->setup();
+    _shapeReferenceSystem->setup();
     //we create all animations
     
     _animations.Append(new animation::FullFading(_linearReferenceSystem));

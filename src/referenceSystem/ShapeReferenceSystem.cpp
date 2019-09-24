@@ -6,7 +6,7 @@
 namespace referenceSystem {
 
 
-ShapeReferenceSystem::ShapeReferenceSystem(ConfigurationProvider configuration, ShapeHelper & shapeHelper, PixelHelper & pixelHelper, Adafruit_NeoPixel * ledDriver)
+ShapeReferenceSystem::ShapeReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver)
     : _configuration(configuration), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _ledDriver(ledDriver), _assembly(NULL)
 {
 }
@@ -17,10 +17,11 @@ ShapeReferenceSystem::~ShapeReferenceSystem()
 
 void ShapeReferenceSystem::setup()
 {
-    _shapeCount = _shapeHelper.shapeCount();
+    Serial.printf("ShapeReferenceSystem kind = %d\n", _configuration->assembly()->kind);
+    _shapeCount = _shapeHelper->shapeCount();
     Serial.printf("shapeCount = %d\n", _shapeCount);
-    _assembly = _shapeHelper.duplicateShape(_configuration.assembly());
-    Serial.printf("kind = %d\n", _configuration.assembly()->kind);
+    _assembly = _shapeHelper->duplicateShape(_configuration->assembly());
+    
     //we iterate the duplicate tree to create content objects that will embed values of each leds of the shape
     createShapeDetailObjects(_assembly);
 }
@@ -33,7 +34,7 @@ void ShapeReferenceSystem::createShapeDetailObjects(Shape * shape)
     ShapeDetails * details = new ShapeDetails(shape, _shapeHelper, _pixelHelper);
     details->setup();
     shape->content = details;
-    for (int i = 0; i < _shapeHelper.numberOfConnections(shape); ++i)
+    for (int i = 0; i < _shapeHelper->numberOfConnections(shape); ++i)
         createShapeDetailObjects(shape->connections[i]);  
 }
 
@@ -55,24 +56,27 @@ int ShapeReferenceSystem::prepareDriveLeds(Shape * node, const int offset)
 {
     if (node == NULL)
         return offset;
+    Serial.printf("1 : %d\n", offset);
     //we iterate each object taking a part of leds (numberOfLeds / (number of connections + 1) between each connection
     //memcpy(_ledDriver->getPixels(), _pixels, _ledCount * _pixelHelper.pixelSize() * sizeof(uint8_t));
-    int numberOfLedToTakeBetweenConnections = _shapeHelper.ledCountOfThisShape(node) / _shapeHelper.numberOfConnections(node);
+    int numberOfLedToTakeBetweenConnections = _shapeHelper->ledCountOfThisShape(node) / _shapeHelper->numberOfConnections(node);
+    Serial.println("plop");
     int newOffset = offset;
-    for (int i = 0; i < _shapeHelper.numberOfConnections(node); ++i)
+    for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
     {
+        Serial.printf("2 : %d\n", offset);
         memcpy(&(_ledDriver->getPixels()[newOffset]), 
-               &(getDetails(node)->pixels()[i * numberOfLedToTakeBetweenConnections * _pixelHelper.pixelSize()]), 
-               numberOfLedToTakeBetweenConnections * _pixelHelper.pixelSize() * sizeof(uint8_t));
+               &(getDetails(node)->pixels()[i * numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize()]), 
+               numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize() * sizeof(uint8_t));
         newOffset += numberOfLedToTakeBetweenConnections;
 
         newOffset = prepareDriveLeds(node->connections[i], newOffset); 
     }
-    
+    Serial.printf("3 : %d\n", offset);
     //we copy the end of the shape after the last connection
     memcpy(&(_ledDriver->getPixels()[newOffset]), 
-               &(getDetails(node)->pixels()[_shapeHelper.numberOfConnections(node) * numberOfLedToTakeBetweenConnections * _pixelHelper.pixelSize()]), 
-               numberOfLedToTakeBetweenConnections * _pixelHelper.pixelSize() * sizeof(uint8_t));
+               &(getDetails(node)->pixels()[_shapeHelper->numberOfConnections(node) * numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize()]), 
+               numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize() * sizeof(uint8_t));
 
     newOffset += numberOfLedToTakeBetweenConnections;
     return newOffset;
@@ -101,7 +105,7 @@ void ShapeReferenceSystem::clear(Shape * node)
     //we clear current
     getDetails(node)->clear();
 
-    for (int i = 0; i < _shapeHelper.numberOfConnections(node); ++i)
+    for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
         clear(node->connections[i]);  
 }
 
@@ -123,13 +127,13 @@ void ShapeReferenceSystem::fill(const Color c, Shape * node)
     //we fill current
     getDetails(node)->fill(c);
 
-    for (int i = 0; i < _shapeHelper.numberOfConnections(node); ++i)
+    for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
         fill(c, node->connections[i]);  
 }
 
 int ShapeReferenceSystem::pixelSize() const
 {
-    return _pixelHelper.pixelSize();
+    return _pixelHelper->pixelSize();
 }
 
 } //referenceSystem

@@ -5,7 +5,8 @@
 namespace referenceSystem {
 
 
-LinearReferenceSystem::LinearReferenceSystem(ConfigurationProvider configuration, ShapeHelper & shapeHelper, PixelHelper & pixelHelper, Adafruit_NeoPixel * ledDriver)
+LinearReferenceSystem::LinearReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
+    PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver)
     : _configuration(configuration), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _ledDriver(ledDriver)
 {
 }
@@ -16,15 +17,16 @@ LinearReferenceSystem::~LinearReferenceSystem()
 
 void LinearReferenceSystem::setup()
 {
-    _ledCount = _shapeHelper.ledCount();
-    _pixels = (uint8_t *)malloc(sizeof(uint8_t) * _pixelHelper.pixelSize() * _ledCount);
-    memset(_pixels, 0, _ledCount * _pixelHelper.pixelSize() * sizeof(uint8_t));
+    Serial.printf("LinearReferenceSystem kind = %d\n", _configuration->assembly()->kind);
+    _ledCount = _shapeHelper->ledCount();
+    _pixels = (uint8_t *)malloc(sizeof(uint8_t) * _pixelHelper->pixelSize() * _ledCount);
+    memset(_pixels, 0, _ledCount * _pixelHelper->pixelSize() * sizeof(uint8_t));
 }
 
 void LinearReferenceSystem::driveLeds()
 {
     //we simply iterate local pixels to ledDriver pixels
-    memcpy(_ledDriver->getPixels(), _pixels, _ledCount * _pixelHelper.pixelSize() * sizeof(uint8_t));
+    memcpy(_ledDriver->getPixels(), _pixels, _ledCount * _pixelHelper->pixelSize() * sizeof(uint8_t));
 
     /*Serial.print("leds(");
     Serial.print(_ledCount);
@@ -49,7 +51,7 @@ int LinearReferenceSystem::ledCount()
 
 void LinearReferenceSystem::clear()
 {
-    memset(_pixels, 0, _ledCount * sizeof(uint8_t) * _pixelHelper.pixelSize());
+    memset(_pixels, 0, _ledCount * sizeof(uint8_t) * _pixelHelper->pixelSize());
 }
 
 void LinearReferenceSystem::fill(const Color c)
@@ -62,17 +64,17 @@ void LinearReferenceSystem::fill(const Color c)
 
 int LinearReferenceSystem::pixelSize() const
 {
-    return _pixelHelper.pixelSize();
+    return _pixelHelper->pixelSize();
 }
 
 void LinearReferenceSystem::setPixel(int pixelNumber, uint32_t color)
 {
-    _pixelHelper.setPixel(_pixels, pixelNumber, color);
+    _pixelHelper->setPixel(_pixels, pixelNumber, color);
 }
 
 uint32_t LinearReferenceSystem::getPixel(int pixelNumber)
 {
-    return _pixelHelper.getPixel(_pixels, pixelNumber);
+    return _pixelHelper->getPixel(_pixels, pixelNumber);
 }
 
 } //referenceSystem

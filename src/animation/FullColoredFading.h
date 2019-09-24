@@ -14,7 +14,7 @@ namespace animation
 class FullColoredFading : public IAnimation
 {
     public:
-        FullColoredFading(referenceSystem::LinearReferenceSystem & referenceSystem)
+        FullColoredFading(referenceSystem::LinearReferenceSystem * referenceSystem)
         : _referenceSystem(referenceSystem)
         {
         }
@@ -30,8 +30,8 @@ class FullColoredFading : public IAnimation
 
         void setup()
         {
-            _referenceSystem.clear();
-            _referenceSystem.driveLeds();
+            _referenceSystem->clear();
+            _referenceSystem->driveLeds();
             _targetColor = 0x000000;
             _counter = 0;
         }
@@ -50,12 +50,12 @@ class FullColoredFading : public IAnimation
             }
             
             Color c = _fade.step();
-            _referenceSystem.fill(c);
-            _referenceSystem.driveLeds();
+            _referenceSystem->fill(c);
+            _referenceSystem->driveLeds();
         }
 
     private:
-        referenceSystem::LinearReferenceSystem & _referenceSystem;
+        referenceSystem::LinearReferenceSystem * _referenceSystem;
         Fade _fade;
         Color _targetColor;
         int _counter;

@@ -11,11 +11,10 @@
 
 #define LED_PIN_NUMBER  2
 
-ConfigurationProvider _configuration;
+ConfigurationProvider * _configuration;
 WifiManager _wifiManager;
-
-ShapeHelper _shapeHelper(_configuration);
-PixelHelper _pixelHelper(_configuration);
+ShapeHelper * _shapeHelper;
+PixelHelper * _pixelHelper;
 Adafruit_NeoPixel * _ledDriver;
 AnimationFactory * _animationFactory;
 Animator * _animator;
@@ -24,14 +23,16 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("setup...");
-  _configuration.setup();
-  _configuration.loadFromFlash();
-  _pixelHelper.setup();
-  //_wifiManager.erase();// This will erase the stored passwords
-	//_wifiManager.setupScan();
-  Serial.printf("ledModel = %d\n", _configuration.parameters().ledModel);
-  
-  _ledDriver = new Adafruit_NeoPixel(_shapeHelper.ledCount(), LED_PIN_NUMBER, _configuration.parameters().ledModel + NEO_KHZ800);
+  _configuration = new ConfigurationProvider();
+  _configuration->setup();
+  _configuration->loadFromFlash();
+  Serial.printf("main kind = %d\n", _configuration->assembly()->kind);
+  _shapeHelper = new ShapeHelper(_configuration);
+  _shapeHelper->setup();
+  _pixelHelper = new PixelHelper(_configuration);
+  _pixelHelper->setup();
+
+  _ledDriver = new Adafruit_NeoPixel(_shapeHelper->ledCount(), LED_PIN_NUMBER, _configuration->parameters().ledModel + NEO_KHZ800);
   _ledDriver->clear();
   _ledDriver->begin();
   

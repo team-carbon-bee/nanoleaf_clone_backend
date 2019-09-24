@@ -8,8 +8,9 @@
 class ShapeHelper
 {
     public:
-        ShapeHelper(ConfigurationProvider & configuration);
+        ShapeHelper(ConfigurationProvider * configuration);
         virtual ~ShapeHelper();
+        void setup();
 
         int numberOfConnections(const Shape * node);
         int shapeCount();
@@ -23,5 +24,5 @@ class ShapeHelper
         int ledCountOfThisShape(const Shape * node);
 
     private:
-        ConfigurationProvider & _configuration;
+        ConfigurationProvider * _configuration;
 };

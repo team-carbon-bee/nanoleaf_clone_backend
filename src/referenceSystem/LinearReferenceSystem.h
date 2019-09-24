@@ -16,7 +16,7 @@ namespace referenceSystem {
 class LinearReferenceSystem : public IReferenceSystem
 {
     public:
-        LinearReferenceSystem(ConfigurationProvider configuration, ShapeHelper & shapeHelper, PixelHelper & pixelHelper, Adafruit_NeoPixel * ledDriver);
+        LinearReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver);
         virtual ~LinearReferenceSystem();
 
         void setup();
@@ -32,9 +32,9 @@ class LinearReferenceSystem : public IReferenceSystem
         uint32_t getPixel(int pixelNumber);
         
     private:
-        ConfigurationProvider & _configuration;
-        ShapeHelper & _shapeHelper;
-        PixelHelper & _pixelHelper;
+        ConfigurationProvider * _configuration;
+        ShapeHelper * _shapeHelper;
+        PixelHelper * _pixelHelper;
         Adafruit_NeoPixel * _ledDriver;
         uint8_t * _pixels;
         int _ledCount;

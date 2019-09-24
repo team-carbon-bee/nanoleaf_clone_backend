@@ -8,7 +8,7 @@
 class PixelHelper
 {
     public:
-        PixelHelper(ConfigurationProvider & configuration);
+        PixelHelper(ConfigurationProvider * configuration);
         virtual ~PixelHelper();
 
         void setup();
@@ -66,7 +66,7 @@ class PixelHelper
         static const Color brightenWhite(const Color & p, const int brightness);
         
     private:
-        ConfigurationProvider & _configuration;
+        ConfigurationProvider * _configuration;
         int _redOffset;
         int _greenOffset;
         int _blueOffset;

@@ -60,10 +60,10 @@ void ConfigurationProvider::createDefaultConfiguration()
     _assembly->connections[1] = NULL;
     _assembly->parent = NULL;
 
+Serial.printf("createDefaultConfiguration kind = %d\n", assembly()->kind);
+
     //we affect parent to second
     second->parent = _assembly;
-
-    Serial.printf("createDefaultConfiguration, kind = %d\n", _assembly->kind);
 
     _parameters.ledPerTriangle = 21;
     _parameters.ledModel = GRB;
@@ -118,7 +118,7 @@ void ConfigurationProvider::parseJson(const String & data)
     //iterate and create structure
     JsonObject obj = doc["assembly"].as<JsonObject>();
     _assembly = createShapeFromJSon(obj);
-
+    
     JsonObject parameters = doc["parameters"].as<JsonObject>();
     _parameters.ledPerTriangle = parameters["ledPerTriangle"].as<int>();
     _parameters.ledModel = stringToPixelKind(parameters["ledModel"].as<String>());

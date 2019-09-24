@@ -1,6 +1,6 @@
 #include "Animator.h"
 
-Animator::Animator(ConfigurationProvider & configuration, AnimationFactory * animationFactory)
+Animator::Animator(ConfigurationProvider * configuration, AnimationFactory * animationFactory)
     : _configuration(configuration), _animationFactory(animationFactory), _currentAnimation(NULL)
 {
 }

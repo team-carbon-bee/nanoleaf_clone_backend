@@ -5,7 +5,7 @@
 
 //Local pixels are always in uint32_t format following structure : WWRRGGBB
 
-PixelHelper::PixelHelper(ConfigurationProvider & configuration)
+PixelHelper::PixelHelper(ConfigurationProvider * configuration)
     : _configuration(configuration)
 {
 }
@@ -25,7 +25,7 @@ void PixelHelper::setup()
 
 PixelKind PixelHelper::pixelKind() const
 {
-    return _configuration.parameters().ledModel;
+    return _configuration->parameters().ledModel;
 }
 
 int PixelHelper::pixelSize() const

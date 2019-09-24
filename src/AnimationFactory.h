@@ -15,20 +15,20 @@
 class AnimationFactory
 {
     public:
-        AnimationFactory(ConfigurationProvider & configuration, ShapeHelper & shapeHelper, 
-                         PixelHelper & pixelHelper, Adafruit_NeoPixel * ledDriver);
+        AnimationFactory(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
+                         PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver);
         virtual ~AnimationFactory();
 
         void setup();
 
         LinkedList<animation::IAnimation *> & animations();
     private:
-        ConfigurationProvider & _configuration;
-        ShapeHelper & _shapeHelper;
-        PixelHelper & _pixelHelper;
+        ConfigurationProvider * _configuration;
+        ShapeHelper * _shapeHelper;
+        PixelHelper * _pixelHelper;
         Adafruit_NeoPixel * _ledDriver;
-        referenceSystem::LinearReferenceSystem _linearReferenceSystem;
-        referenceSystem::ShapeReferenceSystem _shapeReferenceSystem;
+        referenceSystem::LinearReferenceSystem * _linearReferenceSystem;
+        referenceSystem::ShapeReferenceSystem * _shapeReferenceSystem;
         LinkedList<animation::IAnimation*> _animations;
 
 };

@@ -14,7 +14,7 @@ namespace animation
 class FullColoredShapeFading : public IAnimation
 {
     public:
-        FullColoredShapeFading(referenceSystem::ShapeReferenceSystem & referenceSystem)
+        FullColoredShapeFading(referenceSystem::ShapeReferenceSystem * referenceSystem)
         : _referenceSystem(referenceSystem)
         {
         }
@@ -30,8 +30,8 @@ class FullColoredShapeFading : public IAnimation
 
         void setup()
         {
-            _referenceSystem.clear();
-            _referenceSystem.driveLeds();
+            _referenceSystem->clear();
+            _referenceSystem->driveLeds();
             Serial.println("after driveleds.loop");
             _targetColor = 0x000000;
             _counter = 0;
@@ -42,7 +42,7 @@ class FullColoredShapeFading : public IAnimation
             Serial.println("animation.loop");
             if ((not _fade.isConfigured()) || (_fade.isFinished()))
             {
-                //TODO : _referenceSystem.getRandomShape();
+                //TODO : _referenceSystem->getRandomShape();
                 Color dst = _colorList[_counter];
                 _fade.configure(_targetColor, dst, FadingDuration);
                 _targetColor = dst;
@@ -53,13 +53,13 @@ class FullColoredShapeFading : public IAnimation
             }
             
             Color c = _fade.step();
-            _referenceSystem.getDetails(_referenceSystem.assembly()->connections[0])->fill(c);
+            _referenceSystem->getDetails(_referenceSystem->assembly()->connections[0])->fill(c);
 
-            _referenceSystem.driveLeds();
+            _referenceSystem->driveLeds();
         }
 
     private:
-        referenceSystem::ShapeReferenceSystem & _referenceSystem;
+        referenceSystem::ShapeReferenceSystem * _referenceSystem;
         Fade _fade;
         Color _targetColor;
         int _counter;
