@@ -2,13 +2,15 @@
 #include "animation/FullFading.h"
 #include "animation/FullColoredFading.h"
 #include "animation/IndependantRandomFading.h"
+#include "animation/FullColoredShapeFading.h"
 
 #include "AnimationFactory.h"
 
 AnimationFactory::AnimationFactory(ConfigurationProvider & configuration, ShapeHelper & shapeHelper, 
                                    PixelHelper & pixelHelper, Adafruit_NeoPixel * ledDriver)
     : _configuration(configuration), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _ledDriver(ledDriver), 
-      _linearReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver)
+      _linearReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver),
+      _shapeReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver)
 {
 }
 
@@ -18,17 +20,20 @@ AnimationFactory::~AnimationFactory()
 
 void AnimationFactory::setup()
 {
+    Serial.println("AnimationFactory::setup()");
     //we configure all reference systems
     _linearReferenceSystem.setup();
-
+    _shapeReferenceSystem.setup();
     //we create all animations
     
     _animations.Append(new animation::FullFading(_linearReferenceSystem));
     _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
     _animations.Append(new animation::IndependantRandomFading(_linearReferenceSystem));
     _animations.Append(new animation::RunningLight(_linearReferenceSystem));
+    _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem));
     //New animations come here !!!!
 
+    Serial.println("Setup animations");
     //setup all animations
     if (_animations.moveToStart())
     {

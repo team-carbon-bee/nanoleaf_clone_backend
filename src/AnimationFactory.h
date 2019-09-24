@@ -8,7 +8,8 @@
 #include "ShapeHelper.h"
 #include "PixelHelper.h"
 #include "ConfigurationProvider.h"
-#include "referenceSystem/Linear.h"
+#include "referenceSystem/LinearReferenceSystem.h"
+#include "referenceSystem/ShapeReferenceSystem.h"
 #include "animation/IAnimation.h"
 
 class AnimationFactory
@@ -26,7 +27,8 @@ class AnimationFactory
         ShapeHelper & _shapeHelper;
         PixelHelper & _pixelHelper;
         Adafruit_NeoPixel * _ledDriver;
-        referenceSystem::Linear _linearReferenceSystem;
+        referenceSystem::LinearReferenceSystem _linearReferenceSystem;
+        referenceSystem::ShapeReferenceSystem _shapeReferenceSystem;
         LinkedList<animation::IAnimation*> _animations;
 
 };

@@ -34,7 +34,7 @@ class ConfigurationProvider
 
     private:
         void parseJson(const String & data);
-        Shape *createShapeFromJSon(JsonObject & jsonObject);
+        Shape *createShapeFromJSon(JsonObject & jsonObject, Shape * parent = NULL);
         JsonObject createJsonFromShape(Shape * shape);
 
 

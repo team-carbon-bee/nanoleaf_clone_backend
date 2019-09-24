@@ -35,8 +35,12 @@ void setup()
   _ledDriver->clear();
   _ledDriver->begin();
   
+  Serial.println("Creating animations.");
+
   _animationFactory = new AnimationFactory(_configuration, _shapeHelper, _pixelHelper, _ledDriver);
   _animationFactory->setup();
+
+  Serial.println("Creating animator.");
 
   _animator = new Animator(_configuration, _animationFactory);
   _animator->setup();

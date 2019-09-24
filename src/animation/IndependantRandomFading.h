@@ -4,7 +4,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #include "IAnimation.h"
-#include "referenceSystem/Linear.h"
+#include "referenceSystem/LinearReferenceSystem.h"
 #include "PixelHelper.h"
 #include "Fade.h"
 
@@ -14,7 +14,7 @@ namespace animation
 class IndependantRandomFading : public IAnimation
 {
     public:
-        IndependantRandomFading(referenceSystem::Linear & referenceSystem)
+        IndependantRandomFading(referenceSystem::LinearReferenceSystem & referenceSystem)
         : _referenceSystem(referenceSystem)
         {
         }
@@ -56,7 +56,7 @@ class IndependantRandomFading : public IAnimation
         }
 
     private:
-        referenceSystem::Linear & _referenceSystem;
+        referenceSystem::LinearReferenceSystem & _referenceSystem;
         Fade * _fades;        
 
 };

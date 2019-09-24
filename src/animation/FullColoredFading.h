@@ -4,7 +4,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #include "IAnimation.h"
-#include "referenceSystem/Linear.h"
+#include "referenceSystem/LinearReferenceSystem.h"
 #include "PixelHelper.h"
 #include "Fade.h"
 
@@ -14,7 +14,7 @@ namespace animation
 class FullColoredFading : public IAnimation
 {
     public:
-        FullColoredFading(referenceSystem::Linear & referenceSystem)
+        FullColoredFading(referenceSystem::LinearReferenceSystem & referenceSystem)
         : _referenceSystem(referenceSystem)
         {
         }
@@ -55,7 +55,7 @@ class FullColoredFading : public IAnimation
         }
 
     private:
-        referenceSystem::Linear & _referenceSystem;
+        referenceSystem::LinearReferenceSystem & _referenceSystem;
         Fade _fade;
         Color _targetColor;
         int _counter;

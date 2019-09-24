@@ -4,7 +4,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #include "IAnimation.h"
-#include "referenceSystem/Linear.h"
+#include "referenceSystem/LinearReferenceSystem.h"
 #include "PixelHelper.h"
 #include "DividedCounter.h"
 
@@ -14,7 +14,7 @@ namespace animation
 class RunningLight : public IAnimation
 {
     public:
-        RunningLight(referenceSystem::Linear & referenceSystem)
+        RunningLight(referenceSystem::LinearReferenceSystem & referenceSystem)
         : _referenceSystem(referenceSystem)
         {
         }
@@ -76,7 +76,7 @@ class RunningLight : public IAnimation
         }
 
     private:
-        referenceSystem::Linear & _referenceSystem;
+        referenceSystem::LinearReferenceSystem & _referenceSystem;
         int _currentPosition;
         DividedCounter _divider;
         static const int TrailLength = 4;

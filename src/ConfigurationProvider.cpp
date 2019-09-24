@@ -58,6 +58,12 @@ void ConfigurationProvider::createDefaultConfiguration()
     _assembly->connections = (Shape**)malloc(sizeof(Shape *) * 2);
     _assembly->connections[0] = second;
     _assembly->connections[1] = NULL;
+    _assembly->parent = NULL;
+
+    //we affect parent to second
+    second->parent = _assembly;
+
+    Serial.printf("createDefaultConfiguration, kind = %d\n", _assembly->kind);
 
     _parameters.ledPerTriangle = 21;
     _parameters.ledModel = GRB;
@@ -119,7 +125,7 @@ void ConfigurationProvider::parseJson(const String & data)
     _parameters.hostname = parameters["hostname"].as<String>();
 }
 
-Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject)
+Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject, Shape * parent)
 {
     if (jsonObject.isNull())
         return NULL;
@@ -131,10 +137,11 @@ Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject)
         current->kind = triangle;
         current->connections = (Shape**)malloc(sizeof(Shape *) * 2);
         JsonObject leftConnection = jsonObject["leftConnection"].as<JsonObject>();
-        current->connections[0] = createShapeFromJSon(leftConnection);
+        current->connections[0] = createShapeFromJSon(leftConnection, current);
         JsonObject rightConnection = jsonObject["rightConnection"].as<JsonObject>();
-        current->connections[1] = createShapeFromJSon(rightConnection);
+        current->connections[1] = createShapeFromJSon(rightConnection, current);
         current->content = NULL;
+        current->parent = parent;
         return current;
     }
     else
