@@ -2,38 +2,43 @@
     "assembly" : {
         "shape" : {
             "type" : "triangle",
-            "leftConnection" : {
-                "shape" : {
+            "connections" : 
+            [
+                {
                     "type" : "triangle",
-                    "leftConnection" : {
-                        "shape" : {
+                    "connections" : 
+                    [
+                        {
                             "type" : "triangle",
-                            "leftConnection" : null,
-                            "rightConnection" : null
-                        }
-                    },
-                    "rightConnection" : null
-                }
-            },
-            "rightConnection" : {
-                "shape" : {
+                            "connections" : [
+                                null,
+                                null
+                            ]
+                        },
+                        null
+                    ]
+                },
+                {
                     "type" : "triangle",
-                    "leftConnection" : {
-                        "shape" : {
+                    "connections" : 
+                    [
+                        {
                             "type" : "triangle",
-                            "leftConnection" : null,
-                            "rightConnection" : null
-                        }
-                    },
-                    "rightConnection" : {
-                        "shape" : {
+                            "connections" : [
+                                null,
+                                null
+                            ]
+                        },
+                        {
                             "type" : "triangle",
-                            "leftConnection" : null,
-                            "rightConnection" : null
+                            "connections" : [
+                                null,
+                                null
+                            ]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         }
     },
     "parameters" : {
