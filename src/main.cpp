@@ -9,7 +9,7 @@
 #include "ShapeHelper.h"
 #include "PixelHelper.h"
 
-#define LED_PIN_NUMBER  2
+#define LED_PIN_NUMBER  4
 
 ConfigurationProvider * _configuration;
 WifiManager _wifiManager;
@@ -31,7 +31,7 @@ void setup()
   _pixelHelper = new PixelHelper(_configuration);
   _pixelHelper->setup();
 
-  _ledDriver = new Adafruit_NeoPixel(_shapeHelper->ledCount(), LED_PIN_NUMBER, _configuration->parameters().ledModel + NEO_KHZ800);
+  _ledDriver = new Adafruit_NeoPixel(_shapeHelper->ledCount(), LED_PIN_NUMBER, _configuration->parameters().ledModel + NEO_KHZ400);
   _ledDriver->clear();
   _ledDriver->begin();
   
