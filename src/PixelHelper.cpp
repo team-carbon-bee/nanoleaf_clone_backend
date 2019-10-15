@@ -5,6 +5,8 @@
 
 //Local pixels are always in uint32_t format following structure : WWRRGGBB
 
+const Color PixelHelper::FullColorList[6] = {0x0000FF, 0x00FFFF, 0x00FF00, 0XFFFF00, 0xFF0000, 0xFF00FF};
+
 PixelHelper::PixelHelper(ConfigurationProvider * configuration)
     : _configuration(configuration)
 {
@@ -93,4 +95,10 @@ const Color PixelHelper::brightenWhite(const Color & p, const int brightness)
     setWhite(max(min(255, getWhite(p) + brightness), 0), res);
 
     return res;
+}
+
+const Color PixelHelper::getRandomFullColor()
+{
+    int idx = random(PixelHelper::FullColorNumber);
+    return PixelHelper::FullColorList[idx];
 }

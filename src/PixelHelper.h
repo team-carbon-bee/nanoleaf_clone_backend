@@ -65,10 +65,15 @@ class PixelHelper
         static const Color brightenBlue(const Color & p, const int brightness);
         static const Color brightenWhite(const Color & p, const int brightness);
         
+        static const Color getRandomFullColor();
+
     private:
         ConfigurationProvider * _configuration;
         int _redOffset;
         int _greenOffset;
         int _blueOffset;
         int _whiteOffset;
+
+        static const int FullColorNumber = 6;
+        static const Color FullColorList[];
 };
