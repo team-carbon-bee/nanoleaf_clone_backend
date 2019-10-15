@@ -15,7 +15,7 @@ class FullColoredShapeFading : public IAnimation
 {
     public:
         FullColoredShapeFading(referenceSystem::ShapeReferenceSystem * referenceSystem)
-        : _referenceSystem(referenceSystem)
+        : _referenceSystem(referenceSystem), _currentShape(NULL)
         {
         }
 
@@ -32,27 +32,27 @@ class FullColoredShapeFading : public IAnimation
         {
             _referenceSystem->clear();
             _referenceSystem->driveLeds();
-            Serial.println("after driveleds.loop");
-            _targetColor = 0x000000;
-            _counter = 0;
         }
 
         void loop()
         {
             if ((not _fade.isConfigured()) || (_fade.isFinished()))
             {
-                //TODO : _referenceSystem->getRandomShape();
-                Color dst = _colorList[_counter];
-                _fade.configure(_targetColor, dst, FadingDuration);
-                _targetColor = dst;
+                //We manage to get randomly a new shape (not the last one)
+                Shape * lastShape = _currentShape;
+                while (_currentShape == lastShape)
+                {
+                    _currentShape = _referenceSystem->getRandomShape();
+                }   
 
-                _counter++;
-                if (_counter == 6)
-                    _counter = 0;
+                Color dst = PixelHelper::getRandomFullColor();
+
+                //We take the color of the first pixel of the random shape to set the source
+                _fade.configure(_referenceSystem->getDetails(_currentShape)->getPixel(0), dst, FadingDuration);
             }
             
             Color c = _fade.step();
-            _referenceSystem->getDetails(_referenceSystem->assembly()->connections[0])->fill(c);
+            _referenceSystem->getDetails(_currentShape)->fill(c);
 
             _referenceSystem->driveLeds();
         }
@@ -60,11 +60,8 @@ class FullColoredShapeFading : public IAnimation
     private:
         referenceSystem::ShapeReferenceSystem * _referenceSystem;
         Fade _fade;
-        Color _targetColor;
-        int _counter;
-        static const int FadingDuration = 100;
-        const Color _colorList[6] = {0x0000FF, 0x00FFFF, 0x00FF00, 0XFFFF00, 0xFF0000, 0xFF00FF};
-
+        Shape * _currentShape;
+        static const int FadingDuration = 10;
 };
 
 }
