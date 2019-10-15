@@ -143,4 +143,39 @@ int ShapeReferenceSystem::pixelSize() const
     return _pixelHelper->pixelSize();
 }
 
+Shape * ShapeReferenceSystem::getRandomShape()
+{
+    return getRandomShape(_assembly);
+}
+
+//Return random child shape of node 
+Shape * ShapeReferenceSystem::getRandomShape(Shape * node)
+{
+    int rnd = random(_shapeHelper->shapeCount(node));
+    if (rnd == 0)
+    {
+        //One chance to take the current
+        return node;
+    }
+
+    int nbConn = _shapeHelper->numberOfConnections(node);
+    int cumuledNbNodes = 1; //the current node 
+    for (int i = 0; i < nbConn; ++i)
+    {
+        if (node->connections[i] != NULL)
+        {
+            //we compute the probability to take this connection
+            cumuledNbNodes += _shapeHelper->shapeCount(node->connections[i]);
+            if (rnd < cumuledNbNodes)
+            {
+                //we have to take one from this connection
+                return getRandomShape(node->connections[i]);
+            }
+        }
+    }
+    //we are not supposed to go here
+    Serial.println("Invalid random shape");
+    return node;
+}
+
 } //referenceSystem

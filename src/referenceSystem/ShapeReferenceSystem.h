@@ -35,6 +35,10 @@ class ShapeReferenceSystem : public IReferenceSystem
         int pixelSize() const;
         ShapeDetails * getDetails(Shape * node);
         
+        Shape * getRandomShape();
+        //Return random child shape of node 
+        Shape * getRandomShape(Shape * node);
+
     private:
         ConfigurationProvider * _configuration;
         ShapeHelper * _shapeHelper;
