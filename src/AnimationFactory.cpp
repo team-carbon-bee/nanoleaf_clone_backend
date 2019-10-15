@@ -33,6 +33,7 @@ void AnimationFactory::setup()
     _animations.Append(new animation::IndependantRandomFading(_linearReferenceSystem));
     _animations.Append(new animation::RunningLight(_linearReferenceSystem));
     _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem));
+
     //New animations come here !!!!
 
     Serial.println("Setup animations");

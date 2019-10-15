@@ -52,12 +52,19 @@ void ConfigurationProvider::createDefaultConfiguration()
     second->connections[0] = NULL;
     second->connections[1] = NULL;
 
+    Shape *third = new Shape();
+    third->kind = triangle;
+    third->content = NULL;
+    third->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    third->connections[0] = NULL;
+    third->connections[1] = NULL;
+
     _assembly = new Shape();
     _assembly->kind = triangle;
     _assembly->content = NULL;
     _assembly->connections = (Shape**)malloc(sizeof(Shape *) * 2);
     _assembly->connections[0] = second;
-    _assembly->connections[1] = NULL;
+    _assembly->connections[1] = third;
     _assembly->parent = NULL;
 
     //we affect parent to second
