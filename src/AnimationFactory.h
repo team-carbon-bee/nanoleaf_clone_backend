@@ -22,6 +22,8 @@ class AnimationFactory
         void setup();
 
         LinkedList<animation::IAnimation *> & animations();
+        void clearAnimationObject();
+        
     private:
         ConfigurationProvider * _configuration;
         ShapeHelper * _shapeHelper;

@@ -3,6 +3,7 @@
 #include "animation/FullColoredFading.h"
 #include "animation/IndependantRandomFading.h"
 #include "animation/FullColoredShapeFading.h"
+#include "animation/RandomColoredShapes.h"
 
 #include "AnimationFactory.h"
 
@@ -18,7 +19,6 @@ AnimationFactory::~AnimationFactory()
 
 void AnimationFactory::setup()
 {
-    Serial.printf("AnimationFactory kind = %d\n", _configuration->assembly()->kind);
     Serial.println("AnimationFactory::setup()");
     
     _linearReferenceSystem = new referenceSystem::LinearReferenceSystem(_configuration, _shapeHelper, _pixelHelper, _ledDriver);
@@ -27,15 +27,19 @@ void AnimationFactory::setup()
     _linearReferenceSystem->setup();
     _shapeReferenceSystem->setup();
     //we create all animations
-    
-    _animations.Append(new animation::FullFading(_linearReferenceSystem));
-    _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
+      _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
     _animations.Append(new animation::IndependantRandomFading(_linearReferenceSystem));
+    _animations.Append(new animation::FullFading(_linearReferenceSystem));
+       
+    
     _animations.Append(new animation::RunningLight(_linearReferenceSystem));
-    _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem));
+    _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem)); 
+    _animations.Append(new animation::RandomColoredShapes(_shapeReferenceSystem)); 
+
+
 
     //New animations come here !!!!
-
+/*
     Serial.println("Setup animations");
     //setup all animations
     if (_animations.moveToStart())
@@ -44,10 +48,16 @@ void AnimationFactory::setup()
         {
             _animations.getCurrent()->setup();
         } while(_animations.next());
-    }
+    }*/
 }
 
 LinkedList<animation::IAnimation*> & AnimationFactory::animations()
 {
     return _animations;
+}
+
+void AnimationFactory::clearAnimationObject()
+{
+    //in shape ref system
+    _shapeReferenceSystem->clearAnimationObject();
 }
