@@ -33,7 +33,7 @@ class RunningLight : public IAnimation
             _referenceSystem->clear();
             _referenceSystem->driveLeds(); 
             _currentPosition = 0;
-            _divider.configure(10);
+            _divider.configure(2);
         }
 
         void loop()
