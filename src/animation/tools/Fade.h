@@ -14,6 +14,22 @@ class Fade
         {
         }
 
+        Fade(const Fade & copy)
+        : _configured(copy._configured),
+        _finished(copy._finished),
+        _target(copy._target),
+        _currentStep(copy._currentStep),
+        _currentRed(copy._currentRed),
+        _currentGreen(copy._currentGreen),
+        _currentBlue(copy._currentBlue),
+        _currentWhite(copy._currentWhite),
+        _redQuantum(copy._redQuantum),
+        _greenQuantum(copy._greenQuantum),
+        _blueQuantum(copy._blueQuantum),
+        _whiteQuantum(copy._whiteQuantum)
+        {
+        }
+        
         virtual ~Fade()
         {
         }
@@ -78,13 +94,14 @@ class Fade
     private:
         bool _configured;
         bool _finished;
+ 
+        Color _target;
+        int _currentStep;
+
         float _currentRed;
         float _currentGreen;
         float _currentBlue;
         float _currentWhite;
-
-        Color _target;
-        int _currentStep;
 
         float _redQuantum;
         float _greenQuantum;
