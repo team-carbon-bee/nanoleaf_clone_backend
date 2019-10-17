@@ -66,6 +66,7 @@ class PixelHelper
         static const Color brightenWhite(const Color & p, const int brightness);
         
         static const Color getRandomFullColor();
+        static const Color getRandomFullColorExcept(const Color notThisOne);
 
     private:
         ConfigurationProvider * _configuration;

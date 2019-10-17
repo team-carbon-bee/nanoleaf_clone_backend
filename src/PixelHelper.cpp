@@ -102,3 +102,13 @@ const Color PixelHelper::getRandomFullColor()
     int idx = random(PixelHelper::FullColorNumber);
     return PixelHelper::FullColorList[idx];
 }
+
+const Color PixelHelper::getRandomFullColorExcept(const Color notThisOne)
+{
+    Color current = notThisOne;
+    while (current == notThisOne)
+    {
+        current = getRandomFullColor();
+    }
+    return current;
+}
