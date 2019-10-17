@@ -32,7 +32,7 @@ class LinkedList  {
     T& getCurrent();
     T& First() const;
     T& Last() const;
-    int getLength();
+    int size();
     void Append(T);
     void DeleteLast();
     void DeleteFirst();
@@ -112,7 +112,7 @@ T& LinkedList<T>::Last() const
 }
 
 template<class T>
-int LinkedList<T>::getLength()
+int LinkedList<T>::size()
 {
   return length;
 }
