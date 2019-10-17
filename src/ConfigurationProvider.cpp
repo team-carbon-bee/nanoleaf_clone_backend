@@ -67,12 +67,16 @@ void ConfigurationProvider::createDefaultConfiguration()
     _assembly->connections[1] = third;
     _assembly->parent = NULL;
 
-    //we affect parent to second
+    //we affect parent to second and third
     second->parent = _assembly;
+    third->parent = _assembly;
 
     _parameters.ledPerTriangle = 21;
     _parameters.ledModel = GRB;
     _parameters.hostname = "nanoleaf_clone";
+    _parameters.maxBrightness = 255;
+
+    _globalBrigthness = 30;
 }
 
 void ConfigurationProvider::saveToFlash()
@@ -96,6 +100,7 @@ void ConfigurationProvider::saveToFlash()
     parameters["ledPerTriangle"] = _parameters.ledPerTriangle;
     parameters["ledModel"] = pixelKindToString(_parameters.ledModel);
     parameters["hostname"] = _parameters.hostname;
+    parameters["maxBrightness"] = _parameters.maxBrightness;
 
     doc["parameters"] = parameters;
     serializeJson(doc, file);
@@ -128,6 +133,7 @@ void ConfigurationProvider::parseJson(const String & data)
     _parameters.ledPerTriangle = parameters["ledPerTriangle"].as<int>();
     _parameters.ledModel = stringToPixelKind(parameters["ledModel"].as<String>());
     _parameters.hostname = parameters["hostname"].as<String>();
+    _parameters.maxBrightness = parameters["maxBrightness"].as<uint8_t>();
 }
 
 Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject, Shape * parent)
@@ -194,4 +200,14 @@ ConfigurationProvider::Parameters & ConfigurationProvider::parameters()
 Shape * ConfigurationProvider::assembly()
 {
     return _assembly;
+}
+
+uint8_t ConfigurationProvider::globalBrigthness() const
+{
+    return _globalBrigthness;
+}
+
+void ConfigurationProvider::globalBrigthness(const uint8_t value)
+{
+    _globalBrigthness = value;
 }

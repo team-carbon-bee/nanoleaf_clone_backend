@@ -14,6 +14,7 @@ class ConfigurationProvider
             String hostname;
             int ledPerTriangle;
             PixelKind ledModel;
+            uint8_t maxBrightness;
         } Parameters;
         
         ConfigurationProvider();
@@ -32,6 +33,8 @@ class ConfigurationProvider
 
         Shape * assembly();
 
+        uint8_t globalBrigthness() const;
+        void globalBrigthness(const uint8_t value);
     private:
         void parseJson(const String & data);
         Shape *createShapeFromJSon(JsonObject & jsonObject, Shape * parent = NULL);
@@ -41,6 +44,7 @@ class ConfigurationProvider
         static const String ConfigurationFilename;
         Shape * _assembly;
         Parameters _parameters;
+        uint8_t _globalBrigthness;
 
         static const int DynamicJsonDocumentMaxSize = 3 * 1024;
 
