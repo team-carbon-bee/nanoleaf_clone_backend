@@ -4,6 +4,7 @@
 #include "animation/IndependantRandomFading.h"
 #include "animation/FullColoredShapeFading.h"
 #include "animation/RandomColoredShapes.h"
+#include "animation/Fireworks.h"
 
 #include "AnimationFactory.h"
 
@@ -27,16 +28,17 @@ void AnimationFactory::setup()
     _linearReferenceSystem->setup();
     _shapeReferenceSystem->setup();
     //we create all animations
-      _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
+    _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
     _animations.Append(new animation::IndependantRandomFading(_linearReferenceSystem));
     _animations.Append(new animation::FullFading(_linearReferenceSystem));
        
     
-    _animations.Append(new animation::RunningLight(_linearReferenceSystem));
-    _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem)); 
+    
+    
     _animations.Append(new animation::RandomColoredShapes(_shapeReferenceSystem)); 
-
-
+    _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem)); 
+    _animations.Append(new animation::RunningLight(_linearReferenceSystem));
+    _animations.Append(new animation::Fireworks(_linearReferenceSystem));
 
     //New animations come here !!!!
 /*
