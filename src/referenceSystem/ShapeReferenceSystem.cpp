@@ -22,6 +22,7 @@ void ShapeReferenceSystem::setup()
     
     //we iterate the duplicate tree to create content objects that will embed values of each leds of the shape
     createShapeDetailObjects(_assembly);
+    createLinkedListFromShapes(_assembly);
 }
 
 void ShapeReferenceSystem::createShapeDetailObjects(Shape * shape)
@@ -34,6 +35,17 @@ void ShapeReferenceSystem::createShapeDetailObjects(Shape * shape)
     shape->content = details;
     for (int i = 0; i < _shapeHelper->numberOfConnections(shape); ++i)
         createShapeDetailObjects(shape->connections[i]);  
+}
+
+void ShapeReferenceSystem::createLinkedListFromShapes(Shape * shape)
+{
+    if (shape == NULL)
+        return;
+    
+    _shapeList.Append(shape);
+    
+    for (int i = 0; i < _shapeHelper->numberOfConnections(shape); ++i)
+        createLinkedListFromShapes(shape->connections[i]);  
 }
 
 void ShapeReferenceSystem::driveLeds()
@@ -50,8 +62,11 @@ void ShapeReferenceSystem::driveLeds()
         Serial.printf("%06x ", getDetails(_assembly->connections[0])->getPixel(i));
     }
     Serial.println(".");*/
+
+    //we disable brigthness during filling leds values
+    _ledDriver->setBrightness(255);
     prepareDriveLeds(_assembly);
-    
+    /*
     Serial.print("leds(");
     Serial.print(_ledDriver->numPixels());
     Serial.print(") : ");
@@ -59,7 +74,9 @@ void ShapeReferenceSystem::driveLeds()
     {
         Serial.printf("%06x ", _ledDriver->getPixelColor(i));
     }
-    Serial.println("");
+    Serial.println("");*/
+    //we re-enable brightness
+    _ledDriver->setBrightness(_configuration->globalBrigthness());
     _ledDriver->show();
 }
 
@@ -94,6 +111,11 @@ Shape * ShapeReferenceSystem::assembly()
     return _assembly;
 }
 
+LinkedList<Shape *> & ShapeReferenceSystem::shapeList()
+{
+    return _shapeList;
+}
+
 int ShapeReferenceSystem::shapeCount()
 {
     return _shapeCount;
@@ -119,6 +141,18 @@ void ShapeReferenceSystem::clear(Shape * node)
 ShapeDetails * ShapeReferenceSystem::getDetails(Shape * node)
 {
     return (ShapeDetails *)node->content;
+}
+
+void ShapeReferenceSystem::clearAnimationObject()
+{
+    if (_shapeList.moveToStart())
+    {
+        do 
+        {
+            Serial.println("Top");
+            getDetails(_shapeList.getCurrent())->clearAnimationObject();
+        } while (_shapeList.next()); 
+    }
 }
 
 void ShapeReferenceSystem::fill(const Color c)
@@ -176,6 +210,25 @@ Shape * ShapeReferenceSystem::getRandomShape(Shape * node)
     //we are not supposed to go here
     Serial.println("Invalid random shape");
     return node;
+}
+
+Shape * ShapeReferenceSystem::getRandomShapeExcept(Shape * notThisOne)
+{
+    return getRandomShapeExcept(_assembly, notThisOne);
+}
+
+Shape * ShapeReferenceSystem::getRandomShapeExcept(Shape * node, Shape * notThisOne)
+{
+    if (_shapeHelper->shapeCount(node) == 0)
+        return NULL;
+    if (_shapeHelper->shapeCount(node) == 1)
+        return node;
+    Shape * current = notThisOne;
+    while (current == notThisOne)
+    {
+        current = getRandomShape(node);
+    }
+    return current; 
 }
 
 } //referenceSystem

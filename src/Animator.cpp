@@ -20,6 +20,9 @@ void Animator::loop()
         //no animation in progress we chose one
         //TODO select animation
         _currentAnimation = _animationFactory->animations().Last();
+        //Before init animation, we have to remove all previously malloc objects
+        _animationFactory->clearAnimationObject();
+        _currentAnimation->setup();
     }
     //Serial.println("looping animation");
     _currentAnimation->loop();

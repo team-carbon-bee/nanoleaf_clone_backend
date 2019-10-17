@@ -12,7 +12,8 @@ class ShapeDetails
 {
     public:
         ShapeDetails(Shape * parent, ShapeHelper * shapeHelper, PixelHelper * pixelHelper) 
-        : _parent(parent), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper)
+        : _parent(parent), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _animationObject(NULL), 
+          _pixels(NULL), _ledCount(0)
         {
         }
 
@@ -65,10 +66,30 @@ class ShapeDetails
             return _pixelHelper->getPixel(_pixels, pixelNumber);
         }
 
+        void animationObject(void * object)
+        {
+            _animationObject = object;
+        }
+
+        void * animationObject() const
+        {
+            return _animationObject;
+        }
+
+        void clearAnimationObject()
+        {
+            if (_animationObject != NULL)
+            {
+                free(_animationObject);
+                _animationObject = NULL;
+            }
+        }
+
     private:
         Shape * _parent;
         ShapeHelper * _shapeHelper;
         PixelHelper * _pixelHelper;
+        void * _animationObject;
         uint8_t * _pixels;
         //for performance issues
         int _ledCount;
