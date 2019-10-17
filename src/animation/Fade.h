@@ -52,6 +52,11 @@ class Fade
                     _finished = true;
             }
 
+            return value();
+        }
+
+        Color value() const
+        {
             return Adafruit_NeoPixel::Color((uint8_t)_currentRed, (uint8_t)_currentGreen, (uint8_t)_currentBlue, (uint8_t)_currentWhite);
         }
 
