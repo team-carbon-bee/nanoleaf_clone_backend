@@ -6,7 +6,7 @@
 #include "IAnimation.h"
 #include "referenceSystem/LinearReferenceSystem.h"
 #include "PixelHelper.h"
-#include "Fade.h"
+#include "tools/Fade.h"
 
 namespace animation
 {

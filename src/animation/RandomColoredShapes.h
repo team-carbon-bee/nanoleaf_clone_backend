@@ -8,7 +8,7 @@
 #include "IAnimation.h"
 #include "referenceSystem/ShapeReferenceSystem.h"
 #include "PixelHelper.h"
-#include "Fade.h"
+#include "tools/Fade.h"
 
 namespace animation
 {
@@ -65,10 +65,11 @@ class RandomColoredShapes : public IAnimation
                     Fade * currentFade = (Fade*)_referenceSystem->getDetails(currentShape)->animationObject();
                     if ((not currentFade->isConfigured()) || (currentFade->isFinished()))
                     {
-                        Color dst = PixelHelper::getRandomFullColor();
+                        Color src = _referenceSystem->getDetails(currentShape)->getPixel(0);
+                        Color dst = PixelHelper::getRandomFullColorExcept(src);
                         int time = random(FadingSmallestDuration, FadingLongestDuration);
                         //We take the color of the first pixel of the random shape to set the source
-                        Color src = _referenceSystem->getDetails(currentShape)->getPixel(0);
+                        
                         currentFade->configure(src, dst, time);
                     }
                     //after we apply each fade on each shape

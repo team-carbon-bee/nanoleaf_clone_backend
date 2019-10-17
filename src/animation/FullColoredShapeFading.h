@@ -6,7 +6,7 @@
 #include "IAnimation.h"
 #include "referenceSystem/ShapeReferenceSystem.h"
 #include "PixelHelper.h"
-#include "Fade.h"
+#include "tools/Fade.h"
 
 namespace animation
 {
@@ -39,16 +39,12 @@ class FullColoredShapeFading : public IAnimation
             if ((not _fade.isConfigured()) || (_fade.isFinished()))
             {
                 //We manage to get randomly a new shape (not the last one)
-                Shape * lastShape = _currentShape;
-                while (_currentShape == lastShape)
-                {
-                    _currentShape = _referenceSystem->getRandomShape();
-                }   
-
-                Color dst = PixelHelper::getRandomFullColor();
-
+                _currentShape = _referenceSystem->getRandomShapeExcept(_currentShape);
+                Color src = _referenceSystem->getDetails(_currentShape)->getPixel(0);
+                Color dst = PixelHelper::getRandomFullColorExcept(src);
+                
                 //We take the color of the first pixel of the random shape to set the source
-                _fade.configure(_referenceSystem->getDetails(_currentShape)->getPixel(0), dst, FadingDuration);
+                _fade.configure(src, dst, FadingDuration);
             }
             
             Color c = _fade.step();
