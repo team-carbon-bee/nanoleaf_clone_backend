@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Adafruit_NeoPixel.h>
 
 #include "IAnimation.h"
 #include "referenceSystem/LinearReferenceSystem.h"
@@ -32,23 +31,20 @@ class FullColoredFading : public IAnimation
         {
             _referenceSystem->clear();
             _referenceSystem->driveLeds();
-            _targetColor = 0x000000;
-            _counter = 0;
+            _srcColor = 0x000000;
+
         }
 
         void loop()
         {
             if ((not _fade.isConfigured()) || (_fade.isFinished()))
             {
-                Color dst = _colorList[_counter];
-                _fade.configure(_targetColor, dst, FadingDuration);
-                _targetColor = dst;
-
-                _counter++;
-                if (_counter == 6)
-                    _counter = 0;
+                Serial.printf("step\n");
+                Color dst = PixelHelper::getRandomFullColorExcept(_srcColor);
+                _fade.configure(_srcColor, dst, FadingDuration);
+                _srcColor = dst;
             }
-            
+
             Color c = _fade.step();
             _referenceSystem->fill(c);
             _referenceSystem->driveLeds();
@@ -57,10 +53,8 @@ class FullColoredFading : public IAnimation
     private:
         referenceSystem::LinearReferenceSystem * _referenceSystem;
         Fade _fade;
-        Color _targetColor;
-        int _counter;
-        static const int FadingDuration = 100;
-        const Color _colorList[6] = {0x0000FF, 0x00FFFF, 0x00FF00, 0XFFFF00, 0xFF0000, 0xFF00FF};
+        Color _srcColor;
+        static const int FadingDuration = 50;
 
 };
 

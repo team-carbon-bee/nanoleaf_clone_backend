@@ -4,6 +4,7 @@
 
 #include "ShapeHelper.h"
 #include "PixelHelper.h"
+#include "Constants.h"
 
 namespace referenceSystem
 {
@@ -11,8 +12,8 @@ namespace referenceSystem
 class ShapeDetails
 {
     public:
-        ShapeDetails(Shape * parent, ShapeHelper * shapeHelper, PixelHelper * pixelHelper) 
-        : _parent(parent), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _animationObject(NULL), 
+        ShapeDetails(Shape * parent, ShapeHelper * shapeHelper) 
+        : _parent(parent), _shapeHelper(shapeHelper), _animationObject(NULL), 
           _pixels(NULL), _ledCount(0)
         {
         }
@@ -24,11 +25,11 @@ class ShapeDetails
         void setup()
         {
             _ledCount = _shapeHelper->ledCountOfThisShape(_parent);
-            _pixels = (uint8_t *)malloc(sizeof(uint8_t) * _pixelHelper->pixelSize() * _ledCount);
-            memset(_pixels, 0, _ledCount * _pixelHelper->pixelSize() * sizeof(uint8_t));
+            _pixels = (Color *)malloc(sizeof(Color) * _ledCount);
+            memset(_pixels, 0, _ledCount * sizeof(Color));
         }
 
-        uint8_t * pixels()
+        Color * pixels()
         {
             return _pixels;
         }
@@ -40,30 +41,13 @@ class ShapeDetails
 
         void clear()
         {
-            memset(_pixels, 0, _ledCount * sizeof(uint8_t) * _pixelHelper->pixelSize());
+            fill(0);
         }
 
         void fill(const Color c)
         {
             for (int i = 0; i < _ledCount; ++i)
-            {
-                setPixel(i, c);
-            }
-        }
-
-        int pixelSize() const
-        {
-            return _pixelHelper->pixelSize();
-        }
-
-        void setPixel(int pixelNumber, uint32_t color)
-        {
-            _pixelHelper->setPixel(_pixels, pixelNumber, color);
-        }
-
-        uint32_t getPixel(int pixelNumber)
-        {
-            return _pixelHelper->getPixel(_pixels, pixelNumber);
+                _pixels[i] = c;
         }
 
         void animationObject(void * object)
@@ -88,9 +72,8 @@ class ShapeDetails
     private:
         Shape * _parent;
         ShapeHelper * _shapeHelper;
-        PixelHelper * _pixelHelper;
         void * _animationObject;
-        uint8_t * _pixels;
+        Color * _pixels;
         //for performance issues
         int _ledCount;
 };

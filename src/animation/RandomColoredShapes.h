@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Adafruit_NeoPixel.h>
 
 #include <LinkedList.h>
 
@@ -43,11 +42,8 @@ class RandomColoredShapes : public IAnimation
                 do 
                 {
                     //each shape will embed a Fade for this animation
-                    //Serial.println("cretaing");
                     Fade *f = new Fade();
-                    //Serial.println("Adding");
-                    _referenceSystem->getDetails(_referenceSystem->shapeList().getCurrent())->animationObject(f);
-                    //Serial.println("Added");
+                    _referenceSystem->getShape(_referenceSystem->shapeList().getCurrent())->animationObject(f);
                 } while(_referenceSystem->shapeList().next());
             }
 
@@ -62,10 +58,10 @@ class RandomColoredShapes : public IAnimation
                 do 
                 {
                     Shape * currentShape = _referenceSystem->shapeList().getCurrent();
-                    Fade * currentFade = (Fade*)_referenceSystem->getDetails(currentShape)->animationObject();
+                    Fade * currentFade = (Fade*)_referenceSystem->getShape(currentShape)->animationObject();
                     if ((not currentFade->isConfigured()) || (currentFade->isFinished()))
                     {
-                        Color src = _referenceSystem->getDetails(currentShape)->getPixel(0);
+                        Color src = _referenceSystem->getShape(currentShape)->pixels()[0];
                         Color dst = PixelHelper::getRandomFullColorExcept(src);
                         int time = random(FadingSmallestDuration, FadingLongestDuration);
                         //We take the color of the first pixel of the random shape to set the source
@@ -74,7 +70,7 @@ class RandomColoredShapes : public IAnimation
                     }
                     //after we apply each fade on each shape
                     Color c = currentFade->step();
-                    _referenceSystem->getDetails(currentShape)->fill(c);
+                    _referenceSystem->getShape(currentShape)->fill(c);
 
                 } while(_referenceSystem->shapeList().next());
                 _referenceSystem->driveLeds();

@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #include "ConfigurationProvider.h"
-#include "ShapeObjects.h"
+#include "PixelHelper.h"
 
 class ShapeHelper
 {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Adafruit_NeoPixel.h>
 
 #include <LinkedList.h>
 #include "IAnimation.h"
@@ -103,10 +102,10 @@ class Fireworks : public IAnimation
         DividedCounter _divider;
         static const int TrailLength = 6;
         static const int BrightnessStep = -1 * 255 / TrailLength;
-        static const int ShortestDelayBetweenTwoRockets = 10;
-        static const int LongestDelayBetweenTwoRockets = 20;
+        static const int ShortestDelayBetweenTwoRockets = 2;
+        static const int LongestDelayBetweenTwoRockets = 10;
         static const int ShortestRocketsLightingTime = 2;
-        static const int LongestRocketsLightingTime = 10;
+        static const int LongestRocketsLightingTime = 15;
 };
 
 }

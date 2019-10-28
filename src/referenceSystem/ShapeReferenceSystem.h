@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <Adafruit_NeoPixel.h>
 
 #include <LinkedList.h>
 
@@ -13,13 +12,15 @@
 #include "PixelHelper.h"
 #include "ShapeDetails.h"
 #include "ConfigurationProvider.h"
+#include "ledDriver/ILedDriver.h"
 
 namespace referenceSystem {
 
 class ShapeReferenceSystem : public IReferenceSystem
 {
     public:
-        ShapeReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver);
+        ShapeReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
+                             ledDriver::ILedDriver * ledDriver);
         virtual ~ShapeReferenceSystem();
 
         void setup();
@@ -30,7 +31,7 @@ class ShapeReferenceSystem : public IReferenceSystem
         void clear();
         void clear(Shape * node);
         void fill(const Color c);
-        void fill(const Color c, Shape * node);
+        void fill(Shape * node, const Color c);
 
         //Real assembly of the shapes
         Shape * assembly();
@@ -38,8 +39,7 @@ class ShapeReferenceSystem : public IReferenceSystem
         //Linked List representation
         LinkedList<Shape *> & shapeList();
 
-        int pixelSize() const;
-        static ShapeDetails * getDetails(Shape * node);
+        static ShapeDetails * getShape(Shape * node);
         void clearAnimationObject();
 
         //Return random shape of assembly 
@@ -53,8 +53,7 @@ class ShapeReferenceSystem : public IReferenceSystem
     private:
         ConfigurationProvider * _configuration;
         ShapeHelper * _shapeHelper;
-        PixelHelper * _pixelHelper;
-        Adafruit_NeoPixel * _ledDriver;
+        ledDriver::ILedDriver * _ledDriver;
         Shape * _assembly;
         int _shapeCount;
         LinkedList<Shape *> _shapeList;

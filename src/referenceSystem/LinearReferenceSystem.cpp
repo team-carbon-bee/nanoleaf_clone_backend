@@ -5,9 +5,9 @@
 namespace referenceSystem {
 
 
-LinearReferenceSystem::LinearReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
-    PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver)
-    : _configuration(configuration), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _ledDriver(ledDriver)
+LinearReferenceSystem::LinearReferenceSystem(ConfigurationProvider * configuration, 
+                                             ledDriver::ILedDriver * ledDriver)
+    : _configuration(configuration), _ledDriver(ledDriver)
 {
 }
 
@@ -17,74 +17,72 @@ LinearReferenceSystem::~LinearReferenceSystem()
 
 void LinearReferenceSystem::setup()
 {
-    _ledCount = _shapeHelper->ledCount();
-    _pixels = (uint8_t *)malloc(sizeof(uint8_t) * _pixelHelper->pixelSize() * _ledCount);
-    memset(_pixels, 0, _ledCount * _pixelHelper->pixelSize() * sizeof(uint8_t));
 }
 
 void LinearReferenceSystem::driveLeds()
 {
-    //we disable brigthness during filling leds values
-    _ledDriver->setBrightness(255);
-
-    //we simply iterate local pixels to ledDriver pixels
-    memcpy(_ledDriver->getPixels(), _pixels, _ledCount * _pixelHelper->pixelSize() * sizeof(uint8_t));
-    
     //Serial.printf("led 29 - 31 %06x(%06x) %06x(%06x) %06x(%06x)\n", _ledDriver->getPixelColor(29), _ledDriver->getPixelColor(30), _ledDriver->getPixelColor(31));
-    
-    //Serial.printf("led 50 %06x(%06x)\n", _ledDriver->getPixelColor(50), getPixel(50));
-    //Serial.printf("led 62 %06x(%06x)\n", _ledDriver->getPixelColor(62), getPixel(62));
 
-    /*Serial.print("leds(");
-    Serial.print(_ledCount);
-    Serial.print(") : ");
-    for (int i = 0; i < _ledCount; ++i)
-    {
-        Serial.printf("%06x ", getPixel(i));
-    }
-    Serial.println("");*/
     //we re-enable brightness
-    _ledDriver->setBrightness(_configuration->globalBrigthness());
-    //Serial.printf("led 29 %06x(%06x)\n", _ledDriver->getPixelColor(29), getPixel(29));
+    //TODO : implement brightness
+    //_ledDriver->setBrightness(_configuration->globalBrigthness());
+    
     _ledDriver->show();
-}
 
-uint8_t * LinearReferenceSystem::pixels()
-{
-    return _pixels;
+    Serial.print("leds(");
+    Serial.print(_ledDriver->numPixels());
+    Serial.print(") : ");
+    for (int i = 0; i < _ledDriver->numPixels(); ++i)
+    {
+        Serial.printf("%06x ", _ledDriver->getPixel(i));
+    }
+    Serial.println("");
+    // for (int n = 0; n < 21 * 3; ++n)
+    //     //_ledDriver->setPixelColor(n, Adafruit_NeoPixel::Color(i, 0, i));
+    //     strip.SetPixelColor(n, RgbColor(0, i, 0));
+    // if (inc)
+    //     i += 20;
+    // else
+    //     i -= 20;
+
+    // if (i > 255)
+    // {
+    //     i = 255;
+    //     inc = false;
+    // }
+    // else if (i < 0)
+    // {
+    //     i = 0;
+    //     inc = true;
+    // }
+    
+    // strip.Show();
+
 }
 
 int LinearReferenceSystem::ledCount()
 {
-    return _ledCount;
+    return _ledDriver->numPixels();
 }
 
 void LinearReferenceSystem::clear()
 {
-    memset(_pixels, 0, _ledCount * sizeof(uint8_t) * _pixelHelper->pixelSize());
+    _ledDriver->clear();
 }
 
 void LinearReferenceSystem::fill(const Color c)
 {
-    for (int i = 0; i < _ledCount; ++i)
-    {
-        setPixel(i, c);
-    }
+    _ledDriver->fill(c);
 }
 
-int LinearReferenceSystem::pixelSize() const
+void LinearReferenceSystem::setPixel(int pixelNumber, Color color)
 {
-    return _pixelHelper->pixelSize();
-}
-
-void LinearReferenceSystem::setPixel(int pixelNumber, uint32_t color)
-{
-    _pixelHelper->setPixel(_pixels, pixelNumber, color);
+    _ledDriver->setPixel(pixelNumber, color);
 }
 
 uint32_t LinearReferenceSystem::getPixel(int pixelNumber)
 {
-    return _pixelHelper->getPixel(_pixels, pixelNumber);
+    return _ledDriver->getPixel(pixelNumber);
 }
 
 } //referenceSystem

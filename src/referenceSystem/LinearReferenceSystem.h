@@ -10,34 +10,29 @@
 #include "ShapeHelper.h"
 #include "PixelHelper.h"
 #include "ConfigurationProvider.h"
+#include "ledDriver/ILedDriver.h"
 
 namespace referenceSystem {
 
 class LinearReferenceSystem : public IReferenceSystem
 {
     public:
-        LinearReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver);
+        LinearReferenceSystem(ConfigurationProvider * configuration, ledDriver::ILedDriver * ledDriver);
         virtual ~LinearReferenceSystem();
 
         void setup();
         void driveLeds();
-        uint8_t * pixels();
         //cached value for performance reasons
         int ledCount();
         void clear();
         void fill(const Color c);
 
-        int pixelSize() const;
-        void setPixel(int pixelNumber, uint32_t color);
+        void setPixel(int pixelNumber, Color color);
         uint32_t getPixel(int pixelNumber);
         
     private:
         ConfigurationProvider * _configuration;
-        ShapeHelper * _shapeHelper;
-        PixelHelper * _pixelHelper;
-        Adafruit_NeoPixel * _ledDriver;
-        uint8_t * _pixels;
-        int _ledCount;
+        ledDriver::ILedDriver * _ledDriver;
 };
 
 } //referenceSystem

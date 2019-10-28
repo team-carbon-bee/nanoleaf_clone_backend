@@ -2,22 +2,20 @@
 #include <Adafruit_NeoPixel.h>
 #include <WiFi.h>
 #include <Esp32WifiManager.h>
-
 #include "AnimationFactory.h"
 #include "Animator.h"
 #include "ConfigurationProvider.h"
 #include "ShapeHelper.h"
 #include "PixelHelper.h"
-
-#define LED_PIN_NUMBER  4
+#include "ledDriver/NeoPixelBusLedDriver.h"
 
 ConfigurationProvider * _configuration;
 WifiManager _wifiManager;
 ShapeHelper * _shapeHelper;
-PixelHelper * _pixelHelper;
-Adafruit_NeoPixel * _ledDriver;
+ledDriver::ILedDriver * _ledDriver;
 AnimationFactory * _animationFactory;
 Animator * _animator;
+
 
 void setup() 
 {
@@ -28,16 +26,13 @@ void setup()
   _configuration->loadFromFlash();
   _shapeHelper = new ShapeHelper(_configuration);
   _shapeHelper->setup();
-  _pixelHelper = new PixelHelper(_configuration);
-  _pixelHelper->setup();
 
-  _ledDriver = new Adafruit_NeoPixel(_shapeHelper->ledCount(), LED_PIN_NUMBER, _configuration->parameters().ledModel + NEO_KHZ400);
-  _ledDriver->clear();
-  _ledDriver->begin();
+  _ledDriver = new ledDriver::NeoPixelBusLedDriver(_configuration, _shapeHelper);
+  _ledDriver->setup();
   
   Serial.println("Creating animations.");
 
-  _animationFactory = new AnimationFactory(_configuration, _shapeHelper, _pixelHelper, _ledDriver);
+  _animationFactory = new AnimationFactory(_configuration, _shapeHelper, _ledDriver);
   _animationFactory->setup();
 
   Serial.println("Creating animator.");
@@ -45,17 +40,45 @@ void setup()
   _animator = new Animator(_configuration, _animationFactory);
   _animator->setup();
   Serial.println("setup finished.");
-}
 
+  //  strip.Begin();
+  //  strip.Show();
+}
+int i = 0;
+bool inc = true;
 void loop() {
   //_wifiManager.loop();
 	//if (_wifiManager.getState() == Connected) {
 		// use the Wifi Stack now connected
   //  Serial.println("connected to wifi");
-    _animator->loop();
+   _animator->loop();
 	//}
   
+  //_ledDriver->clear();
+  /*
+  for (int n = 0; n < 21 * 3; ++n)
+      //_ledDriver->setPixelColor(n, Adafruit_NeoPixel::Color(i, 0, i));
+      strip.SetPixelColor(n, RgbColor(0, i, 0));
+  if (inc)
+      i += 20;
+  else
+      i -= 20;
+
+  if (i > 255)
+  {
+      i = 255;
+      inc = false;
+  }
+  else if (i < 0)
+  {
+      i = 0;
+      inc = true;
+  }
   
+  strip.Show();*/
+  
+  
+
   //TODO : manage time correctly
   delay(50);
 }

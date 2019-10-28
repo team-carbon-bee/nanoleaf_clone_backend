@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Adafruit_NeoPixel.h>
 
+#include "ledDriver/ILedDriver.h"
 #include "LinkedList.h"
 #include "ShapeObjects.h"
 #include "ShapeHelper.h"
@@ -16,7 +16,7 @@ class AnimationFactory
 {
     public:
         AnimationFactory(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
-                         PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver);
+                         ledDriver::ILedDriver * ledDriver);
         virtual ~AnimationFactory();
 
         void setup();
@@ -27,8 +27,7 @@ class AnimationFactory
     private:
         ConfigurationProvider * _configuration;
         ShapeHelper * _shapeHelper;
-        PixelHelper * _pixelHelper;
-        Adafruit_NeoPixel * _ledDriver;
+        ledDriver::ILedDriver * _ledDriver;
         referenceSystem::LinearReferenceSystem * _linearReferenceSystem;
         referenceSystem::ShapeReferenceSystem * _shapeReferenceSystem;
         LinkedList<animation::IAnimation*> _animations;

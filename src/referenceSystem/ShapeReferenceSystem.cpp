@@ -6,8 +6,9 @@
 namespace referenceSystem {
 
 
-ShapeReferenceSystem::ShapeReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, PixelHelper * pixelHelper, Adafruit_NeoPixel * ledDriver)
-    : _configuration(configuration), _shapeHelper(shapeHelper), _pixelHelper(pixelHelper), _ledDriver(ledDriver), _assembly(NULL)
+ShapeReferenceSystem::ShapeReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
+                                           ledDriver::ILedDriver * ledDriver)
+    : _configuration(configuration), _shapeHelper(shapeHelper), _ledDriver(ledDriver), _assembly(NULL)
 {
 }
 
@@ -30,7 +31,7 @@ void ShapeReferenceSystem::createShapeDetailObjects(Shape * shape)
     if (shape == NULL)
         return;
         //we create the object for the active shape and call for all of its childs
-    ShapeDetails * details = new ShapeDetails(shape, _shapeHelper, _pixelHelper);
+    ShapeDetails * details = new ShapeDetails(shape, _shapeHelper);
     details->setup();
     shape->content = details;
     for (int i = 0; i < _shapeHelper->numberOfConnections(shape); ++i)
@@ -53,18 +54,18 @@ void ShapeReferenceSystem::driveLeds()
     /*Serial.println("shape0");
     for (int i = 0; i < _shapeHelper->ledCountOfThisShape(_assembly); ++i)
     {
-        Serial.printf("%06x ", getDetails(_assembly)->getPixel(i));
+        Serial.printf("%06x ", getShape(_assembly)->getPixel(i));
     }
     Serial.println(".");
     Serial.println("shape1");
     for (int i = 0; i < _shapeHelper->ledCountOfThisShape(_assembly->connections[0]); ++i)
     {
-        Serial.printf("%06x ", getDetails(_assembly->connections[0])->getPixel(i));
+        Serial.printf("%06x ", getShape(_assembly->connections[0])->getPixel(i));
     }
     Serial.println(".");*/
 
     //we disable brigthness during filling leds values
-    _ledDriver->setBrightness(255);
+    //_ledDriver->setBrightness(255);
     prepareDriveLeds(_assembly);
     /*
     Serial.print("leds(");
@@ -76,7 +77,7 @@ void ShapeReferenceSystem::driveLeds()
     }
     Serial.println("");*/
     //we re-enable brightness
-    _ledDriver->setBrightness(_configuration->globalBrigthness());
+    //_ledDriver->setBrightness(_configuration->globalBrigthness());
     _ledDriver->show();
 }
 
@@ -85,23 +86,20 @@ int ShapeReferenceSystem::prepareDriveLeds(Shape * node, const int offset)
     if (node == NULL)
         return offset;
     //we iterate each object taking a part of leds (numberOfLeds / (number of connections + 1) between each connection
-    //memcpy(_ledDriver->getPixels(), _pixels, _ledCount * _pixelHelper.pixelSize() * sizeof(uint8_t));
+
     int numberOfLedToTakeBetweenConnections = _shapeHelper->ledCountOfThisShape(node) / (_shapeHelper->numberOfConnections(node) + 1);
     int newOffset = offset;
     for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
     {
-        memcpy(&(_ledDriver->getPixels()[newOffset * _pixelHelper->pixelSize()]), 
-               &(getDetails(node)->pixels()[i * numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize()]), 
-               numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize() * sizeof(uint8_t));
+        _ledDriver->setPixels(getShape(node)->pixels(), i * numberOfLedToTakeBetweenConnections, 
+                                   numberOfLedToTakeBetweenConnections, newOffset);
+        
         newOffset += numberOfLedToTakeBetweenConnections;
-
         newOffset = prepareDriveLeds(node->connections[i], newOffset); 
     }
     //we copy the end of the shape after the last connection
-    memcpy(&(_ledDriver->getPixels()[newOffset * _pixelHelper->pixelSize()]), 
-               &(getDetails(node)->pixels()[_shapeHelper->numberOfConnections(node) * numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize()]), 
-               numberOfLedToTakeBetweenConnections * _pixelHelper->pixelSize() * sizeof(uint8_t));
-
+    _ledDriver->setPixels(getShape(node)->pixels(), _shapeHelper->numberOfConnections(node) * numberOfLedToTakeBetweenConnections, 
+                                   numberOfLedToTakeBetweenConnections, newOffset);
     newOffset += numberOfLedToTakeBetweenConnections;
     return newOffset;
 }
@@ -132,13 +130,13 @@ void ShapeReferenceSystem::clear(Shape * node)
         return;
 
     //we clear current
-    getDetails(node)->clear();
+    getShape(node)->clear();
 
     for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
         clear(node->connections[i]);  
 }
 
-ShapeDetails * ShapeReferenceSystem::getDetails(Shape * node)
+ShapeDetails * ShapeReferenceSystem::getShape(Shape * node)
 {
     return (ShapeDetails *)node->content;
 }
@@ -149,32 +147,25 @@ void ShapeReferenceSystem::clearAnimationObject()
     {
         do 
         {
-            Serial.println("Top");
-            getDetails(_shapeList.getCurrent())->clearAnimationObject();
+            getShape(_shapeList.getCurrent())->clearAnimationObject();
         } while (_shapeList.next()); 
     }
 }
 
 void ShapeReferenceSystem::fill(const Color c)
 {
-    fill(c, _assembly);
+    fill(_assembly, c);
 }
 
-void ShapeReferenceSystem::fill(const Color c, Shape * node)
+void ShapeReferenceSystem::fill(Shape * node, const Color c)
 {
     if (node == NULL)
         return;
 
     //we fill current
-    getDetails(node)->fill(c);
-
+    getShape(node)->fill(c);
     for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
-        fill(c, node->connections[i]);  
-}
-
-int ShapeReferenceSystem::pixelSize() const
-{
-    return _pixelHelper->pixelSize();
+        fill(node->connections[i], c);  
 }
 
 Shape * ShapeReferenceSystem::getRandomShape()

@@ -45,12 +45,26 @@ void ConfigurationProvider::loadFromFlash()
 
 void ConfigurationProvider::createDefaultConfiguration()
 {
+    Shape *rightSecond = new Shape();
+    rightSecond->kind = triangle;
+    rightSecond->content = NULL;
+    rightSecond->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    rightSecond->connections[0] = NULL;
+    rightSecond->connections[1] = NULL;
+    
     Shape *second = new Shape();
     second->kind = triangle;
     second->content = NULL;
     second->connections = (Shape**)malloc(sizeof(Shape *) * 2);
     second->connections[0] = NULL;
     second->connections[1] = NULL;
+
+    Shape *rightThird = new Shape();
+    rightThird->kind = triangle;
+    rightThird->content = NULL;
+    rightThird->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    rightThird->connections[0] = NULL;
+    rightThird->connections[1] = NULL;
 
     Shape *third = new Shape();
     third->kind = triangle;
@@ -72,7 +86,6 @@ void ConfigurationProvider::createDefaultConfiguration()
     third->parent = _assembly;
 
     _parameters.ledPerTriangle = 21;
-    _parameters.ledModel = GRB;
     _parameters.hostname = "nanoleaf_clone";
     _parameters.maxBrightness = 255;
 
@@ -98,7 +111,6 @@ void ConfigurationProvider::saveToFlash()
 
     JsonObject parameters;
     parameters["ledPerTriangle"] = _parameters.ledPerTriangle;
-    parameters["ledModel"] = pixelKindToString(_parameters.ledModel);
     parameters["hostname"] = _parameters.hostname;
     parameters["maxBrightness"] = _parameters.maxBrightness;
 
@@ -131,7 +143,6 @@ void ConfigurationProvider::parseJson(const String & data)
     
     JsonObject parameters = doc["parameters"].as<JsonObject>();
     _parameters.ledPerTriangle = parameters["ledPerTriangle"].as<int>();
-    _parameters.ledModel = stringToPixelKind(parameters["ledModel"].as<String>());
     _parameters.hostname = parameters["hostname"].as<String>();
     _parameters.maxBrightness = parameters["maxBrightness"].as<uint8_t>();
 }
