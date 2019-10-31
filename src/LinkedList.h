@@ -32,6 +32,7 @@ class LinkedList  {
     T& getCurrent();
     T& First() const;
     T& Last() const;
+    bool at(const int pos);
     int size();
     void Append(T);
     void DeleteLast();
@@ -109,6 +110,23 @@ template<class T>
 T& LinkedList<T>::Last() const
 {
   return tail->element;
+}
+
+template<class T>
+bool LinkedList<T>::at(const int pos)
+{
+    if(length == 0)
+        return false;
+    if (pos >= length)
+        return false;
+    if (moveToStart())
+    {
+        for (int i = 0; i < pos; ++i)
+            next();
+    
+        return true; 
+    }
+    return false;
 }
 
 template<class T>
