@@ -71,9 +71,10 @@ class PixelHelper
         static const Color getRandomFullColor();
         static const Color getRandomFullColorExcept(const Color notThisOne);
 
+        static const int FullColorNumber = 6;
+        static const Color FullColorList[]; 
     private:
         PixelHelper();
         
-        static const int FullColorNumber = 6;
-        static const Color FullColorList[];
+
 };
