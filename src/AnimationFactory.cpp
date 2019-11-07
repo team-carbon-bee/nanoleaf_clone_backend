@@ -5,6 +5,8 @@
 #include "animation/RandomColoredShapes.h"
 #include "animation/Fireworks.h"
 #include "animation/PaintingLight.h"
+#include "animation/ShapeVanishing.h"
+#include "animation/RainbowRunning.h"
 
 #include "AnimationFactory.h"
 
@@ -32,12 +34,16 @@ void AnimationFactory::setup()
     _animations.Append(new animation::FullFading(_linearReferenceSystem));
     _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
     _animations.Append(new animation::RunningLight(_linearReferenceSystem));
-    _animations.Append(new animation::Fireworks(_linearReferenceSystem));
-    _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem)); 
-    _animations.Append(new animation::RandomColoredShapes(_shapeReferenceSystem)); 
-    _animations.Append(new animation::PaintingLight(_linearReferenceSystem)); 
-    //New animations come here !!!!
 
+    _animations.Append(new animation::RandomColoredShapes(_shapeReferenceSystem)); 
+
+
+    _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem));
+    //New animations come here !!!!
+    _animations.Append(new animation::ShapeVanishing(_shapeReferenceSystem)); 
+    _animations.Append(new animation::Fireworks(_linearReferenceSystem));
+    _animations.Append(new animation::PaintingLight(_linearReferenceSystem)); 
+    _animations.Append(new animation::RainbowRunning(_linearReferenceSystem));
 }
 
 LinkedList<animation::IAnimation*> & AnimationFactory::animations()
