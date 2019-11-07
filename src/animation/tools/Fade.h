@@ -50,7 +50,7 @@ class Fade
             _blueQuantum = ((float)(PixelHelper::getBlue(dst) - _currentBlue)) / duration;
             _whiteQuantum = ((float)(PixelHelper::getWhite(dst) - _currentWhite)) / duration;
 
-            printf("%f %f %f %f\n", _redQuantum, _greenQuantum, _blueQuantum, _whiteQuantum);
+            // printf("%f %f %f %f\n", _redQuantum, _greenQuantum, _blueQuantum, _whiteQuantum);
 
             _finished = false;
             _configured = true;

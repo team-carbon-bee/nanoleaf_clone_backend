@@ -21,9 +21,7 @@ AnimationFactory::~AnimationFactory()
 }
 
 void AnimationFactory::setup()
-{
-    Serial.println("AnimationFactory::setup()");
-    
+{    
     _linearReferenceSystem = new referenceSystem::LinearReferenceSystem(_configuration, _ledDriver);
     _shapeReferenceSystem = new referenceSystem::ShapeReferenceSystem(_configuration, _shapeHelper, _ledDriver);
     //we configure all reference systems

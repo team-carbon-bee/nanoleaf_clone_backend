@@ -34,7 +34,7 @@ class RainbowRunning : public IAnimation
             _referenceSystem->clear();
             _referenceSystem->driveLeds(); 
             
-            _leds = (Color*)calloc(0, _referenceSystem->ledCount() * sizeof(Color));
+            _leds = (Color*)calloc(_referenceSystem->ledCount(), sizeof(Color));
             
             if (_leds)
             {

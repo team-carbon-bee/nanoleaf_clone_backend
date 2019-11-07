@@ -1,6 +1,5 @@
 #include <Arduino.h>
-#include <WiFi.h>
-#include <Esp32WifiManager.h>
+#include "tools/WiFiManager.h"
 //#include "tools/WifiManager.h"
 #include "AnimationFactory.h"
 #include "Animator.h"
@@ -11,8 +10,11 @@
 #include "HttpServer.h"
 #include "tools/Logger.h"
 
+#define NTP_SERVERS "0.fr.pool.ntp.org", "time.nist.gov", "pool.ntp.org"
+#define UTC_OFFSET  +1
+
 ConfigurationProvider * _configuration;
-WifiManager _wifiManager;
+WiFiManager _wifiManager;
 ShapeHelper * _shapeHelper;
 ledDriver::ILedDriver * _ledDriver;
 AnimationFactory * _animationFactory;
@@ -28,22 +30,23 @@ void setup()
   _configuration->setup();
   _configuration->loadFromFlash();
 
-  //_wifiManager = new WifiManager(_configuration);
-//   _wifiManager.autoConnect("nanoLeaf", "nanoLeaf");
-//   while (WiFi.status() != WL_CONNECTED) 
-//   {
-//       delay(200);
-//       Log.print(".");
-//   }
+  _wifiManager.autoConnect("nanoLeaf", "nanoLeaf");
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+      delay(200);
+      Log.print(".");
+  }
+  Log.println("WiFi-CONNECTED");
 
-  //_wifiManager.preferences.putString("apssid", "nanoLeaf_esp32");
-  //_wifiManager.preferences.putString("nanoLeaf_esp32", "nanoLeaf_esp32");
-  //_wifiManager.setup();
-  _wifiManager.erase();
-  _wifiManager.setupScan();
-  Log.println("WL-CONNECTED");
+  
+#ifdef USE_DST_ADJUST
+  configTime(UTC_OFFSET * 3600, 0, NTP_SERVERS);
+  while (!time(nullptr)) {
+    delay(50);
+  }
+#endif
 
-//   HTTPServer.setup();
+  HTTPServer.setup();
 
   _shapeHelper = new ShapeHelper(_configuration);
   _shapeHelper->setup();
@@ -60,19 +63,16 @@ void setup()
 
   _animator = new Animator(_configuration, _animationFactory);
   _animator->setup();
+
   Log.println("setup finished.");
 }
 
 
-void loop() {
+void loop() 
+{
+  Log.println("Main loop");
+  _animator->loop();
 
-_wifiManager.loop();
-	//if (_wifiManager.getState() == Connected) {
-		// use the Wifi Stack now connected
-  //  Log.println("connected to wifi");
-   _animator->loop();
-	//}
-  
   //_ledDriver->clear();
   /*
   for (int n = 0; n < 21 * 3; ++n)
@@ -96,7 +96,7 @@ _wifiManager.loop();
   
   strip.Show();*/
   
-  //HTTPServer.handle();
+  HTTPServer.handle();
 
   //TODO : manage time correctly
   delay(50);
