@@ -86,7 +86,7 @@ int ShapeReferenceSystem::prepareDriveLeds(Shape * node, const int offset)
     if (node == NULL)
         return offset;
     //we iterate each object taking a part of leds (numberOfLeds / (number of connections + 1) between each connection
-
+    //Serial.printf("Color of the shape : %06x\n", getShape(node)->pixels()[0]);
     int numberOfLedToTakeBetweenConnections = _shapeHelper->ledCountOfThisShape(node) / (_shapeHelper->numberOfConnections(node) + 1);
     int newOffset = offset;
     for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)

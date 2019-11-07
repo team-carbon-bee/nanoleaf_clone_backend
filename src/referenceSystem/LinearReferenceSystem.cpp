@@ -29,14 +29,14 @@ void LinearReferenceSystem::driveLeds()
     
     _ledDriver->show();
 
-    Serial.print("leds(");
+    /*Serial.print("leds(");
     Serial.print(_ledDriver->numPixels());
     Serial.print(") : ");
     for (int i = 0; i < _ledDriver->numPixels(); ++i)
     {
         Serial.printf("%06x ", _ledDriver->getPixel(i));
     }
-    Serial.println("");
+    Serial.println("");*/
     // for (int n = 0; n < 21 * 3; ++n)
     //     //_ledDriver->setPixelColor(n, Adafruit_NeoPixel::Color(i, 0, i));
     //     strip.SetPixelColor(n, RgbColor(0, i, 0));

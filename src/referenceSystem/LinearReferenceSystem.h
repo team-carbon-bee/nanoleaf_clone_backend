@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <Adafruit_NeoPixel.h>
 
 #include "IReferenceSystem.h"
 

@@ -1,13 +1,15 @@
 #include <Arduino.h>
-#include <Adafruit_NeoPixel.h>
 #include <WiFi.h>
 #include <Esp32WifiManager.h>
+//#include "tools/WifiManager.h"
 #include "AnimationFactory.h"
 #include "Animator.h"
 #include "ConfigurationProvider.h"
 #include "ShapeHelper.h"
 #include "PixelHelper.h"
 #include "ledDriver/NeoPixelBusLedDriver.h"
+#include "HttpServer.h"
+#include "tools/Logger.h"
 
 ConfigurationProvider * _configuration;
 WifiManager _wifiManager;
@@ -19,38 +21,55 @@ Animator * _animator;
 
 void setup() 
 {
-  Serial.begin(115200);
-  Serial.println("setup...");
+  Log.setup();
+  Log.println("setup...");
+
   _configuration = new ConfigurationProvider();
   _configuration->setup();
   _configuration->loadFromFlash();
+
+  //_wifiManager = new WifiManager(_configuration);
+//   _wifiManager.autoConnect("nanoLeaf", "nanoLeaf");
+//   while (WiFi.status() != WL_CONNECTED) 
+//   {
+//       delay(200);
+//       Log.print(".");
+//   }
+
+  //_wifiManager.preferences.putString("apssid", "nanoLeaf_esp32");
+  //_wifiManager.preferences.putString("nanoLeaf_esp32", "nanoLeaf_esp32");
+  //_wifiManager.setup();
+  _wifiManager.erase();
+  _wifiManager.setupScan();
+  Log.println("WL-CONNECTED");
+
+//   HTTPServer.setup();
+
   _shapeHelper = new ShapeHelper(_configuration);
   _shapeHelper->setup();
 
   _ledDriver = new ledDriver::NeoPixelBusLedDriver(_configuration, _shapeHelper);
   _ledDriver->setup();
   
-  Serial.println("Creating animations.");
+  Log.println("Creating animations.");
 
   _animationFactory = new AnimationFactory(_configuration, _shapeHelper, _ledDriver);
   _animationFactory->setup();
 
-  Serial.println("Creating animator.");
+  Log.println("Creating animator.");
 
   _animator = new Animator(_configuration, _animationFactory);
   _animator->setup();
-  Serial.println("setup finished.");
-
-  //  strip.Begin();
-  //  strip.Show();
+  Log.println("setup finished.");
 }
-int i = 0;
-bool inc = true;
+
+
 void loop() {
-  //_wifiManager.loop();
+
+_wifiManager.loop();
 	//if (_wifiManager.getState() == Connected) {
 		// use the Wifi Stack now connected
-  //  Serial.println("connected to wifi");
+  //  Log.println("connected to wifi");
    _animator->loop();
 	//}
   
@@ -77,7 +96,7 @@ void loop() {
   
   strip.Show();*/
   
-  
+  //HTTPServer.handle();
 
   //TODO : manage time correctly
   delay(50);
