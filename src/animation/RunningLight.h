@@ -14,8 +14,7 @@ namespace animation
 class RunningLight : public IAnimation
 {
     public:
-        RunningLight(referenceSystem::LinearReferenceSystem * referenceSystem)
-        : _referenceSystem(referenceSystem)
+        RunningLight()
         {
         }
 
@@ -30,8 +29,8 @@ class RunningLight : public IAnimation
 
         void setup()
         {
-            _referenceSystem->clear();
-            _referenceSystem->driveLeds(); 
+            referenceSystem::LinearRef.clear();
+            referenceSystem::LinearRef.driveLeds(); 
             
             Color foreColor = PixelHelper::getRandomFullColor();
             _backgroundColor = PixelHelper::getRandomFullColorExcept(foreColor);
@@ -53,24 +52,24 @@ class RunningLight : public IAnimation
             if (_divider.step())
             {
                 //we draw the background
-                _referenceSystem->fill(_backgroundColor);
+                referenceSystem::LinearRef.fill(_backgroundColor);
                 if (_trail.moveToStart())
                 {
                     do
                     {
-                        _referenceSystem->setPixel(_trail.getCurrent().position, _trail.getCurrent().color);
+                        referenceSystem::LinearRef.setPixel(_trail.getCurrent().position, _trail.getCurrent().color);
                         //go ahead for next time
                         _trail.getCurrent().position++;
-                        if (_trail.getCurrent().position >= _referenceSystem->ledCount())
+                        if (_trail.getCurrent().position >= referenceSystem::LinearRef.ledCount())
                         {
                             //instead of setting to 0 we make following computation to allow 
                             //other steps than one when go ahead
-                            _trail.getCurrent().position = _trail.getCurrent().position - _referenceSystem->ledCount();
+                            _trail.getCurrent().position = _trail.getCurrent().position - referenceSystem::LinearRef.ledCount();
                         }
                     } while (_trail.next());
                 }
 
-                _referenceSystem->driveLeds();
+                referenceSystem::LinearRef.driveLeds();
             }
         }
 
@@ -81,8 +80,7 @@ class RunningLight : public IAnimation
             int position;
             Color color;
         } Light;
-
-        referenceSystem::LinearReferenceSystem * _referenceSystem;
+        
         LinkedList<Light> _trail;
         Color _backgroundColor;
         DividedCounter _divider;

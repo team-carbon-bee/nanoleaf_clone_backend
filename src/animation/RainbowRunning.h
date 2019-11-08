@@ -15,8 +15,8 @@ namespace animation
 class RainbowRunning : public IAnimation
 {
     public:
-        RainbowRunning(referenceSystem::LinearReferenceSystem * referenceSystem)
-        : _referenceSystem(referenceSystem), _leds(NULL)
+        RainbowRunning()
+        : _leds(NULL)
         {
         }
 
@@ -31,20 +31,20 @@ class RainbowRunning : public IAnimation
 
         void setup()
         {
-            _referenceSystem->clear();
-            _referenceSystem->driveLeds(); 
+            referenceSystem::LinearRef.clear();
+            referenceSystem::LinearRef.driveLeds(); 
             
-            _leds = (Color*)calloc(_referenceSystem->ledCount(), sizeof(Color));
+            _leds = (Color*)calloc(referenceSystem::LinearRef.ledCount(), sizeof(Color));
             
             if (_leds)
             {
                 int numberOfLedsByTransitionColor = 0;
-                int restNumberOfLedsByTransitionColor = _referenceSystem->ledCount() % PixelHelper::FullColorNumber;
+                int restNumberOfLedsByTransitionColor = referenceSystem::LinearRef.ledCount() % PixelHelper::FullColorNumber;
                 int k=0;
                 for (int i = 0; i < PixelHelper::FullColorNumber; ++i)
                 {
                     //we compute the number of led in the color transition
-                    numberOfLedsByTransitionColor = _referenceSystem->ledCount() / PixelHelper::FullColorNumber;
+                    numberOfLedsByTransitionColor = referenceSystem::LinearRef.ledCount() / PixelHelper::FullColorNumber;
                     if (restNumberOfLedsByTransitionColor)
                     {
                         numberOfLedsByTransitionColor++;
@@ -60,11 +60,8 @@ class RainbowRunning : public IAnimation
                     {
                         _leds[k++] = f.step();
                     }
-                    // Serial.printf("Number of transition: %d, reste: %d, k: %d\n\r", numberOfLedsByTransitionColor, restNumberOfLedsByTransitionColor, k);
                 }
             }
-            // for (int i = 0 ; i < _referenceSystem->ledCount() ; ++i)
-            //     Serial.printf("leds[%d]=%06x, ", i, _leds[i]);
 
             _currentPos = 0;
         }
@@ -73,26 +70,25 @@ class RainbowRunning : public IAnimation
         {
             if (_leds)
             {
-                if (_currentPos != _referenceSystem->ledCount()) {
+                if (_currentPos != referenceSystem::LinearRef.ledCount()) {
                     for (int i = 0 ; i <= _currentPos ; ++i)
-                        _referenceSystem->setPixel(i, _leds[_referenceSystem->ledCount()-_currentPos+i-1]);
+                        referenceSystem::LinearRef.setPixel(i, _leds[referenceSystem::LinearRef.ledCount()-_currentPos+i-1]);
 
                     _currentPos++;
                 }
                 else {
-                    Color firstColor = _referenceSystem->getPixel(_referenceSystem->ledCount()-1);
-                    for (int i = _referenceSystem->ledCount()-2 ; i >= 0; --i)
-                        _referenceSystem->setPixel(i+1, _referenceSystem->getPixel(i));
-                    _referenceSystem->setPixel(0, firstColor); 
+                    Color firstColor = referenceSystem::LinearRef.getPixel(referenceSystem::LinearRef.ledCount()-1);
+                    for (int i = referenceSystem::LinearRef.ledCount()-2 ; i >= 0; --i)
+                        referenceSystem::LinearRef.setPixel(i+1, referenceSystem::LinearRef.getPixel(i));
+                    referenceSystem::LinearRef.setPixel(0, firstColor); 
                 }
 
-                _referenceSystem->driveLeds();
+                referenceSystem::LinearRef.driveLeds();
             }
         }
 
     private:
 
-        referenceSystem::LinearReferenceSystem * _referenceSystem;
         Color * _leds;
         int _currentPos;
         DividedCounter _divider;

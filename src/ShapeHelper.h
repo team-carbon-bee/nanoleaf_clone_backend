@@ -8,7 +8,7 @@
 class ShapeHelper
 {
     public:
-        ShapeHelper(ConfigurationProvider * configuration);
+        ShapeHelper();
         virtual ~ShapeHelper();
         void setup();
 
@@ -24,5 +24,8 @@ class ShapeHelper
         int ledCountOfThisShape(const Shape * node);
 
     private:
-        ConfigurationProvider * _configuration;
 };
+
+#if !defined(NO_GLOBAL_INSTANCES)
+extern ShapeHelper GlobalShapeHelper;
+#endif

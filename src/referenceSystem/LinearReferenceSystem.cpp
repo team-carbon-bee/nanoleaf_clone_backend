@@ -5,9 +5,7 @@
 namespace referenceSystem {
 
 
-LinearReferenceSystem::LinearReferenceSystem(ConfigurationProvider * configuration, 
-                                             ledDriver::ILedDriver * ledDriver)
-    : _configuration(configuration), _ledDriver(ledDriver)
+LinearReferenceSystem::LinearReferenceSystem()
 {
 }
 
@@ -15,8 +13,9 @@ LinearReferenceSystem::~LinearReferenceSystem()
 {
 }
 
-void LinearReferenceSystem::setup()
+void LinearReferenceSystem::setup(ledDriver::ILedDriver * ledDriver)
 {
+    _ledDriver = ledDriver;
 }
 
 void LinearReferenceSystem::driveLeds()
@@ -84,5 +83,9 @@ uint32_t LinearReferenceSystem::getPixel(int pixelNumber)
 {
     return _ledDriver->getPixel(pixelNumber);
 }
+
+#if !defined(NO_GLOBAL_INSTANCES)
+LinearReferenceSystem LinearRef;
+#endif
 
 } //referenceSystem

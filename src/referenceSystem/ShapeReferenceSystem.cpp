@@ -6,9 +6,8 @@
 namespace referenceSystem {
 
 
-ShapeReferenceSystem::ShapeReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
-                                           ledDriver::ILedDriver * ledDriver)
-    : _configuration(configuration), _shapeHelper(shapeHelper), _ledDriver(ledDriver), _assembly(NULL)
+ShapeReferenceSystem::ShapeReferenceSystem()
+    : _assembly(NULL)
 {
 }
 
@@ -16,10 +15,10 @@ ShapeReferenceSystem::~ShapeReferenceSystem()
 {
 }
 
-void ShapeReferenceSystem::setup()
+void ShapeReferenceSystem::setup(ledDriver::ILedDriver * ledDriver)
 {
-    _shapeCount = _shapeHelper->shapeCount();
-    _assembly = _shapeHelper->duplicateShape(_configuration->assembly());
+    _shapeCount = GlobalShapeHelper.shapeCount();
+    _assembly = GlobalShapeHelper.duplicateShape(Configuration.assembly());
     
     //we iterate the duplicate tree to create content objects that will embed values of each leds of the shape
     createShapeDetailObjects(_assembly);
@@ -31,10 +30,10 @@ void ShapeReferenceSystem::createShapeDetailObjects(Shape * shape)
     if (shape == NULL)
         return;
         //we create the object for the active shape and call for all of its childs
-    ShapeDetails * details = new ShapeDetails(shape, _shapeHelper);
+    ShapeDetails * details = new ShapeDetails(shape);
     details->setup();
     shape->content = details;
-    for (int i = 0; i < _shapeHelper->numberOfConnections(shape); ++i)
+    for (int i = 0; i < GlobalShapeHelper.numberOfConnections(shape); ++i)
         createShapeDetailObjects(shape->connections[i]);  
 }
 
@@ -45,20 +44,20 @@ void ShapeReferenceSystem::createLinkedListFromShapes(Shape * shape)
     
     _shapeList.Append(shape);
     
-    for (int i = 0; i < _shapeHelper->numberOfConnections(shape); ++i)
+    for (int i = 0; i < GlobalShapeHelper.numberOfConnections(shape); ++i)
         createLinkedListFromShapes(shape->connections[i]);  
 }
 
 void ShapeReferenceSystem::driveLeds()
 {
     /*Serial.println("shape0");
-    for (int i = 0; i < _shapeHelper->ledCountOfThisShape(_assembly); ++i)
+    for (int i = 0; i < GlobalShapeHelper.ledCountOfThisShape(_assembly); ++i)
     {
         Serial.printf("%06x ", getShape(_assembly)->getPixel(i));
     }
     Serial.println(".");
     Serial.println("shape1");
-    for (int i = 0; i < _shapeHelper->ledCountOfThisShape(_assembly->connections[0]); ++i)
+    for (int i = 0; i < GlobalShapeHelper.ledCountOfThisShape(_assembly->connections[0]); ++i)
     {
         Serial.printf("%06x ", getShape(_assembly->connections[0])->getPixel(i));
     }
@@ -77,7 +76,7 @@ void ShapeReferenceSystem::driveLeds()
     }
     Serial.println("");*/
     //we re-enable brightness
-    //_ledDriver->setBrightness(_configuration->globalBrigthness());
+    //_ledDriver->setBrightness(Configuration.globalBrigthness());
     _ledDriver->show();
 }
 
@@ -87,9 +86,9 @@ int ShapeReferenceSystem::prepareDriveLeds(Shape * node, const int offset)
         return offset;
     //we iterate each object taking a part of leds (numberOfLeds / (number of connections + 1) between each connection
     //Serial.printf("Color of the shape : %06x\n", getShape(node)->pixels()[0]);
-    int numberOfLedToTakeBetweenConnections = _shapeHelper->ledCountOfThisShape(node) / (_shapeHelper->numberOfConnections(node) + 1);
+    int numberOfLedToTakeBetweenConnections = GlobalShapeHelper.ledCountOfThisShape(node) / (GlobalShapeHelper.numberOfConnections(node) + 1);
     int newOffset = offset;
-    for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
+    for (int i = 0; i < GlobalShapeHelper.numberOfConnections(node); ++i)
     {
         _ledDriver->setPixels(getShape(node)->pixels(), i * numberOfLedToTakeBetweenConnections, 
                                    numberOfLedToTakeBetweenConnections, newOffset);
@@ -98,7 +97,7 @@ int ShapeReferenceSystem::prepareDriveLeds(Shape * node, const int offset)
         newOffset = prepareDriveLeds(node->connections[i], newOffset); 
     }
     //we copy the end of the shape after the last connection
-    _ledDriver->setPixels(getShape(node)->pixels(), _shapeHelper->numberOfConnections(node) * numberOfLedToTakeBetweenConnections, 
+    _ledDriver->setPixels(getShape(node)->pixels(), GlobalShapeHelper.numberOfConnections(node) * numberOfLedToTakeBetweenConnections, 
                                    numberOfLedToTakeBetweenConnections, newOffset);
     newOffset += numberOfLedToTakeBetweenConnections;
     return newOffset;
@@ -132,7 +131,7 @@ void ShapeReferenceSystem::clear(Shape * node)
     //we clear current
     getShape(node)->clear();
 
-    for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
+    for (int i = 0; i < GlobalShapeHelper.numberOfConnections(node); ++i)
         clear(node->connections[i]);  
 }
 
@@ -164,7 +163,7 @@ void ShapeReferenceSystem::fill(Shape * node, const Color c)
 
     //we fill current
     getShape(node)->fill(c);
-    for (int i = 0; i < _shapeHelper->numberOfConnections(node); ++i)
+    for (int i = 0; i < GlobalShapeHelper.numberOfConnections(node); ++i)
         fill(node->connections[i], c);  
 }
 
@@ -176,21 +175,21 @@ Shape * ShapeReferenceSystem::getRandomShape()
 //Return random child shape of node 
 Shape * ShapeReferenceSystem::getRandomShape(Shape * node)
 {
-    int rnd = random(_shapeHelper->shapeCount(node));
+    int rnd = random(GlobalShapeHelper.shapeCount(node));
     if (rnd == 0)
     {
         //One chance to take the current
         return node;
     }
 
-    int nbConn = _shapeHelper->numberOfConnections(node);
+    int nbConn = GlobalShapeHelper.numberOfConnections(node);
     int cumuledNbNodes = 1; //the current node 
     for (int i = 0; i < nbConn; ++i)
     {
         if (node->connections[i] != NULL)
         {
             //we compute the probability to take this connection
-            cumuledNbNodes += _shapeHelper->shapeCount(node->connections[i]);
+            cumuledNbNodes += GlobalShapeHelper.shapeCount(node->connections[i]);
             if (rnd < cumuledNbNodes)
             {
                 //we have to take one from this connection
@@ -210,9 +209,9 @@ Shape * ShapeReferenceSystem::getRandomShapeExcept(Shape * notThisOne)
 
 Shape * ShapeReferenceSystem::getRandomShapeExcept(Shape * node, Shape * notThisOne)
 {
-    if (_shapeHelper->shapeCount(node) == 0)
+    if (GlobalShapeHelper.shapeCount(node) == 0)
         return NULL;
-    if (_shapeHelper->shapeCount(node) == 1)
+    if (GlobalShapeHelper.shapeCount(node) == 1)
         return node;
     Shape * current = notThisOne;
     while (current == notThisOne)
@@ -221,5 +220,9 @@ Shape * ShapeReferenceSystem::getRandomShapeExcept(Shape * node, Shape * notThis
     }
     return current; 
 }
+
+#if !defined(NO_GLOBAL_INSTANCES)
+ShapeReferenceSystem ShapeRef;
+#endif
 
 } //referenceSystem

@@ -1,7 +1,6 @@
 #include "ShapeHelper.h"
 
-ShapeHelper::ShapeHelper(ConfigurationProvider * configuration)
-    : _configuration(configuration)
+ShapeHelper::ShapeHelper()
 {
 }
 
@@ -30,7 +29,7 @@ int ShapeHelper::numberOfConnections(const Shape * node)
 
 int ShapeHelper::shapeCount()
 {
-    return shapeCount(_configuration->assembly());
+    return shapeCount(Configuration.assembly());
 }
 
 int ShapeHelper::shapeCount(const Shape * node)
@@ -59,7 +58,7 @@ Shape * ShapeHelper::duplicateShape(Shape * node, Shape * parent)
 
 int ShapeHelper::ledCount()
 {
-    return ledCount(_configuration->assembly());
+    return ledCount(Configuration.assembly());
 }
 
 int ShapeHelper::ledCount(const Shape * node)
@@ -79,9 +78,13 @@ int ShapeHelper::ledCountOfThisShape(const Shape * node)
     switch (node->kind)
     {
         case triangle :
-            return _configuration->parameters().ledPerTriangle;
+            return Configuration.parameters().ledPerTriangle;
         default:
         case unknown :
             return 0;
     }
 }
+
+#if !defined(NO_GLOBAL_INSTANCES)
+ShapeHelper GlobalShapeHelper;
+#endif

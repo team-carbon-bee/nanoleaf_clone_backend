@@ -74,7 +74,6 @@ class PixelHelper
         static const int FullColorNumber = 6;
         static const Color FullColorList[]; 
     private:
-        PixelHelper();
-        
+        PixelHelper();   
 
 };

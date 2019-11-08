@@ -12,8 +12,8 @@ namespace referenceSystem
 class ShapeDetails
 {
     public:
-        ShapeDetails(Shape * parent, ShapeHelper * shapeHelper) 
-        : _parent(parent), _shapeHelper(shapeHelper), _animationObject(NULL), 
+        ShapeDetails(Shape * parent) 
+        : _parent(parent), _animationObject(NULL), 
           _pixels(NULL), _ledCount(0)
         {
         }
@@ -24,7 +24,7 @@ class ShapeDetails
 
         void setup()
         {
-            _ledCount = _shapeHelper->ledCountOfThisShape(_parent);
+            _ledCount = GlobalShapeHelper.ledCountOfThisShape(_parent);
             _pixels = (Color *)malloc(sizeof(Color) * _ledCount);
             memset(_pixels, 0, _ledCount * sizeof(Color));
         }
@@ -71,7 +71,6 @@ class ShapeDetails
 
     private:
         Shape * _parent;
-        ShapeHelper * _shapeHelper;
         void * _animationObject;
         Color * _pixels;
         //for performance issues

@@ -15,21 +15,19 @@
 class AnimationFactory
 {
     public:
-        AnimationFactory(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
-                         ledDriver::ILedDriver * ledDriver);
+        AnimationFactory();
         virtual ~AnimationFactory();
 
-        void setup();
-
+        void setup(ledDriver::ILedDriver * ledDriver);
         LinkedList<animation::IAnimation *> & animations();
         void clearAnimationObject();
         
     private:
-        ConfigurationProvider * _configuration;
-        ShapeHelper * _shapeHelper;
         ledDriver::ILedDriver * _ledDriver;
-        referenceSystem::LinearReferenceSystem * _linearReferenceSystem;
-        referenceSystem::ShapeReferenceSystem * _shapeReferenceSystem;
         LinkedList<animation::IAnimation*> _animations;
 
 };
+
+#if !defined(NO_GLOBAL_INSTANCES) 
+extern AnimationFactory GlobalAnimationFactory;
+#endif

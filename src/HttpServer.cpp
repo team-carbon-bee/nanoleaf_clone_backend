@@ -41,7 +41,7 @@ void HttpServer::setup(void)
     _webServer.send(200, "text/plain", "Reset settings of WifiManager, the card reboot now in AP mode");
     delay(200);
     WiFiManager wifiManager;
-    wifiManager.resetSettings();
+    wifiManager.startConfigPortal();
     delay(200);
     ESP.restart();
   });

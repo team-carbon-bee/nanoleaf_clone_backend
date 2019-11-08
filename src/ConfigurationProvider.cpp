@@ -222,3 +222,7 @@ void ConfigurationProvider::globalBrigthness(const uint8_t value)
 {
     _globalBrigthness = value;
 }
+
+#if !defined(NO_GLOBAL_INSTANCES)
+ConfigurationProvider Configuration;
+#endif

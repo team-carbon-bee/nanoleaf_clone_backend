@@ -15,8 +15,8 @@ namespace animation
 class ShapeVanishing : public IAnimation
 {
     public:
-        ShapeVanishing(referenceSystem::ShapeReferenceSystem * referenceSystem)
-        : _referenceSystem(referenceSystem), _currentShape(NULL)
+        ShapeVanishing()
+        : _currentShape(NULL)
         {
         }
 
@@ -31,15 +31,15 @@ class ShapeVanishing : public IAnimation
 
         void setup()
         {
-            _referenceSystem->clear();
-            _referenceSystem->driveLeds();
+            referenceSystem::ShapeRef.clear();
+            referenceSystem::ShapeRef.driveLeds();
             //we copy all shapes into hidden part
-            if (_referenceSystem->shapeList().moveToStart())
+            if (referenceSystem::ShapeRef.shapeList().moveToStart())
             {
                 do
                 {
-                    _hidden.Append(_referenceSystem->shapeList().getCurrent());
-                } while (_referenceSystem->shapeList().next());
+                    _hidden.Append(referenceSystem::ShapeRef.shapeList().getCurrent());
+                } while (referenceSystem::ShapeRef.shapeList().next());
             }
         }
 
@@ -92,7 +92,7 @@ class ShapeVanishing : public IAnimation
                     _currentShape = _visible.getCurrent();
                     //we remove from visible list
                     _visible.DeleteCurrent();
-                    Color src = _referenceSystem->getShape(_currentShape)->pixels()[0];
+                    Color src = referenceSystem::ShapeRef.getShape(_currentShape)->pixels()[0];
                     Color dst = 0;
                     int time = random(FadingSmallestDuration, FadingLongestDuration);
                     Serial.println("vanish order");
@@ -116,12 +116,11 @@ class ShapeVanishing : public IAnimation
                 }
             }
             Color c = _fade.step();
-            _referenceSystem->fill(_currentShape, c);
-            _referenceSystem->driveLeds();
+            referenceSystem::ShapeRef.fill(_currentShape, c);
+            referenceSystem::ShapeRef.driveLeds();
         }
 
     private:
-        referenceSystem::ShapeReferenceSystem * _referenceSystem;
         static const int FadingSmallestDuration = 5;
         static const int FadingLongestDuration = 20;
         LinkedList<Shape *> _hidden;

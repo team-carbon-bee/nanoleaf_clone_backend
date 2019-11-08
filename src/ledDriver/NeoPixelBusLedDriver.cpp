@@ -5,8 +5,8 @@
 
 namespace ledDriver {
 
-NeoPixelBusLedDriver::NeoPixelBusLedDriver(ConfigurationProvider * configuration, ShapeHelper * shapeHelper)
-    : _configuration(configuration), _shapeHelper(shapeHelper), _strip(_shapeHelper->ledCount(), Constants::LedPin)
+NeoPixelBusLedDriver::NeoPixelBusLedDriver()
+    : _strip(GlobalShapeHelper.ledCount(), Constants::LedPin)
 {
 }
 

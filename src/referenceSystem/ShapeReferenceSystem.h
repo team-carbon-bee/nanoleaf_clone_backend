@@ -19,11 +19,10 @@ namespace referenceSystem {
 class ShapeReferenceSystem : public IReferenceSystem
 {
     public:
-        ShapeReferenceSystem(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
-                             ledDriver::ILedDriver * ledDriver);
+        ShapeReferenceSystem();
         virtual ~ShapeReferenceSystem();
 
-        void setup();
+        void setup(ledDriver::ILedDriver * ledDriver);
         void driveLeds();
         
         //cached value for performance reasons
@@ -51,8 +50,6 @@ class ShapeReferenceSystem : public IReferenceSystem
         //Return random child shape of node except provided one
         Shape * getRandomShapeExcept(Shape * node, Shape * notThisOne);
     private:
-        ConfigurationProvider * _configuration;
-        ShapeHelper * _shapeHelper;
         ledDriver::ILedDriver * _ledDriver;
         Shape * _assembly;
         int _shapeCount;
@@ -62,5 +59,9 @@ class ShapeReferenceSystem : public IReferenceSystem
         void createLinkedListFromShapes(Shape * shape);
         int prepareDriveLeds(Shape * node, const int offset = 0);
 };
+
+#if !defined(NO_GLOBAL_INSTANCES)
+extern ShapeReferenceSystem ShapeRef;
+#endif
 
 } //referenceSystem

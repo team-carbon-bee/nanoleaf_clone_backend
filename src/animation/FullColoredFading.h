@@ -13,8 +13,7 @@ namespace animation
 class FullColoredFading : public IAnimation
 {
     public:
-        FullColoredFading(referenceSystem::LinearReferenceSystem * referenceSystem)
-        : _referenceSystem(referenceSystem)
+        FullColoredFading()
         {
         }
 
@@ -29,8 +28,8 @@ class FullColoredFading : public IAnimation
 
         void setup()
         {
-            _referenceSystem->clear();
-            _referenceSystem->driveLeds();
+            referenceSystem::LinearRef.clear();
+            referenceSystem::LinearRef.driveLeds();
             _srcColor = 0x000000;
 
         }
@@ -39,19 +38,17 @@ class FullColoredFading : public IAnimation
         {
             if ((not _fade.isConfigured()) || (_fade.isFinished()))
             {
-                Serial.printf("step\n");
                 Color dst = PixelHelper::getRandomFullColorExcept(_srcColor);
                 _fade.configure(_srcColor, dst, FadingDuration);
                 _srcColor = dst;
             }
 
             Color c = _fade.step();
-            _referenceSystem->fill(c);
-            _referenceSystem->driveLeds();
+            referenceSystem::LinearRef.fill(c);
+            referenceSystem::LinearRef.driveLeds();
         }
 
     private:
-        referenceSystem::LinearReferenceSystem * _referenceSystem;
         Fade _fade;
         Color _srcColor;
         static const int FadingDuration = 50;

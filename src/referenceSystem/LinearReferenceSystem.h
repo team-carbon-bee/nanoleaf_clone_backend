@@ -16,10 +16,10 @@ namespace referenceSystem {
 class LinearReferenceSystem : public IReferenceSystem
 {
     public:
-        LinearReferenceSystem(ConfigurationProvider * configuration, ledDriver::ILedDriver * ledDriver);
+        LinearReferenceSystem();
         virtual ~LinearReferenceSystem();
 
-        void setup();
+        void setup(ledDriver::ILedDriver * ledDriver);
         void driveLeds();
         //cached value for performance reasons
         int ledCount();
@@ -30,8 +30,11 @@ class LinearReferenceSystem : public IReferenceSystem
         uint32_t getPixel(int pixelNumber);
         
     private:
-        ConfigurationProvider * _configuration;
         ledDriver::ILedDriver * _ledDriver;
 };
+
+#if !defined(NO_GLOBAL_INSTANCES)
+extern LinearReferenceSystem LinearRef;
+#endif
 
 } //referenceSystem

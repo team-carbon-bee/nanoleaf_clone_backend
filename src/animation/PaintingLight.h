@@ -14,8 +14,7 @@ namespace animation
 class PaintingLight : public IAnimation
 {
     public:
-        PaintingLight(referenceSystem::LinearReferenceSystem * referenceSystem)
-        : _referenceSystem(referenceSystem)
+        PaintingLight()
         {
         }
 
@@ -30,8 +29,8 @@ class PaintingLight : public IAnimation
 
         void setup()
         {
-            _referenceSystem->clear();
-            _referenceSystem->driveLeds(); 
+            referenceSystem::LinearRef.clear();
+            referenceSystem::LinearRef.driveLeds(); 
             
             _foreColor = PixelHelper::getRandomFullColor();
             _backgroundColor = PixelHelper::getRandomFullColorExcept(_foreColor);
@@ -45,26 +44,24 @@ class PaintingLight : public IAnimation
             {
                 //we draw the painted part
                 for (int i = 0;  i < _curPos; ++i)
-                    _referenceSystem->setPixel(i, _foreColor);
+                    referenceSystem::LinearRef.setPixel(i, _foreColor);
                 //we draw the background
-                for (int i = _curPos; i < _referenceSystem->ledCount(); ++i)
-                    _referenceSystem->setPixel(i, _backgroundColor);
+                for (int i = _curPos; i < referenceSystem::LinearRef.ledCount(); ++i)
+                    referenceSystem::LinearRef.setPixel(i, _backgroundColor);
 
                 _curPos++;
-                if (_curPos >= _referenceSystem->ledCount())
+                if (_curPos >= referenceSystem::LinearRef.ledCount())
                 {
                     _curPos = 0;
                     _backgroundColor = _foreColor;
                     _foreColor = PixelHelper::getRandomFullColorExcept(_backgroundColor);
                 }
 
-                _referenceSystem->driveLeds();
+                referenceSystem::LinearRef.driveLeds();
             }
         }
 
     private:
-
-        referenceSystem::LinearReferenceSystem * _referenceSystem;
         Color _foreColor;
         Color _backgroundColor;
         int _curPos;

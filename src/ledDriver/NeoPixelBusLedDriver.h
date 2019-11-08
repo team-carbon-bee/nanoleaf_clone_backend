@@ -14,7 +14,7 @@ namespace ledDriver {
 class NeoPixelBusLedDriver : public ILedDriver
 {
     public:
-        NeoPixelBusLedDriver(ConfigurationProvider * configuration, ShapeHelper * shapeHelper);
+        NeoPixelBusLedDriver();
         virtual ~NeoPixelBusLedDriver();
 
         void setup();
@@ -29,8 +29,6 @@ class NeoPixelBusLedDriver : public ILedDriver
         int numPixels() const;
         void show();
     private:
-        ConfigurationProvider * _configuration;
-        ShapeHelper * _shapeHelper;
         NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> _strip;
 
         static inline RgbColor colorToNeoPixelBusColor(const Color & c);

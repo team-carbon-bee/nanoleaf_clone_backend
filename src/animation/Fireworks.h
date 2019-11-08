@@ -15,8 +15,7 @@ namespace animation
 class Fireworks : public IAnimation
 {
     public:
-        Fireworks(referenceSystem::LinearReferenceSystem * referenceSystem)
-        : _referenceSystem(referenceSystem)
+        Fireworks()
         {
         }
 
@@ -31,8 +30,8 @@ class Fireworks : public IAnimation
 
         void setup()
         {
-            _referenceSystem->clear();
-            _referenceSystem->driveLeds(); 
+            referenceSystem::LinearRef.clear();
+            referenceSystem::LinearRef.driveLeds(); 
             _divider.configure(random(1, 3));
         }
 
@@ -44,7 +43,7 @@ class Fireworks : public IAnimation
             {
                 do
                 {
-                    _referenceSystem->setPixel(_rockets.getCurrent().position, _rockets.getCurrent().fade.step());
+                    referenceSystem::LinearRef.setPixel(_rockets.getCurrent().position, _rockets.getCurrent().fade.step());
                     if (_rockets.getCurrent().fade.isFinished())
                     {
                         _rockets.DeleteCurrent();
@@ -62,7 +61,7 @@ class Fireworks : public IAnimation
                 while (not ok)
                 {
                     //to be ok the random position mustnt't be in the rockets list
-                    r.position = random(_referenceSystem->ledCount());
+                    r.position = random(referenceSystem::LinearRef.ledCount());
                     ok = true;
                     if (_rockets.moveToStart())
                     {
@@ -76,7 +75,7 @@ class Fireworks : public IAnimation
                 
                 Color src = PixelHelper::getRandomFullColor();
                 //launch the rocket
-                _referenceSystem->setPixel(r.position, src);
+                referenceSystem::LinearRef.setPixel(r.position, src);
                 r.fade.configure(src, 0x000000, random(ShortestRocketsLightingTime, LongestRocketsLightingTime));
 
                 _rockets.Append(r);
@@ -85,7 +84,7 @@ class Fireworks : public IAnimation
                 _divider.configure(random(ShortestDelayBetweenTwoRockets, LongestDelayBetweenTwoRockets));
             }
 
-            _referenceSystem->driveLeds();
+            referenceSystem::LinearRef.driveLeds();
         }
 
     private:
@@ -96,7 +95,6 @@ class Fireworks : public IAnimation
             Fade fade;
         } Rocket;
 
-        referenceSystem::LinearReferenceSystem * _referenceSystem;
         LinkedList<Rocket> _rockets;
         Color _backgroundColor;
         DividedCounter _divider;

@@ -2,21 +2,23 @@
 
 #include <Arduino.h>
 
-#include "ConfigurationProvider.h"
-#include "AnimationFactory.h"
+#include "ledDriver/ILedDriver.h"
 
 class Animator
 {
     public:
-        Animator(ConfigurationProvider * configuration, AnimationFactory * animationFactory);
+        Animator();
         virtual ~Animator();
 
         void setup();
         void loop();
 
     private:
-        ConfigurationProvider * _configuration;
-        AnimationFactory * _animationFactory;
         animation::IAnimation * _currentAnimation;
+        ledDriver::ILedDriver * _ledDriver;
 
 };
+
+#if !defined(NO_GLOBAL_INSTANCES) 
+extern Animator GlobalAnimator;
+#endif

@@ -10,9 +10,7 @@
 
 #include "AnimationFactory.h"
 
-AnimationFactory::AnimationFactory(ConfigurationProvider * configuration, ShapeHelper * shapeHelper, 
-                                   ledDriver::ILedDriver * ledDriver)
-    : _configuration(configuration), _shapeHelper(shapeHelper), _ledDriver(ledDriver)
+AnimationFactory::AnimationFactory()
 {
 }
 
@@ -20,28 +18,27 @@ AnimationFactory::~AnimationFactory()
 {
 }
 
-void AnimationFactory::setup()
+void AnimationFactory::setup(ledDriver::ILedDriver * ledDriver)
 {    
-    _linearReferenceSystem = new referenceSystem::LinearReferenceSystem(_configuration, _ledDriver);
-    _shapeReferenceSystem = new referenceSystem::ShapeReferenceSystem(_configuration, _shapeHelper, _ledDriver);
+    _ledDriver = ledDriver;
     //we configure all reference systems
-    _linearReferenceSystem->setup();
-    _shapeReferenceSystem->setup();
+    referenceSystem::LinearRef.setup(_ledDriver);
+    referenceSystem::ShapeRef.setup(_ledDriver);
     
     //we create all animations
-    _animations.Append(new animation::FullFading(_linearReferenceSystem));
-    _animations.Append(new animation::FullColoredFading(_linearReferenceSystem));
-    _animations.Append(new animation::RunningLight(_linearReferenceSystem));
+    _animations.Append(new animation::FullFading());
+    _animations.Append(new animation::FullColoredFading());
+    _animations.Append(new animation::RunningLight());
 
-    _animations.Append(new animation::RandomColoredShapes(_shapeReferenceSystem)); 
+    _animations.Append(new animation::RandomColoredShapes()); 
 
 
-    _animations.Append(new animation::FullColoredShapeFading(_shapeReferenceSystem));
+    _animations.Append(new animation::FullColoredShapeFading());
     //New animations come here !!!!
-    _animations.Append(new animation::ShapeVanishing(_shapeReferenceSystem)); 
-    _animations.Append(new animation::Fireworks(_linearReferenceSystem));
-    _animations.Append(new animation::PaintingLight(_linearReferenceSystem)); 
-    _animations.Append(new animation::RainbowRunning(_linearReferenceSystem));
+    _animations.Append(new animation::ShapeVanishing()); 
+    _animations.Append(new animation::Fireworks());
+    _animations.Append(new animation::PaintingLight()); 
+    _animations.Append(new animation::RainbowRunning());
 }
 
 LinkedList<animation::IAnimation*> & AnimationFactory::animations()
@@ -52,5 +49,9 @@ LinkedList<animation::IAnimation*> & AnimationFactory::animations()
 void AnimationFactory::clearAnimationObject()
 {
     //in shape ref system
-    _shapeReferenceSystem->clearAnimationObject();
+    referenceSystem::ShapeRef.clearAnimationObject();
 }
+
+#if !defined(NO_GLOBAL_INSTANCES) 
+AnimationFactory GlobalAnimationFactory;
+#endif

@@ -1,7 +1,12 @@
+#include "tools/Logger.h"
+
+#include "ledDriver/NeoPixelBusLedDriver.h"
+#include "AnimationFactory.h"
+
 #include "Animator.h"
 
-Animator::Animator(ConfigurationProvider * configuration, AnimationFactory * animationFactory)
-    : _configuration(configuration), _animationFactory(animationFactory), _currentAnimation(NULL)
+Animator::Animator()
+    : _currentAnimation(NULL)
 {
 }
 
@@ -11,6 +16,16 @@ Animator::~Animator()
 
 void Animator::setup()
 {
+    GlobalShapeHelper.setup();
+
+    _ledDriver = new ledDriver::NeoPixelBusLedDriver();
+    _ledDriver->setup();
+    
+    Log.println("Creating animations.");
+
+    GlobalAnimationFactory.setup(_ledDriver);
+
+    Log.println("Creating animator.");
 }
 
 void Animator::loop()
@@ -19,11 +34,15 @@ void Animator::loop()
     {
         //no animation in progress we chose one
         //TODO select animation
-        _currentAnimation = _animationFactory->animations().Last();
+        _currentAnimation = GlobalAnimationFactory.animations().Last();
         //Before init animation, we have to remove all previously malloc objects
-        _animationFactory->clearAnimationObject();
+        GlobalAnimationFactory.clearAnimationObject();
         _currentAnimation->setup();
     }
     //Serial.println("looping animation");
     _currentAnimation->loop();
 }
+
+#if !defined(NO_GLOBAL_INSTANCES) 
+Animator GlobalAnimator;
+#endif

@@ -15,8 +15,7 @@ namespace animation
 class RandomColoredShapes : public IAnimation
 {
     public:
-        RandomColoredShapes(referenceSystem::ShapeReferenceSystem * referenceSystem)
-        : _referenceSystem(referenceSystem)
+        RandomColoredShapes()
         {
         }
 
@@ -31,20 +30,20 @@ class RandomColoredShapes : public IAnimation
 
         void setup()
         {
-            _referenceSystem->clear();
-            _referenceSystem->driveLeds();
+            referenceSystem::ShapeRef.clear();
+            referenceSystem::ShapeRef.driveLeds();
             
-            Serial.printf("Setup animations : %d", _referenceSystem->shapeList().size());
+            Serial.printf("Setup animations : %d", referenceSystem::ShapeRef.shapeList().size());
 
             //we iterate all shapes using linkedlist (no need to localize them)
-            if (_referenceSystem->shapeList().moveToStart())
+            if (referenceSystem::ShapeRef.shapeList().moveToStart())
             {
                 do 
                 {
                     //each shape will embed a Fade for this animation
                     Fade *f = new Fade();
-                    _referenceSystem->getShape(_referenceSystem->shapeList().getCurrent())->animationObject(f);
-                } while(_referenceSystem->shapeList().next());
+                    referenceSystem::ShapeRef.getShape(referenceSystem::ShapeRef.shapeList().getCurrent())->animationObject(f);
+                } while(referenceSystem::ShapeRef.shapeList().next());
             }
 
             Serial.println("Setup animations finished");
@@ -53,15 +52,15 @@ class RandomColoredShapes : public IAnimation
         void loop()
         {
             //we iterate all shapes using linkedlist (no need to localize them)
-            if (_referenceSystem->shapeList().moveToStart())
+            if (referenceSystem::ShapeRef.shapeList().moveToStart())
             {
                 do 
                 {
-                    Shape * currentShape = _referenceSystem->shapeList().getCurrent();
-                    Fade * currentFade = (Fade*)_referenceSystem->getShape(currentShape)->animationObject();
+                    Shape * currentShape = referenceSystem::ShapeRef.shapeList().getCurrent();
+                    Fade * currentFade = (Fade*)referenceSystem::ShapeRef.getShape(currentShape)->animationObject();
                     if ((not currentFade->isConfigured()) || (currentFade->isFinished()))
                     {
-                        Color src = _referenceSystem->getShape(currentShape)->pixels()[0];
+                        Color src = referenceSystem::ShapeRef.getShape(currentShape)->pixels()[0];
                         Color dst = PixelHelper::getRandomFullColorExcept(src);
                         int time = random(FadingSmallestDuration, FadingLongestDuration);
                         //We take the color of the first pixel of the random shape to set the source
@@ -70,15 +69,14 @@ class RandomColoredShapes : public IAnimation
                     }
                     //after we apply each fade on each shape
                     Color c = currentFade->step();
-                    _referenceSystem->getShape(currentShape)->fill(c);
+                    referenceSystem::ShapeRef.getShape(currentShape)->fill(c);
 
-                } while(_referenceSystem->shapeList().next());
-                _referenceSystem->driveLeds();
+                } while(referenceSystem::ShapeRef.shapeList().next());
+                referenceSystem::ShapeRef.driveLeds();
             }
         }
 
     private:
-        referenceSystem::ShapeReferenceSystem * _referenceSystem;
         static const int FadingSmallestDuration = 5;
         static const int FadingLongestDuration = 20;
 };

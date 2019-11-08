@@ -48,3 +48,7 @@ class ConfigurationProvider
         static const int DynamicJsonDocumentMaxSize = 3 * 1024;
 
 };
+
+#if !defined(NO_GLOBAL_INSTANCES)
+extern ConfigurationProvider Configuration;
+#endif
