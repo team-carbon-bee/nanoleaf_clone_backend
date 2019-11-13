@@ -28,7 +28,7 @@ void setup()
 
 void loop() 
 {
-  GlobalAnimator.loop();
+  GlobalAnimator.handle();
   Network.handle();
 
   //TODO : manage time correctly
