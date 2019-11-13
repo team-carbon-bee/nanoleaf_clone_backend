@@ -25,7 +25,7 @@ void ConfigurationProvider::loadFromFlash()
 {
     //TODO : restore when wifi ok and validated
     createDefaultConfiguration();
-    /*File file = SPIFFS.open(ConfigurationFilename, "r");
+    File file = SPIFFS.open(ConfigurationFilename, "r");
     if (!file)
     {
         Serial.println("Exception during opening system configuration, resetting to factory settings");
@@ -40,7 +40,7 @@ void ConfigurationProvider::loadFromFlash()
         configurationFileAsString +=(char)file.read();
     }
 
-    parseJson(configurationFileAsString);*/
+    parseJson(configurationFileAsString);
 }
 
 void ConfigurationProvider::createDefaultConfiguration()
@@ -147,7 +147,7 @@ void ConfigurationProvider::parseJson(const String & data)
     _parameters.maxBrightness = parameters["maxBrightness"].as<uint8_t>();
 }
 
-Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject, Shape * parent)
+Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject & jsonObject, Shape * parent)
 {
     if (jsonObject.isNull())
         return NULL;
@@ -158,10 +158,11 @@ Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject, Shape
         Shape * current = new Shape();
         current->kind = triangle;
         current->connections = (Shape**)malloc(sizeof(Shape *) * 2);
-        JsonObject leftConnection = jsonObject["leftConnection"].as<JsonObject>();
-        current->connections[0] = createShapeFromJSon(leftConnection, current);
-        JsonObject rightConnection = jsonObject["rightConnection"].as<JsonObject>();
-        current->connections[1] = createShapeFromJSon(rightConnection, current);
+        JsonArray array = jsonObject["connections"].as<JsonArray>();
+        for(int i = 0; i < array.size(); ++i) 
+        {
+            current->connections[i] = createShapeFromJSon(array[i].as<JsonObject>(), current);
+        }
         current->content = NULL;
         current->parent = parent;
         return current;
@@ -181,19 +182,20 @@ JsonObject ConfigurationProvider::createJsonFromShape(Shape * shape)
         return obj;
     JsonObject jsonShape;
     jsonShape["type"] = shapeKindToString(shape->kind);
-    
+    JsonArray array;
+
     switch (shape->kind)
     {
         case triangle:
-            jsonShape["leftConnection"] = createJsonFromShape(shape->connections[0]);
-            jsonShape["rightConnection"] = createJsonFromShape(shape->connections[1]);
+            array.add(createJsonFromShape(shape->connections[0]));
+            array.add(createJsonFromShape(shape->connections[1]));
         break;
 
         case unknown:
             //nothing to do
         break;
     }
-
+    jsonShape["connections"] = array;
     obj["shape"] = jsonShape;
     return obj;
 }

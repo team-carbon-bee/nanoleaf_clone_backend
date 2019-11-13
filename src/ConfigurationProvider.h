@@ -36,7 +36,7 @@ class ConfigurationProvider
         void globalBrigthness(const uint8_t value);
     private:
         void parseJson(const String & data);
-        Shape *createShapeFromJSon(JsonObject & jsonObject, Shape * parent = NULL);
+        Shape *createShapeFromJSon(const JsonObject & jsonObject, Shape * parent = NULL);
         JsonObject createJsonFromShape(Shape * shape);
 
 
