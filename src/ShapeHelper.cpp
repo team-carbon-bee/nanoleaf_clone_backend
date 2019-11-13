@@ -8,10 +8,6 @@ ShapeHelper::~ShapeHelper()
 {
 }
 
-void ShapeHelper::setup()
-{
-}
-
 //return the number of child connections of a shape based on its kind
 int ShapeHelper::numberOfConnections(const Shape * node)
 {

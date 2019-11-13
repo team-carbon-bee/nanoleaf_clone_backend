@@ -16,8 +16,6 @@ Animator::~Animator()
 
 void Animator::setup()
 {
-    GlobalShapeHelper.setup();
-
     _ledDriver = new ledDriver::NeoPixelBusLedDriver();
     _ledDriver->setup();
     
@@ -28,7 +26,7 @@ void Animator::setup()
     Log.println("Creating animator.");
 }
 
-void Animator::loop()
+void Animator::handle()
 {
     if (_currentAnimation == NULL)
     {

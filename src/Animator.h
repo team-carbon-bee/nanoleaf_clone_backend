@@ -11,7 +11,7 @@ class Animator
         virtual ~Animator();
 
         void setup();
-        void loop();
+        void handle();
 
     private:
         animation::IAnimation * _currentAnimation;
