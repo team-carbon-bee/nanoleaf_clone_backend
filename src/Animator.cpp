@@ -35,7 +35,7 @@ void Animator::handle()
         _currentAnimation = GlobalAnimationFactory.animations().Last();
         //Before init animation, we have to remove all previously malloc objects
         GlobalAnimationFactory.clearAnimationObject();
-        _currentAnimation->setup();
+        _currentAnimation->initialize();
     }
     //Serial.println("looping animation");
     _currentAnimation->loop();

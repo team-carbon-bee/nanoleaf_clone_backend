@@ -39,6 +39,12 @@ void AnimationFactory::setup(ledDriver::ILedDriver * ledDriver)
     _animations.Append(new animation::Fireworks());
     _animations.Append(new animation::PaintingLight()); 
     _animations.Append(new animation::RainbowRunning());
+
+    _animations.moveToStart();
+    do 
+    {
+        _animations.getCurrent()->setup();
+    } while (_animations.next()); 
 }
 
 LinkedList<animation::IAnimation*> & AnimationFactory::animations()
