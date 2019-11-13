@@ -10,6 +10,7 @@
 
 // You can update by 'curl -F "image=@firmware.bin" MDNS_Name_of_ESP.local/'
 
+#include "ConfigurationProvider.h"
 #include "HttpServer.h"
 #include "tools/Logger.h"
 
@@ -28,7 +29,7 @@ HttpServer::~HttpServer()
 
 void HttpServer::setup(void)
 {
-  MDNS.begin("nanoleaf"); 
+  MDNS.begin(Configuration.parameters().hostname.c_str()); 
   MDNS.addService("http", "tcp", 80);
 
   _webServer.on("/reboot", [&]() {
