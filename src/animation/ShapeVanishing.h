@@ -24,12 +24,17 @@ class ShapeVanishing : public IAnimation
         {
         }
 
-        std::string name()
+        std::string name() const
         {
             return "Shape vanishing";
         }
 
         void setup()
+        {
+        }
+
+        //Called each time before starting animation
+        void initialize()
         {
             referenceSystem::ShapeRef.clear();
             referenceSystem::ShapeRef.driveLeds();
@@ -41,6 +46,25 @@ class ShapeVanishing : public IAnimation
                     _hidden.Append(referenceSystem::ShapeRef.shapeList().getCurrent());
                 } while (referenceSystem::ShapeRef.shapeList().next());
             }
+        }
+
+        //Called at the end of the animation
+        virtual void deinitialize()
+        {
+            _hidden.Clear();
+            _visible.Clear();
+        }
+                
+        //Determine if the animation can be ended by itself
+        virtual bool canFinish() const
+        {
+            return false;
+        }
+
+        //Check if the animation has finished if it can false otherwise
+        virtual bool isFinished() const
+        {
+            return false;
         }
 
         void loop()

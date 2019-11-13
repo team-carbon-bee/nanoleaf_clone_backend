@@ -23,18 +23,21 @@ class RandomColoredShapes : public IAnimation
         {
         }
 
-        std::string name()
+        std::string name() const
         {
             return "Random colored shapes";
         }
 
         void setup()
         {
+        }
+
+        //Called each time before starting animation
+        void initialize()
+        {
             referenceSystem::ShapeRef.clear();
             referenceSystem::ShapeRef.driveLeds();
             
-            Serial.printf("Setup animations : %d", referenceSystem::ShapeRef.shapeList().size());
-
             //we iterate all shapes using linkedlist (no need to localize them)
             if (referenceSystem::ShapeRef.shapeList().moveToStart())
             {
@@ -45,8 +48,25 @@ class RandomColoredShapes : public IAnimation
                     referenceSystem::ShapeRef.getShape(referenceSystem::ShapeRef.shapeList().getCurrent())->animationObject(f);
                 } while(referenceSystem::ShapeRef.shapeList().next());
             }
+        }
 
-            Serial.println("Setup animations finished");
+        //Called at the end of the animation
+        virtual void deinitialize()
+        {
+            //tidy animation objects
+            referenceSystem::ShapeRef.clearAnimationObject();
+        }
+                
+        //Determine if the animation can be ended by itself
+        virtual bool canFinish() const
+        {
+            return false;
+        }
+
+        //Check if the animation has finished if it can false otherwise
+        virtual bool isFinished() const
+        {
+            return false;
         }
 
         void loop()

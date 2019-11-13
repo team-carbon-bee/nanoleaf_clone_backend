@@ -21,16 +21,38 @@ class FullFading : public IAnimation
         {
         }
 
-        std::string name()
+        std::string name() const
         {
             return "Full fading";
         }
 
         void setup()
         {
+        }
+
+        //Called each time before starting animation
+        void initialize()
+        {
             referenceSystem::LinearRef.clear();
             referenceSystem::LinearRef.driveLeds();
             _targetColor = 0x000000;
+        }
+
+        //Called at the end of the animation
+        virtual void deinitialize()
+        {
+        }
+                
+        //Determine if the animation can be ended by itself
+        virtual bool canFinish() const
+        {
+            return false;
+        }
+
+        //Check if the animation has finished if it can false otherwise
+        virtual bool isFinished() const
+        {
+            return false;
         }
 
         void loop()
