@@ -15,6 +15,11 @@ class ConfigurationProvider
             String hostname;
             int ledPerTriangle;
             uint8_t maxBrightness;
+            int speed;
+            bool mainColorRandom;
+            Color mainColor;
+            bool backgroundColorRandom;
+            Color backgroundColor;
         } Parameters;
         
         ConfigurationProvider();
@@ -38,8 +43,7 @@ class ConfigurationProvider
     private:
         void parseJson(const String & data);
         Shape *createShapeFromJSon(const JsonObject & jsonObject, Shape * parent = NULL);
-        JsonObject createJsonFromShape(Shape * shape);
-
+        void createJsonFromShape(JsonObject & targetedObject, Shape * shape);
 
         static const String ConfigurationFilename;
         Shape * _assembly;
