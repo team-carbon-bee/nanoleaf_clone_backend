@@ -116,6 +116,8 @@ void ConfigurationProvider::saveToFlash()
 
     doc["parameters"] = parameters;
     serializeJson(doc, file);
+    file.close();
+    Serial.println("Configuration fiele saved");
 }
 
 void ConfigurationProvider::load(const String & data)
