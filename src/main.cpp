@@ -25,12 +25,17 @@ void setup()
   Log.println("setup finished.");
 }
 
+int l = 0;
 
 void loop() 
 {
-  GlobalAnimator.handle();
+  if (l >= Configuration.parameters().speed)
+  {
+    GlobalAnimator.handle();
+    l = 0;
+  }
   Network.handle();
 
-  //TODO : manage time correctly
-  delay(50);
+  ++l;
+  delay(1);
 }
