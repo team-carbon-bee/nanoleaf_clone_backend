@@ -47,6 +47,15 @@ void HttpServer::setup(void)
     ESP.restart();
   });
 
+  _webServer.on("/resetConfiguration", [&]() {
+    _webServer.send(200, "text/plain", "Resetting all parameters, the card reboot now.");
+    delay(200);
+    Configuration.createDefaultConfiguration();
+    Configuration.saveToFlash();
+    delay(200);
+    ESP.restart();
+  });
+
   _webServer.onNotFound([&]() {
     if (!handleFileRead(_webServer.uri())) {
       _webServer.send(404, "text/plain", "File Not Found !");
