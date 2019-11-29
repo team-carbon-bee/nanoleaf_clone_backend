@@ -1,6 +1,7 @@
 #include <FS.h>
 #include "SPIFFS.h"
 #include "ConfigurationProvider.h"
+#include "PixelHelper.h"
 
 const String ConfigurationProvider::ConfigurationFilename = "/configuration.json";
 

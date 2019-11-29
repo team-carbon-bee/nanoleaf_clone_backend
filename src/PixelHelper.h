@@ -1,11 +1,11 @@
 #pragma once
 
 #include <Arduino.h>
+#include <stdint.h>
 
 #include "ConfigurationProvider.h"
 #include "ShapeObjects.h"
-
-typedef uint32_t Color;
+#include "Color.h"
 
 class PixelHelper
 {

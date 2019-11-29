@@ -5,6 +5,7 @@
 
 #include "ShapeObjects.h"
 #include "PixelHelper.h"
+#include "Color.h"
 
 class ConfigurationProvider
 {
