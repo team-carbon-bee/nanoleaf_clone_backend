@@ -19,6 +19,9 @@ class ILedDriver
         virtual uint32_t getPixel(int pixelNumber)=0;
         virtual int numPixels() const=0;
         virtual void show()=0;
+        virtual void setBrightness(const double value) = 0;
+        virtual double getBrightness() = 0;
+
 };
 
 }

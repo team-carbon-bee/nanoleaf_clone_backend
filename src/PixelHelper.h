@@ -62,11 +62,11 @@ class PixelHelper
             return ((uint32_t)w << 24) | ((uint32_t)r << 16) | ((uint32_t)g <<  8) | b;
         }
 
-        static const Color brightenPixel(const Color & p, const int brightness);
-        static const Color brightenRed(const Color & p, const int brightness);
-        static const Color brightenGreen(const Color & p, const int brightness);
-        static const Color brightenBlue(const Color & p, const int brightness);
-        static const Color brightenWhite(const Color & p, const int brightness);
+        static const Color brightenPixel(const Color & p, const double brightness);
+        static const Color brightenRed(const Color & p, const double brightness);
+        static const Color brightenGreen(const Color & p, const double brightness);
+        static const Color brightenBlue(const Color & p, const double brightness);
+        static const Color brightenWhite(const Color & p, const double brightness);
         
         static const Color getRandomFullColor();
         static const Color getRandomFullColorExcept(const Color notThisOne);

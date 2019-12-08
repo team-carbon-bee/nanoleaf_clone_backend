@@ -1,5 +1,7 @@
 #include "tools/Logger.h"
 
+#include "ConfigurationProvider.h"
+
 #include "ledDriver/NeoPixelBusLedDriver.h"
 #include "AnimationFactory.h"
 
@@ -18,6 +20,8 @@ void Animator::setup()
 {
     _ledDriver = new ledDriver::NeoPixelBusLedDriver();
     _ledDriver->setup();
+    _ledDriver->setBrightness(Configuration.parameters().maxBrightness);
+    _ledDriver->clear();
     
     Log.println("Creating animations.");
 

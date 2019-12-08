@@ -14,45 +14,45 @@ PixelHelper::~PixelHelper()
 {
 }
 
-const Color PixelHelper::brightenPixel(const Color & p, const int brightness)
+const Color PixelHelper::brightenPixel(const Color & p, const double brightness)
 {
     Color res = p;
-    setWhite(max(min(255, getWhite(p) + brightness), 0), res);
-    setRed(max(min(255, getRed(p) + brightness), 0), res);
-    setGreen(max(min(255, getGreen(p) + brightness), 0), res);
-    setBlue(max(min(255, getBlue(p) + brightness), 0), res);
+    setWhite(max(min(255, (int)((float)getWhite(p) * brightness)), 0), res);
+    setRed(max(min(255, (int)((float)getRed(p) * brightness)), 0), res);
+    setGreen(max(min(255, (int)((float)getGreen(p) * brightness)), 0), res);
+    setBlue(max(min(255, (int)((float)getBlue(p) * brightness)), 0), res);
 
     return res;
 }
 
-const Color PixelHelper::brightenRed(const Color & p, const int brightness)
+const Color PixelHelper::brightenRed(const Color & p, const double brightness)
 {
     Color res = p;
-    setRed(max(min(255, getRed(p) + brightness), 0), res);
+    setRed(max(min(255, (int)((float)getRed(p) * brightness)), 0), res);
 
     return res;
 }
 
-const Color PixelHelper::brightenGreen(const Color & p, const int brightness)
+const Color PixelHelper::brightenGreen(const Color & p, const double brightness)
 {
     Color res = p;
-    setGreen(max(min(255, getGreen(p) + brightness), 0), res);
+    setGreen(max(min(255, (int)((float)getGreen(p) * brightness)), 0), res);
 
     return res;
 }
 
-const Color PixelHelper::brightenBlue(const Color & p, const int brightness)
+const Color PixelHelper::brightenBlue(const Color & p, const double brightness)
 {
     Color res = p;
-    setBlue(max(min(255, getBlue(p) + brightness), 0), res);
+    setBlue(max(min(255, (int)((float)getBlue(p) * brightness)), 0), res);
 
     return res;
 }
 
-const Color PixelHelper::brightenWhite(const Color & p, const int brightness)
+const Color PixelHelper::brightenWhite(const Color & p, const double brightness)
 {
     Color res = p;
-    setWhite(max(min(255, getWhite(p) + brightness), 0), res);
+    setWhite(max(min(255, (int)((float)getWhite(p) * brightness)), 0), res);
 
     return res;
 }

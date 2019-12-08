@@ -14,7 +14,7 @@ class ConfigurationProvider
         {
             String hostname;
             int ledPerTriangle;
-            uint8_t maxBrightness;
+            double maxBrightness;
             int speed;
             bool mainColorRandom;
             Color mainColor;
@@ -37,9 +37,6 @@ class ConfigurationProvider
         Parameters & parameters();
 
         Shape * assembly();
-
-        uint8_t globalBrigthness() const;
-        void globalBrigthness(const uint8_t value);
     private:
         void parseJson(const String & data);
         Shape *createShapeFromJSon(const JsonObject & jsonObject, Shape * parent = NULL);
@@ -48,7 +45,6 @@ class ConfigurationProvider
         static const String ConfigurationFilename;
         Shape * _assembly;
         Parameters _parameters;
-        uint8_t _globalBrigthness;
 
         static const int DynamicJsonDocumentMaxSize = 3 * 1024;
 

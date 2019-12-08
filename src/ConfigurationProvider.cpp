@@ -29,7 +29,8 @@ void ConfigurationProvider::setup()
 void ConfigurationProvider::loadFromFlash()
 {
     //TODO : restore when wifi ok and validated
-    createDefaultConfiguration();
+    // createDefaultConfiguration();
+    // saveToFlash();
     if(SPIFFS.exists(ConfigurationFilename))
     {
         File file = SPIFFS.open(ConfigurationFilename, "r");
@@ -48,7 +49,7 @@ void ConfigurationProvider::loadFromFlash()
         {
             configurationFileAsString +=(char)file.read();
         }
-
+        Serial.println("Configuration file read.");
         parseJson(configurationFileAsString);
     }
     else
@@ -103,14 +104,12 @@ void ConfigurationProvider::createDefaultConfiguration()
 
     _parameters.ledPerTriangle = 21;
     _parameters.hostname = "nanoleaf_clone";
-    _parameters.maxBrightness = 255;
+    _parameters.maxBrightness = 0.3;
     _parameters.speed = 50;
     _parameters.mainColorRandom = true;
     _parameters.mainColor = 0;
     _parameters.backgroundColorRandom = true;
     _parameters.backgroundColor = 0;
-
-    _globalBrigthness = 30;
 }
 
 void ConfigurationProvider::saveToFlash()
@@ -173,7 +172,7 @@ void ConfigurationProvider::parseJson(const String & data)
     JsonObject parameters = doc["parameters"];
     _parameters.ledPerTriangle = parameters["ledPerTriangle"] | 21;
     _parameters.hostname = parameters["hostname"] | "nanoleaf_clone";
-    _parameters.maxBrightness = parameters["maxBrightness"] | 255;
+    _parameters.maxBrightness = parameters["maxBrightness"] | 1.0;
     _parameters.speed = parameters["speed"] | 50;
     _parameters.mainColorRandom = parameters["mainColorRandom"] | true;
     _parameters.mainColor = parameters["mainColor"] | 0;
@@ -256,16 +255,6 @@ ConfigurationProvider::Parameters & ConfigurationProvider::parameters()
 Shape * ConfigurationProvider::assembly()
 {
     return _assembly;
-}
-
-uint8_t ConfigurationProvider::globalBrigthness() const
-{
-    return _globalBrigthness;
-}
-
-void ConfigurationProvider::globalBrigthness(const uint8_t value)
-{
-    _globalBrigthness = value;
 }
 
 #if !defined(NO_GLOBAL_INSTANCES)

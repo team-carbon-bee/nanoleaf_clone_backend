@@ -25,7 +25,6 @@ void LinearReferenceSystem::driveLeds()
     //we re-enable brightness
     //TODO : implement brightness
     //_ledDriver->setBrightness(_configuration->globalBrigthness());
-    
     _ledDriver->show();
 
     /*Serial.print("leds(");
