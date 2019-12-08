@@ -30,12 +30,12 @@ void AnimationFactory::setup(ledDriver::ILedDriver * ledDriver)
     _animations.Append(new animation::FullColoredFading());
     _animations.Append(new animation::RunningLight());
 
-    _animations.Append(new animation::RandomColoredShapes()); 
+    //_animations.Append(new animation::RandomColoredShapes()); 
 
 
-    _animations.Append(new animation::FullColoredShapeFading());
+    //_animations.Append(new animation::FullColoredShapeFading());
     //New animations come here !!!!
-    _animations.Append(new animation::ShapeVanishing()); 
+    //_animations.Append(new animation::ShapeVanishing()); 
     _animations.Append(new animation::Fireworks());
     _animations.Append(new animation::PaintingLight()); 
     _animations.Append(new animation::RainbowRunning());

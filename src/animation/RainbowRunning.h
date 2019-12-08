@@ -24,7 +24,7 @@ class RainbowRunning : public IAnimation
         {
         }
 
-        std::string name() const
+        String name() const
         {
             return "Rainbow running";
         }

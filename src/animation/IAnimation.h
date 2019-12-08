@@ -19,7 +19,7 @@ class IAnimation
         virtual void loop() = 0;
 
         //Name of the animation
-        virtual std::string name() const = 0;
+        virtual String name() const = 0;
 
         //Determine if the animation can be ended by itself
         virtual bool canFinish() const = 0;

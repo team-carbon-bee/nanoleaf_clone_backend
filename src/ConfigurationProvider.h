@@ -20,6 +20,9 @@ class ConfigurationProvider
             Color mainColor;
             bool backgroundColorRandom;
             Color backgroundColor;
+            int animationDuration;
+            String animationChoice;
+            String staticAnimation;
         } Parameters;
         
         ConfigurationProvider();

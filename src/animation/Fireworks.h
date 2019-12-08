@@ -23,7 +23,7 @@ class Fireworks : public IAnimation
         {
         }
 
-        std::string name() const
+        String name() const
         {
             return "Fireworks";
         }
@@ -59,7 +59,6 @@ class Fireworks : public IAnimation
 
         void loop()
         {
-            Serial.printf("loop\n");
             //managing launched rockets
             if (_rockets.moveToStart())
             {
@@ -69,7 +68,6 @@ class Fireworks : public IAnimation
                     if (_rockets.getCurrent().fade.isFinished())
                     {
                         _rockets.DeleteCurrent();
-                        Serial.printf("Suppr rocket, reste %d elem\n", _rockets.size());
                     }
                 } while (_rockets.next());
             }
@@ -77,7 +75,6 @@ class Fireworks : public IAnimation
             //launch a new rocket ?
             if (_divider.step())
             {
-                Serial.printf("new rocket\n");
                 Rocket r;
                 bool ok = false;
                 while (not ok)

@@ -23,7 +23,7 @@ class RandomColoredShapes : public IAnimation
         {
         }
 
-        std::string name() const
+        String name() const
         {
             return "Random colored shapes";
         }

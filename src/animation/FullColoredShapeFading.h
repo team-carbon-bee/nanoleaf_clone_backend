@@ -22,7 +22,7 @@ class FullColoredShapeFading : public IAnimation
         {
         }
 
-        std::string name() const
+        String name() const
         {
             return "Full colored shape fading";
         }

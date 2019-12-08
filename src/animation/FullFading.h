@@ -21,7 +21,7 @@ class FullFading : public IAnimation
         {
         }
 
-        std::string name() const
+        String name() const
         {
             return "Full fading";
         }

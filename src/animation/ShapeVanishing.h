@@ -24,7 +24,7 @@ class ShapeVanishing : public IAnimation
         {
         }
 
-        std::string name() const
+        String name() const
         {
             return "Shape vanishing";
         }

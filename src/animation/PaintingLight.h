@@ -22,7 +22,7 @@ class PaintingLight : public IAnimation
         {
         }
 
-        std::string name() const
+        String name() const
         {
             return "Painting lights";
         }
