@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Yannick RICHARDOT <yannick.richardot@carbonbee.fr>">
+
+    <!-- Bootstrap CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="index.css" rel="stylesheet">
+
+    <title>Nano Leaf</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <span class="navbar-brand col-md-3 col-lg-2 mr-0 px-3">Nano Leaf</span>
+        <span class="navbar-text" id="versionText"></span>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html">
+                                Dashboard
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>Paint</h2>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-secondary">Clear</button>
+                        <button type="button" class="btn btn-outline-secondary">Undo</button>
+                        <button type="button" class="btn btn-outline-secondary">Save</button>
+                    </div>
+                </div>
+
+                <div>
+                    <svg id="mySvg" width="800" height="600" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+            </main>
+        </div>
+    </div>
+
+
+    <script src="bootstrap.min.js"></script>
+    <script src="index.js"></script>
+
+</body>
+
+</html>
