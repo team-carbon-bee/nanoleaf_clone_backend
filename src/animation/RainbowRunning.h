@@ -24,12 +24,17 @@ class RainbowRunning : public IAnimation
         {
         }
 
-        std::string name()
+        String name() const
         {
             return "Rainbow running";
         }
 
         void setup()
+        {
+        }
+
+        //Called each time before starting animation
+        void initialize()
         {
             referenceSystem::LinearRef.clear();
             referenceSystem::LinearRef.driveLeds(); 
@@ -64,6 +69,24 @@ class RainbowRunning : public IAnimation
             }
 
             _currentPos = 0;
+        }
+
+        //Called at the end of the animation
+        virtual void deinitialize()
+        {
+            free(_leds);
+        }
+                
+        //Determine if the animation can be ended by itself
+        virtual bool canFinish() const
+        {
+            return false;
+        }
+
+        //Check if the animation has finished if it can false otherwise
+        virtual bool isFinished() const
+        {
+            return false;
         }
 
         void loop()

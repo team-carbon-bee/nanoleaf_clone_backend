@@ -27,7 +27,7 @@ class LinearReferenceSystem : public IReferenceSystem
         void fill(const Color c);
 
         void setPixel(int pixelNumber, Color color);
-        uint32_t getPixel(int pixelNumber);
+        Color getPixel(int pixelNumber);
         
     private:
         ledDriver::ILedDriver * _ledDriver;

@@ -2,40 +2,44 @@
 
 #include <Arduino.h>
 
+#include <LinkedList.h>
 #include "IAnimation.h"
 #include "referenceSystem/LinearReferenceSystem.h"
 #include "PixelHelper.h"
-#include "tools/Fade.h"
+#include "tools/DividedCounter.h"
 
 namespace animation
 {
 
-class FullColoredFading : public IAnimation
+class FadingOff : public IAnimation
 {
+    private:
+        bool _finished;
+        Color _backgroundColor;
+
     public:
-        FullColoredFading()
+        FadingOff() : _finished(false)
         {
         }
 
-        virtual ~FullColoredFading()
+        virtual ~FadingOff()
         {
         }
 
         String name() const
         {
-            return "Full colored fading";
+            return "Fading off";
         }
 
         void setup()
         {
+            _finished = false;
         }
 
         //Called each time before starting animation
         void initialize()
         {
-            referenceSystem::LinearRef.clear();
-            referenceSystem::LinearRef.driveLeds();
-            _srcColor = 0x000000;
+            _backgroundColor = 0;
         }
 
         //Called at the end of the animation
@@ -46,34 +50,29 @@ class FullColoredFading : public IAnimation
         //Determine if the animation can be ended by itself
         virtual bool canFinish() const
         {
-            return false;
+            return true;
         }
 
         //Check if the animation has finished if it can false otherwise
         virtual bool isFinished() const
         {
-            return false;
+            return _finished;
         }
 
         void loop()
         {
-            if ((not _fade.isConfigured()) || (_fade.isFinished()))
+            _finished = true; //true if remains for all leds
+            for (int i = 0; i < referenceSystem::LinearRef.ledCount(); ++i)
             {
-                Color dst = PixelHelper::getRandomFullColorExcept(_srcColor);
-                _fade.configure(_srcColor, dst, FadingDuration);
-                _srcColor = dst;
+                Color c = referenceSystem::LinearRef.getPixel(i);
+                if (c != 0)
+                {
+                    _finished = false;
+                    referenceSystem::LinearRef.setPixel(i, PixelHelper::brightenPixel(c, .5));
+                }
             }
-
-            Color c = _fade.step();
-            referenceSystem::LinearRef.fill(c);
             referenceSystem::LinearRef.driveLeds();
         }
-
-    private:
-        Fade _fade;
-        Color _srcColor;
-        static const int FadingDuration = 50;
-
 };
 
 }

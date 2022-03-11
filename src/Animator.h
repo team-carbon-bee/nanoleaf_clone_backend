@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include "ledDriver/ILedDriver.h"
+#include "animation/FadingOff.h"
 
 class Animator
 {
@@ -11,11 +12,18 @@ class Animator
         virtual ~Animator();
 
         void setup();
-        void loop();
+        void handle();
 
     private:
         animation::IAnimation * _currentAnimation;
         ledDriver::ILedDriver * _ledDriver;
+        int _timeRemaining;
+        bool _animationCanChange;
+        int _currentAnimationIndex;
+        animation::FadingOff _fadingOffAnimation;
+
+        animation::IAnimation * getAnimationByName(const String & animationName);
+        animation::IAnimation * getAnimationByMethod(const String & animationMethod);
 
 };
 

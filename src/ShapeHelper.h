@@ -10,7 +10,6 @@ class ShapeHelper
     public:
         ShapeHelper();
         virtual ~ShapeHelper();
-        void setup();
 
         int numberOfConnections(const Shape * node);
         int shapeCount();

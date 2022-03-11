@@ -1,6 +1,7 @@
 #include <FS.h>
 #include "SPIFFS.h"
 #include "ConfigurationProvider.h"
+#include "PixelHelper.h"
 
 const String ConfigurationProvider::ConfigurationFilename = "/configuration.json";
 
@@ -19,28 +20,44 @@ void ConfigurationProvider::setup()
     {
         Serial.println("Unable to begin SPIFFS");
     }
+    else
+    {
+        Serial.println("SPIFFS initialized.");
+    }
 }
 
 void ConfigurationProvider::loadFromFlash()
 {
     //TODO : restore when wifi ok and validated
-    createDefaultConfiguration();
-    /*File file = SPIFFS.open(ConfigurationFilename, "r");
-    if (!file)
+    // createDefaultConfiguration();
+    // saveToFlash();
+    if(SPIFFS.exists(ConfigurationFilename))
     {
-        Serial.println("Exception during opening system configuration, resetting to factory settings");
+        File file = SPIFFS.open(ConfigurationFilename, "r");
+        if (!file)
+        {
+            Serial.println("Exception during opening system configuration, resetting to factory settings");
+            createDefaultConfiguration();
+            saveToFlash();
+        }
+        else
+        {
+            Serial.println("Configuration file opened.");
+        }
+        String configurationFileAsString = "";
+        while (file.available())
+        {
+            configurationFileAsString +=(char)file.read();
+        }
+        Serial.println("Configuration file read.");
+        parseJson(configurationFileAsString);
+    }
+    else
+    {
+        Serial.println("Configuration file doesn't exists, resetting to factory settings");
         createDefaultConfiguration();
         saveToFlash();
-        return;
     }
-
-    String configurationFileAsString = "";
-    while (file.available())
-    {
-        configurationFileAsString +=(char)file.read();
-    }
-
-    parseJson(configurationFileAsString);*/
 }
 
 void ConfigurationProvider::createDefaultConfiguration()
@@ -87,9 +104,15 @@ void ConfigurationProvider::createDefaultConfiguration()
 
     _parameters.ledPerTriangle = 21;
     _parameters.hostname = "nanoleaf_clone";
-    _parameters.maxBrightness = 255;
-
-    _globalBrigthness = 30;
+    _parameters.maxBrightness = 0.3;
+    _parameters.speed = 50;
+    _parameters.mainColorRandom = true;
+    _parameters.mainColor = 0;
+    _parameters.backgroundColorRandom = true;
+    _parameters.backgroundColor = 0;
+    _parameters.animationDuration = 20 * 1000;
+    _parameters.animationChoice = "randomAll";
+    _parameters.staticAnimation = "";
 }
 
 void ConfigurationProvider::saveToFlash()
@@ -107,15 +130,26 @@ void ConfigurationProvider::saveToFlash()
     
     //we browse the tree to generate the json
     DynamicJsonDocument doc(DynamicJsonDocumentMaxSize);
-    doc["assembly"] = createJsonFromShape(_assembly);
+    JsonObject assemblyNode = doc.createNestedObject("assembly");
+    createJsonFromShape(assemblyNode, _assembly);
 
-    JsonObject parameters;
+    JsonObject parameters = doc.createNestedObject("parameters");
     parameters["ledPerTriangle"] = _parameters.ledPerTriangle;
     parameters["hostname"] = _parameters.hostname;
     parameters["maxBrightness"] = _parameters.maxBrightness;
-
-    doc["parameters"] = parameters;
+    parameters["speed"] = _parameters.speed;
+    parameters["mainColorRandom"] = _parameters.mainColorRandom;
+    parameters["mainColor"] = _parameters.mainColor;
+    parameters["backgroundColorRandom"] = _parameters.backgroundColorRandom;
+    parameters["backgroundColor"] = _parameters.backgroundColor;
+    parameters["animationDuration"] = _parameters.animationDuration;
+    parameters["animationChoice"] = _parameters.animationChoice;
+    parameters["staticAnimation"] = _parameters.staticAnimation;
+    
+    serializeJson(doc, Serial);
     serializeJson(doc, file);
+    file.close();
+    Serial.println("Configuration file saved");
 }
 
 void ConfigurationProvider::load(const String & data)
@@ -138,16 +172,24 @@ void ConfigurationProvider::parseJson(const String & data)
     }
 
     //iterate and create structure
-    JsonObject obj = doc["assembly"].as<JsonObject>();
+    JsonObject obj = doc["assembly"]["shape"];
     _assembly = createShapeFromJSon(obj);
     
-    JsonObject parameters = doc["parameters"].as<JsonObject>();
-    _parameters.ledPerTriangle = parameters["ledPerTriangle"].as<int>();
-    _parameters.hostname = parameters["hostname"].as<String>();
-    _parameters.maxBrightness = parameters["maxBrightness"].as<uint8_t>();
+    JsonObject parameters = doc["parameters"];
+    _parameters.ledPerTriangle = parameters["ledPerTriangle"] | 21;
+    _parameters.hostname = parameters["hostname"] | "nanoleaf_clone";
+    _parameters.maxBrightness = parameters["maxBrightness"] | 1.0;
+    _parameters.speed = parameters["speed"] | 50;
+    _parameters.mainColorRandom = parameters["mainColorRandom"] | true;
+    _parameters.mainColor = parameters["mainColor"] | 0;
+    _parameters.backgroundColorRandom = parameters["backgroundColorRandom"] | true;
+    _parameters.backgroundColor = parameters["backgroundColor"] | 0;
+    _parameters.animationDuration = parameters["animationDuration"] | 20 * 1000;
+    _parameters.animationChoice = parameters["animationChoice"] | "randomAll";
+    _parameters.staticAnimation = parameters["staticAnimation"] | "";
 }
 
-Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject, Shape * parent)
+Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject & jsonObject, Shape * parent)
 {
     if (jsonObject.isNull())
         return NULL;
@@ -158,10 +200,11 @@ Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject, Shape
         Shape * current = new Shape();
         current->kind = triangle;
         current->connections = (Shape**)malloc(sizeof(Shape *) * 2);
-        JsonObject leftConnection = jsonObject["leftConnection"].as<JsonObject>();
-        current->connections[0] = createShapeFromJSon(leftConnection, current);
-        JsonObject rightConnection = jsonObject["rightConnection"].as<JsonObject>();
-        current->connections[1] = createShapeFromJSon(rightConnection, current);
+        JsonArray array = jsonObject["connections"];
+        for(int i = 0; i < array.size(); ++i) 
+        {
+            current->connections[i] = createShapeFromJSon(array[i]["shape"], current);
+        }
         current->content = NULL;
         current->parent = parent;
         return current;
@@ -174,28 +217,38 @@ Shape *ConfigurationProvider::createShapeFromJSon(JsonObject & jsonObject, Shape
     }
 }
 
-JsonObject ConfigurationProvider::createJsonFromShape(Shape * shape)
+void ConfigurationProvider::createJsonFromShape(JsonObject & targetedObject, Shape * shape)
 {
-    JsonObject obj;
     if (shape == NULL)
-        return obj;
-    JsonObject jsonShape;
+        return;
+    JsonObject jsonShape = targetedObject.createNestedObject("shape");
     jsonShape["type"] = shapeKindToString(shape->kind);
-    
+    JsonArray array = jsonShape.createNestedArray("connections");
+
     switch (shape->kind)
     {
         case triangle:
-            jsonShape["leftConnection"] = createJsonFromShape(shape->connections[0]);
-            jsonShape["rightConnection"] = createJsonFromShape(shape->connections[1]);
-        break;
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                if (shape->connections[0] == NULL)
+                {
+                    //add "null" element to json
+                    array.add(JsonObject());
+                }
+                else
+                {
+                    JsonObject branch = array.createNestedObject();
+                    createJsonFromShape(branch, shape->connections[0]);
+                }
+            }
+            break;
+        }
 
         case unknown:
             //nothing to do
         break;
     }
-
-    obj["shape"] = jsonShape;
-    return obj;
 }
 
 const ConfigurationProvider::Parameters & ConfigurationProvider::parameters() const
@@ -211,16 +264,6 @@ ConfigurationProvider::Parameters & ConfigurationProvider::parameters()
 Shape * ConfigurationProvider::assembly()
 {
     return _assembly;
-}
-
-uint8_t ConfigurationProvider::globalBrigthness() const
-{
-    return _globalBrigthness;
-}
-
-void ConfigurationProvider::globalBrigthness(const uint8_t value)
-{
-    _globalBrigthness = value;
 }
 
 #if !defined(NO_GLOBAL_INSTANCES)

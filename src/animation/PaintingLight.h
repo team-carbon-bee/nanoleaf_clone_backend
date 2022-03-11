@@ -22,12 +22,17 @@ class PaintingLight : public IAnimation
         {
         }
 
-        std::string name()
+        String name() const
         {
             return "Painting lights";
         }
 
         void setup()
+        {
+        }
+
+        //Called each time before starting animation
+        void initialize()
         {
             referenceSystem::LinearRef.clear();
             referenceSystem::LinearRef.driveLeds(); 
@@ -36,6 +41,23 @@ class PaintingLight : public IAnimation
             _backgroundColor = PixelHelper::getRandomFullColorExcept(_foreColor);
             _curPos = 0;
             _divider.configure(random(1, 3));
+        }
+
+        //Called at the end of the animation
+        virtual void deinitialize()
+        {
+        }
+                
+        //Determine if the animation can be ended by itself
+        virtual bool canFinish() const
+        {
+            return false;
+        }
+
+        //Check if the animation has finished if it can false otherwise
+        virtual bool isFinished() const
+        {
+            return false;
         }
 
         void loop()

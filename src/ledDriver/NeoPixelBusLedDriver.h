@@ -28,11 +28,16 @@ class NeoPixelBusLedDriver : public ILedDriver
 
         int numPixels() const;
         void show();
+
+        void setBrightness(const double value);
+        double getBrightness();
     private:
         NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> _strip;
+        Color * _buffer;
+        double _brightness;
 
-        static inline RgbColor colorToNeoPixelBusColor(const Color & c);
-        static inline Color neoPixelBusColorToColor(const RgbColor & c);
+        RgbColor colorToNeoPixelBusColor(const Color & c);
+        Color neoPixelBusColorToColor(const RgbColor & c);
 };
 
 } //referenceSystem

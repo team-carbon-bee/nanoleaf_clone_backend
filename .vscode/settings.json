@@ -18,6 +18,7 @@
         "functional": "cpp",
         "cmath": "cpp",
         "memory": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "typeinfo": "cpp"
     }
 }

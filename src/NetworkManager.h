@@ -4,6 +4,7 @@
 
 #ifdef ESP32
   #include "tools/WiFiManager.h"
+  #include <ESP8266FtpServer.h>
 #else // ESP8266
   #include <WiFiManager.h>
 #endif
@@ -19,6 +20,7 @@ public:
 
 private:
   WiFiManager _wifiManager;
+  FtpServer _ftpServer;
 };
 
 #if !defined(NO_GLOBAL_INSTANCES)

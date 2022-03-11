@@ -36,11 +36,13 @@ void NetworkManager::setup()
 #endif
 
   HTTPServer.setup();
+  _ftpServer.begin(Configuration.parameters().hostname.c_str(), Configuration.parameters().hostname.c_str()); 
 }
 
 void NetworkManager::handle()
 {
   HTTPServer.handle();
+  _ftpServer.handleFTP();
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) 

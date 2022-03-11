@@ -1,45 +1,43 @@
 {
     "assembly" : {
-        "shape" : {
-            "type" : "triangle",
-            "connections" : 
-            [
-                {
-                    "type" : "triangle",
-                    "connections" : 
-                    [
-                        {
-                            "type" : "triangle",
-                            "connections" : [
-                                null,
-                                null
-                            ]
-                        },
-                        null
-                    ]
-                },
-                {
-                    "type" : "triangle",
-                    "connections" : 
-                    [
-                        {
-                            "type" : "triangle",
-                            "connections" : [
-                                null,
-                                null
-                            ]
-                        },
-                        {
-                            "type" : "triangle",
-                            "connections" : [
-                                null,
-                                null
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
+        "type" : "triangle",
+        "connections" : 
+        [
+            {
+                "type" : "triangle",
+                "connections" : 
+                [
+                    {
+                        "type" : "triangle",
+                        "connections" : [
+                            null,
+                            null
+                        ]
+                    },
+                    null
+                ]
+            },
+            {
+                "type" : "triangle",
+                "connections" : 
+                [
+                    {
+                        "type" : "triangle",
+                        "connections" : [
+                            null,
+                            null
+                        ]
+                    },
+                    {
+                        "type" : "triangle",
+                        "connections" : [
+                            null,
+                            null
+                        ]
+                    }
+                ]
+            }
+        ]
     },
     "parameters" : {
         "ledPerTriangle" : 21,

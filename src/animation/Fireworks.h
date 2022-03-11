@@ -23,7 +23,7 @@ class Fireworks : public IAnimation
         {
         }
 
-        std::string name()
+        String name() const
         {
             return "Fireworks";
         }
@@ -35,9 +35,30 @@ class Fireworks : public IAnimation
             _divider.configure(random(1, 3));
         }
 
+        //Called each time before starting animation
+        void initialize()
+        {
+        }
+
+        //Called at the end of the animation
+        virtual void deinitialize()
+        {
+        }
+                
+        //Determine if the animation can be ended by itself
+        virtual bool canFinish() const
+        {
+            return false;
+        }
+
+        //Check if the animation has finished if it can false otherwise
+        virtual bool isFinished() const
+        {
+            return false;
+        }
+
         void loop()
         {
-            Serial.printf("loop\n");
             //managing launched rockets
             if (_rockets.moveToStart())
             {
@@ -47,7 +68,6 @@ class Fireworks : public IAnimation
                     if (_rockets.getCurrent().fade.isFinished())
                     {
                         _rockets.DeleteCurrent();
-                        Serial.printf("Suppr rocket, reste %d elem\n", _rockets.size());
                     }
                 } while (_rockets.next());
             }
@@ -55,7 +75,6 @@ class Fireworks : public IAnimation
             //launch a new rocket ?
             if (_divider.step())
             {
-                Serial.printf("new rocket\n");
                 Rocket r;
                 bool ok = false;
                 while (not ok)
