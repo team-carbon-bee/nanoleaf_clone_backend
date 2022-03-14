@@ -53,6 +53,7 @@ class ShapeVanishing : public IAnimation
         {
             _hidden.Clear();
             _visible.Clear();
+            _currentShape = NULL;
         }
                 
         //Determine if the animation can be ended by itself
@@ -89,23 +90,19 @@ class ShapeVanishing : public IAnimation
                 else
                 {
                     float ratio = ((float)_visible.size())/((float)_hidden.size());
-                    Serial.printf("_visible.size() = %d, _hidden.size() = %d, ratio = %f", _visible.size(), _hidden.size(), ratio);
                     if (ratio < MinVisibleRatio)
                     {
                         //we have to make appear
-                        Serial.println("not enough items");
                         _orderVanish = false;
                     }
                     else if (ratio > MaxVisibleRatio)
                     {
-                        Serial.println("Too much items");
                         _orderVanish = true;
                     }
                     else
                     {
                         //we take a random decision
                         _orderVanish = (bool)random(2);
-                        Serial.printf("Random decision %d\n", (int)_orderVanish);
                     }
                 }
 
@@ -119,8 +116,6 @@ class ShapeVanishing : public IAnimation
                     Color src = referenceSystem::ShapeRef.getShape(_currentShape)->pixels()[0];
                     Color dst = 0;
                     int time = random(FadingSmallestDuration, FadingLongestDuration);
-                    Serial.println("vanish order");
-                    Serial.printf("from : #%06x, to : #%06x, in %d ms\n", src, dst, time);
                     _fade.configure(src, dst, time);
                 }
                 else
@@ -134,8 +129,6 @@ class ShapeVanishing : public IAnimation
                     Color src = 0;
                     Color dst = PixelHelper::getRandomFullColorExcept(src);
                     int time = random(FadingSmallestDuration, FadingLongestDuration);
-                    Serial.println("appear order");
-                    Serial.printf("from : #%06x, to : #%06x, in %d ms\n", src, dst, time);
                     _fade.configure(src, dst, time);
                 }
             }
@@ -150,8 +143,8 @@ class ShapeVanishing : public IAnimation
         LinkedList<Shape *> _hidden;
         LinkedList<Shape *> _visible;
         Shape * _currentShape;
-        static const int MinVisibleRatio = .2;
-        static const int MaxVisibleRatio = 1 - MinVisibleRatio;
+        static constexpr float MinVisibleRatio = .2;
+        static constexpr float MaxVisibleRatio = 1.0f - MinVisibleRatio;
         Fade _fade;
         bool _orderVanish;
 };
