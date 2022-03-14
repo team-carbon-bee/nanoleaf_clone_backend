@@ -283,6 +283,7 @@ void LinkedList<T>::Clear()
     }
 
     head = curr = tail = nullptr;
+    length = 0;
 
 }
 
