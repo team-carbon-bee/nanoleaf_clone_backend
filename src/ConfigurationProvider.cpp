@@ -111,8 +111,8 @@ void ConfigurationProvider::createDefaultConfiguration()
     _parameters.backgroundColorRandom = true;
     _parameters.backgroundColor = 0;
     _parameters.animationDuration = 20 * 1000;
-    _parameters.animationChoice = "random";
-    _parameters.staticAnimation = "";
+    _parameters.animationMethod = "random";
+    _parameters.animationList = "";
 }
 
 void ConfigurationProvider::saveToFlash()
@@ -143,8 +143,8 @@ void ConfigurationProvider::saveToFlash()
     parameters["backgroundColorRandom"] = _parameters.backgroundColorRandom;
     parameters["backgroundColor"] = _parameters.backgroundColor;
     parameters["animationDuration"] = _parameters.animationDuration;
-    parameters["animationChoice"] = _parameters.animationChoice;
-    parameters["staticAnimation"] = _parameters.staticAnimation;
+    parameters["animationMethod"] = _parameters.animationMethod;
+    parameters["animationList"] = _parameters.animationList;
     
     serializeJson(doc, Serial);
     serializeJson(doc, file);
@@ -185,8 +185,9 @@ void ConfigurationProvider::parseJson(const String & data)
     _parameters.backgroundColorRandom = parameters["backgroundColorRandom"] | true;
     _parameters.backgroundColor = parameters["backgroundColor"] | 0;
     _parameters.animationDuration = parameters["animationDuration"] | 20 * 1000;
-    _parameters.animationChoice = parameters["animationChoice"] | "random";
-    _parameters.staticAnimation = parameters["staticAnimation"] | "";
+    _parameters.animationMethod = parameters["animationMethod"] | "random";
+
+    _parameters.animationList = parameters["staticAnimation"] | "";
 }
 
 Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject & jsonObject, Shape * parent)
