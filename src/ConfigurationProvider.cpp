@@ -5,6 +5,31 @@
 
 const String ConfigurationProvider::ConfigurationFilename = "/configuration.json";
 
+const String ConfigurationProvider::animationSelectionMethodToString(const ConfigurationProvider::EAnimationSelectionMethod & method)
+{
+    switch (method)
+    {
+        case kStatic : 
+            return "static";
+        default:
+        case kRandom : 
+            return "random";
+        case kSequential : 
+            return "sequential";
+    }  
+}
+
+ConfigurationProvider::EAnimationSelectionMethod ConfigurationProvider::parseAnimationSelectionMethod(const String & method)
+{
+    if (method == "static") 
+        return kStatic;
+    if (method == "random") 
+        return kRandom;
+    if (method == "sequential") 
+        return kSequential;
+    return kRandom;
+}
+
 ConfigurationProvider::ConfigurationProvider()
     : _assembly(NULL)
 {
@@ -111,8 +136,9 @@ void ConfigurationProvider::createDefaultConfiguration()
     _parameters.backgroundColorRandom = true;
     _parameters.backgroundColor = 0;
     _parameters.animationDuration = 20 * 1000;
-    _parameters.animationMethod = "random";
-    _parameters.animationList = "";
+    _parameters.animationMethod = kRandom;
+    //TODO : make better
+    _parameters.animationList = {10, 11, 12, 13, 14, 15, 16, 17, 18};
 }
 
 bool ConfigurationProvider::saveToFlash()
@@ -144,8 +170,11 @@ bool ConfigurationProvider::saveToFlash()
     parameters["backgroundColorRandom"] = _parameters.backgroundColorRandom;
     parameters["backgroundColor"] = _parameters.backgroundColor;
     parameters["animationDuration"] = _parameters.animationDuration;
-    parameters["animationMethod"] = _parameters.animationMethod;
-    parameters["animationList"] = _parameters.animationList;
+    parameters["animationMethod"] = animationSelectionMethodToString(_parameters.animationMethod);
+
+    JsonArray animationList = parameters.createNestedArray("animationList");
+    for (const auto & id : _parameters.animationList)
+        animationList.add(id);
     
     serializeJson(doc, Serial);
     serializeJson(doc, file);
@@ -187,9 +216,13 @@ bool ConfigurationProvider::parseJson(const String & data)
     _parameters.backgroundColorRandom = parameters["backgroundColorRandom"] | true;
     _parameters.backgroundColor = parameters["backgroundColor"] | 0;
     _parameters.animationDuration = parameters["animationDuration"] | 20 * 1000;
-    _parameters.animationMethod = parameters["animationMethod"] | "random";
+    _parameters.animationMethod = parseAnimationSelectionMethod(parameters["animationMethod"] | "random");
 
-    _parameters.animationList = parameters["staticAnimation"] | "";
+    _parameters.animationList.clear();
+    JsonArray jsonAnimation = parameters["animationList"].as<JsonArray>();
+    for(JsonVariant id : jsonAnimation) 
+        _parameters.animationList.push_back(id.as<int>());
+
     return true;
 }
 

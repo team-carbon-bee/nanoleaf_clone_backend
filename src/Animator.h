@@ -22,8 +22,8 @@ class Animator
         int _currentAnimationIndex;
         animation::FadingOff _fadingOffAnimation;
 
-        animation::IAnimation * getAnimationByName(const String & animationName);
-        animation::IAnimation * getAnimationByMethod(const String & animationMethod);
+        animation::IAnimation * getAnimationById(const uint8_t & animationId);
+        animation::IAnimation * getAnimationByMethod(const ConfigurationProvider::EAnimationSelectionMethod & animationMethod);
 
 };
 

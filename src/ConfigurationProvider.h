@@ -12,6 +12,16 @@
 class ConfigurationProvider
 {
     public:
+        typedef enum 
+        {
+            kStatic, //one animation choosen
+            kRandom, //selected animation random
+            kSequential //selected animation by order
+        } EAnimationSelectionMethod;
+
+        static const String animationSelectionMethodToString(const EAnimationSelectionMethod & method);
+        static EAnimationSelectionMethod parseAnimationSelectionMethod(const String & method);
+
         typedef struct
         {
             //Hostname of the board
@@ -32,10 +42,8 @@ class ConfigurationProvider
             Color backgroundColor;
             //Duration of animation in ms
             int animationDuration;
-            //Kind animation choice (static : one animation choosen, 
-            //                                random : selected animation random
-            //                                sequential : selected animation by order)
-            String animationMethod;
+            //Kind animation choice
+            EAnimationSelectionMethod animationMethod;
             //List of the animation to use
             std::vector<uint8_t> animationList;
         } Parameters;
