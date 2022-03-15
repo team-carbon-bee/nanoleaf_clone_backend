@@ -28,12 +28,12 @@
                 <div class="sidebar-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" href="index.html">
+                            <a class="nav-link" href="index.html">
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="assembly.html">
+                            <a class="nav-link active" href="assembly.html">
                                 Assembly
                             </a>
                         </li>
@@ -48,6 +48,18 @@
 
             <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>Assembly Shape</h2>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-secondary">Reset</button>
+                        <button type="button" class="btn btn-outline-secondary">Undo</button>
+                        <button type="button" class="btn btn-outline-secondary">Save</button>
+                    </div>
+                </div>
+
+                <div id="svgContainer">
+                    <svg id="mySvg" viewbox='0 0 1500 750' width="1500" height="750" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
             </main>
         </div>
     </div>
@@ -55,7 +67,7 @@
 
     <script src="bootstrap.min.js"></script>
     <script src="dev_env.js"></script>
-    <script src="index.js"></script>
+    <script src="assembly.js"></script>
 
 </body>
 
