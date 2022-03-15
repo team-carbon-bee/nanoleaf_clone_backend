@@ -32,7 +32,19 @@ let config =
                                 {
                                     "type": "triangle",
                                     "connections": [
-                                        null,
+                                        {
+                                            "type": "triangle",
+                                            "connections": [
+                                                {
+                                                    "type": "triangle",
+                                                    "connections": [
+                                                        null,
+                                                        null
+                                                    ]
+                                                },
+                                                null
+                                            ]
+                                        },
                                         null
                                     ]
                                 },
@@ -62,7 +74,14 @@ function appendTriangle(parent) {
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
     let h = (Math.sqrt(3) * size_of_triangle / 2).toFixed(2);
-    let points = `${-(size_of_triangle / 2)} 0 ${size_of_triangle / 2} 0 0 ${-h}`
+    let l = h / 6;
+    let x = (l / Math.cos(30 * Math.PI / 360));
+    let points = `${-(size_of_triangle / 2) + x}                                      0
+                    ${-(size_of_triangle / 2) + (x * Math.sin(60 * Math.PI / 360))}         ${-x * Math.cos(60 * Math.PI / 360)}
+                    ${-l * Math.tan(60 * Math.PI / 360)}                                    ${-h + l}
+                    ${l * Math.tan(60 * Math.PI / 360)}                                     ${-h + l}
+                    ${(size_of_triangle / 2) - (x * Math.sin(60 * Math.PI / 360))}          ${-x * Math.cos(60 * Math.PI / 360)}
+                    ${(size_of_triangle / 2) - x}                                       0`
 
     // Add Point
     triangle.setAttribute("points", points);
@@ -91,9 +110,9 @@ function appendBase(parent) {
     let base = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
     let h = (Math.sqrt(3) * size_of_triangle / 2 / 4).toFixed(2);
-    let points = `${-(size_of_triangle / 2)} 2 ${-(size_of_triangle / 2) + (h * Math.tan(60*Math.PI/360))} ${h} ${(size_of_triangle / 2) - (h * Math.tan(60*Math.PI/360))} ${h} ${size_of_triangle / 2} 2`
+    let points = `${-(size_of_triangle / 2)} 2 ${-(size_of_triangle / 2) + (h * Math.tan(60 * Math.PI / 360))} ${h} ${(size_of_triangle / 2) - (h * Math.tan(60 * Math.PI / 360))} ${h} ${size_of_triangle / 2} 2`
 
-    console.log(size_of_triangle * Math.tan(60*Math.PI/360));
+    console.log(size_of_triangle * Math.tan(60 * Math.PI / 360));
 
     // Add Point
     base.setAttribute("points", points);
@@ -134,7 +153,7 @@ function parseConfig(config) {
         let c = document.getElementById("mySvg");
 
         // Add Rotation and set the origin of the group
-        parent.setAttribute("transform", `translate(${c.getAttribute('width')/2}, ${c.getAttribute('height')*5/6}), rotate(0)`);
+        parent.setAttribute("transform", `translate(${c.getAttribute('width') / 2}, ${c.getAttribute('height') * 5 / 6}), rotate(0)`);
 
         parseShape(config.assembly.shape, parent);
 
