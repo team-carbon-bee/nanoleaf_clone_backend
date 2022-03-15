@@ -111,7 +111,7 @@ void ConfigurationProvider::createDefaultConfiguration()
     _parameters.backgroundColorRandom = true;
     _parameters.backgroundColor = 0;
     _parameters.animationDuration = 20 * 1000;
-    _parameters.animationChoice = "randomAll";
+    _parameters.animationChoice = "random";
     _parameters.staticAnimation = "";
 }
 
@@ -185,7 +185,7 @@ void ConfigurationProvider::parseJson(const String & data)
     _parameters.backgroundColorRandom = parameters["backgroundColorRandom"] | true;
     _parameters.backgroundColor = parameters["backgroundColor"] | 0;
     _parameters.animationDuration = parameters["animationDuration"] | 20 * 1000;
-    _parameters.animationChoice = parameters["animationChoice"] | "randomAll";
+    _parameters.animationChoice = parameters["animationChoice"] | "random";
     _parameters.staticAnimation = parameters["staticAnimation"] | "";
 }
 

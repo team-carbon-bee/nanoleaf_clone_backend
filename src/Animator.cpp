@@ -94,7 +94,7 @@ animation::IAnimation * Animator::getAnimationByName(const String & animationNam
 
 animation::IAnimation * Animator::getAnimationByMethod(const String & animationMethod)
 {
-    if (animationMethod == "randomAll")
+    if (animationMethod == "random")
     {
         int pos = random(0, GlobalAnimationFactory.animations().size());
         GlobalAnimationFactory.animations().at(pos);
