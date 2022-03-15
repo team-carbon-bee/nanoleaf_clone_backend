@@ -29,6 +29,11 @@ class RainbowRunning : public IAnimation
             return "Rainbow running";
         }
 
+        uint8_t id() const
+        {
+            return 15;
+        }
+
         void setup()
         {
         }

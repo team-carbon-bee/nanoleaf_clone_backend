@@ -27,6 +27,11 @@ class RunningLight : public IAnimation
             return "Running lights";
         }
 
+        uint8_t id() const
+        {
+            return 17;
+        }
+
         void setup()
         {
            

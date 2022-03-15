@@ -31,6 +31,11 @@ class FadingOff : public IAnimation
             return "Fading off";
         }
 
+        uint8_t id() const
+        {
+            return 0;
+        }
+
         void setup()
         {
             _finished = false;

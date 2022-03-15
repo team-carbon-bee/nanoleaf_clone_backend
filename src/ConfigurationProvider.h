@@ -12,6 +12,16 @@
 class ConfigurationProvider
 {
     public:
+        typedef enum 
+        {
+            kStatic, //one animation choosen
+            kRandom, //selected animation random
+            kSequential //selected animation by order
+        } EAnimationSelectionMethod;
+
+        static const String animationSelectionMethodToString(const EAnimationSelectionMethod & method);
+        static EAnimationSelectionMethod parseAnimationSelectionMethod(const String & method);
+
         typedef struct
         {
             //Hostname of the board
@@ -32,10 +42,8 @@ class ConfigurationProvider
             Color backgroundColor;
             //Duration of animation in ms
             int animationDuration;
-            //Kind animation choice (static : one animation choosen, 
-            //                                random : selected animation random
-            //                                sequential : selected animation by order)
-            String animationMethod;
+            //Kind animation choice
+            EAnimationSelectionMethod animationMethod;
             //List of the animation to use
             std::vector<uint8_t> animationList;
         } Parameters;
@@ -46,8 +54,8 @@ class ConfigurationProvider
         void setup();
 
         void loadFromFlash();
-        void saveToFlash();
-        void load(const String & data);
+        bool saveToFlash();
+        bool load(const String & data);
 
         void createDefaultConfiguration();
 
@@ -56,7 +64,7 @@ class ConfigurationProvider
 
         Shape * assembly();
     private:
-        void parseJson(const String & data);
+        bool parseJson(const String & data);
         Shape *createShapeFromJSon(const JsonObject & jsonObject, Shape * parent = NULL);
         void createJsonFromShape(JsonObject & targetedObject, Shape * shape);
 

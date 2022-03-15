@@ -29,6 +29,11 @@ class ShapeVanishing : public IAnimation
             return "Shape vanishing";
         }
 
+        uint8_t id() const
+        {
+            return 18;
+        }
+
         void setup()
         {
         }

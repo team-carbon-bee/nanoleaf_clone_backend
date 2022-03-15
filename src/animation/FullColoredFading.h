@@ -26,6 +26,11 @@ class FullColoredFading : public IAnimation
             return "Full colored fading";
         }
 
+        uint8_t id() const
+        {
+            return 11;
+        }
+
         void setup()
         {
         }

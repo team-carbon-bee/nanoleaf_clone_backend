@@ -29,15 +29,23 @@ void Animator::setup()
 
     Log.println("Creating animator.");
 
-    if (Configuration.parameters().animationChoice == "static")
+    if (Configuration.parameters().animationMethod == ConfigurationProvider::kStatic)
     {
-        _animationCanChange = false;
-        _currentAnimation = getAnimationByName(Configuration.parameters().staticAnimation);
+        if (not Configuration.parameters().animationList.empty())
+        {
+            _animationCanChange = false;
+            _currentAnimation = getAnimationById(Configuration.parameters().animationList.front());
+        }
+        else
+        {
+            _animationCanChange = false;
+            _currentAnimation = nullptr;
+        }
     } 
     else
     {
         _animationCanChange = true;
-        _currentAnimation = getAnimationByMethod(Configuration.parameters().animationChoice);
+        _currentAnimation = getAnimationByMethod(Configuration.parameters().animationMethod);
     }   
 }
 
@@ -56,14 +64,14 @@ void Animator::handle()
             // The last one was already fade off and we can choose anoter new animation
             if (_currentAnimation == &_fadingOffAnimation)
             {
-                 _currentAnimation = getAnimationByMethod(Configuration.parameters().animationChoice);
+                _currentAnimation = getAnimationByMethod(Configuration.parameters().animationMethod);
             }
             else
             {
                 _currentAnimation = &_fadingOffAnimation;
             }
            
-            Serial.printf("Starting new animation %s\n", _currentAnimation->name().c_str());
+            Serial.printf("Starting new animation %s (%d)\n", _currentAnimation->name().c_str(), _currentAnimation->id());
             _currentAnimation->initialize();
             //restart timer
             _timeRemaining = Configuration.parameters().animationDuration;
@@ -76,31 +84,31 @@ void Animator::handle()
     }
 }
 
-animation::IAnimation * Animator::getAnimationByName(const String & animationName)
+animation::IAnimation * Animator::getAnimationById(const uint8_t & animationId)
 {
     if (GlobalAnimationFactory.animations().moveToStart())
     {
         do
         {
-            if (GlobalAnimationFactory.animations().getCurrent()->name() == animationName)
+            if (GlobalAnimationFactory.animations().getCurrent()->id() == animationId)
             {
                return GlobalAnimationFactory.animations().getCurrent();
             }
         } while (GlobalAnimationFactory.animations().next());
     }
-    Serial.printf("Unable to find animation %s\n", animationName.c_str());
+    Serial.printf("Unable to find animation with id %d\n", animationId);
     return NULL;
 }
 
-animation::IAnimation * Animator::getAnimationByMethod(const String & animationMethod)
+animation::IAnimation * Animator::getAnimationByMethod(const ConfigurationProvider::EAnimationSelectionMethod & animationMethod)
 {
-    if (animationMethod == "random")
+    if (animationMethod == ConfigurationProvider::kRandom)
     {
         int pos = random(0, GlobalAnimationFactory.animations().size());
         GlobalAnimationFactory.animations().at(pos);
         return GlobalAnimationFactory.animations().getCurrent();
     }
-    else if (animationMethod == "sequential")
+    else if (animationMethod == ConfigurationProvider::kSequential)
     {
         if (GlobalAnimationFactory.animations().at(_currentAnimationIndex))
         {

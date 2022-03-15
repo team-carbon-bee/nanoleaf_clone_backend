@@ -2,3 +2,4 @@
 .vscode/
 data/dist/
 src/web_autogen.h
+*.log

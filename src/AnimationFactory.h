@@ -7,7 +7,6 @@
 #include "ShapeObjects.h"
 #include "ShapeHelper.h"
 #include "PixelHelper.h"
-#include "ConfigurationProvider.h"
 #include "referenceSystem/LinearReferenceSystem.h"
 #include "referenceSystem/ShapeReferenceSystem.h"
 #include "animation/IAnimation.h"
