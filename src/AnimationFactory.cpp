@@ -26,19 +26,19 @@ void AnimationFactory::setup(ledDriver::ILedDriver * ledDriver)
     referenceSystem::ShapeRef.setup(_ledDriver);
     
     //we create all animations
-    _animations.Append(new animation::FullFading());
+
+    //Using linear reference system
+    //_animations.Append(new animation::FullFading());
     _animations.Append(new animation::FullColoredFading());
-    _animations.Append(new animation::RunningLight());
+    // _animations.Append(new animation::RunningLight());
+    // _animations.Append(new animation::Fireworks());
+    // _animations.Append(new animation::PaintingLight()); 
+    // _animations.Append(new animation::RainbowRunning());
 
+    //Using shape reference system
     //_animations.Append(new animation::RandomColoredShapes()); 
-
-
     //_animations.Append(new animation::FullColoredShapeFading());
-    //New animations come here !!!!
     //_animations.Append(new animation::ShapeVanishing()); 
-    _animations.Append(new animation::Fireworks());
-    _animations.Append(new animation::PaintingLight()); 
-    _animations.Append(new animation::RainbowRunning());
 
     _animations.moveToStart();
     do 

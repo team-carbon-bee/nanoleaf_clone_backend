@@ -17,6 +17,7 @@ ShapeReferenceSystem::~ShapeReferenceSystem()
 
 void ShapeReferenceSystem::setup(ledDriver::ILedDriver * ledDriver)
 {
+    _ledDriver = ledDriver;
     _shapeCount = GlobalShapeHelper.shapeCount();
     _assembly = GlobalShapeHelper.duplicateShape(Configuration.assembly());
     
@@ -50,33 +51,7 @@ void ShapeReferenceSystem::createLinkedListFromShapes(Shape * shape)
 
 void ShapeReferenceSystem::driveLeds()
 {
-    /*Serial.println("shape0");
-    for (int i = 0; i < GlobalShapeHelper.ledCountOfThisShape(_assembly); ++i)
-    {
-        Serial.printf("%06x ", getShape(_assembly)->getPixel(i));
-    }
-    Serial.println(".");
-    Serial.println("shape1");
-    for (int i = 0; i < GlobalShapeHelper.ledCountOfThisShape(_assembly->connections[0]); ++i)
-    {
-        Serial.printf("%06x ", getShape(_assembly->connections[0])->getPixel(i));
-    }
-    Serial.println(".");*/
-
-    //we disable brigthness during filling leds values
-    //_ledDriver->setBrightness(255);
     prepareDriveLeds(_assembly);
-    /*
-    Serial.print("leds(");
-    Serial.print(_ledDriver->numPixels());
-    Serial.print(") : ");
-    for (int i = 0; i < _ledDriver->numPixels(); ++i)
-    {
-        Serial.printf("%06x ", _ledDriver->getPixelColor(i));
-    }
-    Serial.println("");*/
-    //we re-enable brightness
-    //_ledDriver->setBrightness(Configuration.globalBrigthness());
     _ledDriver->show();
 }
 
