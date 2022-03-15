@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Yannick RICHARDOT <yannick.richardot@carbonbee.fr>">
+
+    <!-- Bootstrap CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="index.css" rel="stylesheet">
+
+    <title>Nano Leaf</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <span class="navbar-brand col-md-3 col-lg-2 mr-0 px-3">Nano Leaf</span>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="assembly.html">
+                                Assembly
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="config.html">
+                                Configuration
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+                <div class="row pt-md-4">
+                    <div class="input-group mb-3 col">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Version</span>
+                        </div>
+                        <input type="text" class="form-control" id="version-text" disabled>
+                    </div>
+                    <div class="input-group mb-3 col">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"">Build Date</span>
+                        </div>
+                        <input type=" text" class="form-control" id="buildDate-text" disabled>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>Configuration</h2>
+                </div>
+
+                </br>
+
+                <!-- ---- -->
+                <!-- MQTT -->
+                <!-- ---- -->
+                <div class="card">
+                    <div class="card-header">
+                        <input type="checkbox" class="form-check-input" id="mqtt-enable" data-bs-toggle="collapse"
+                            href="#card-mqtt">
+                        <label class="form-check-label" for="mqtt-enable">
+                            MQTT
+                        </label>
+                    </div>
+                    <div class="card-body collapse" id="card-mqtt">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">@ IP / Hostname</span>
+                                    </div>
+                                    <input type="text" class="form-control" id="mqtt-hostname">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Port</span>
+                                    </div>
+                                    <input type="number" min="1" max="65535" class="form-control" id="mqtt-port">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Username</span>
+                                    </div>
+                                    <input type="text" class="form-control" id="mqtt-username">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Password</span>
+                                    </div>
+                                    <input type="password" class="form-control" id="mqtt-password">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Topic</span>
+                                    </div>
+                                    <input type="text" class="form-control" id="mqtt-topic">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                </br>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-lg btn-primary" onclick="onBtnSaveClick()">Save</button>
+                </div>
+                </br>
+
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3 border-bottom">
+                </div>
+
+
+                <div class="btn-toolbar justify-content-between">
+                    <div>
+                        <a href="/update" type="submit" class="btn btn-secondary"
+                            onclick="onBtnUpdateClick()">Update</a>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-info" onclick="onBtnRebootClick()">Reboot</button>
+                        <button type="submit" class="btn btn-danger" data-toggle="modal"
+                            data-target="#modalConfirmation">Reset Factory</button>
+                    </div>
+                </div>
+
+                </br>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modalConfirmation" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure ?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                    onclick="onBtnResetClick()">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toast -->
+                <div aria-live="polite" aria-atomic="true" class="position-relative">
+                    <div class="toast-container position-fixed top-0 end-0">
+                        <div class="toast" id="toastError" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header toast-error">
+                                <strong class="me-auto" id="toastName">Error</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body" id="toastErrorText"></div>
+                        </div>
+
+                        <div class="toast" id="toastInfo" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header toast-info">
+                                <strong class="me-auto" id="toastName">Information</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body" id="toastInfoText"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+
+    <script src="bootstrap.min.js"></script>
+    <script src="dev_env.js"></script>
+    <script src="config.js"></script>
+
+</body>
+
+</html>
