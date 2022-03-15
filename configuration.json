@@ -42,7 +42,15 @@
     "parameters" : {
         "ledPerTriangle" : 21,
         "ledModel" : "rgb",
-        "hostname" : "nanoleaf_clone"
-
+        "hostname" : "nanoleaf_clone",
+        "maxBrightness" : 0.5,
+        "speed" : 50,
+        "mainColorRandom" : true,
+        "mainColor" : 16711935,
+        "backgroundColorRandom" : false,
+        "backgroundColor" : 0,
+        "animationDuration" : 5000,
+        "animationMethod" : "random",
+        "animationList" : [10, 11, 13, 15]
     }
 }
