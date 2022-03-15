@@ -28,6 +28,11 @@ class Fireworks : public IAnimation
             return "Fireworks";
         }
 
+        uint8_t id() const
+        {
+            return 10;
+        }
+
         void setup()
         {
             referenceSystem::LinearRef.clear();

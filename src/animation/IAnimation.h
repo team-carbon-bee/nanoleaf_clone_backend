@@ -21,6 +21,9 @@ class IAnimation
         //Name of the animation
         virtual String name() const = 0;
 
+        //Id of the animation
+        virtual uint8_t id() const = 0;
+
         //Determine if the animation can be ended by itself
         virtual bool canFinish() const = 0;
 

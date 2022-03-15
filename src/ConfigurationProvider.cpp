@@ -115,7 +115,7 @@ void ConfigurationProvider::createDefaultConfiguration()
     _parameters.animationList = "";
 }
 
-void ConfigurationProvider::saveToFlash()
+bool ConfigurationProvider::saveToFlash()
 {
     // Delete existing file, otherwise the configuration is appended to the file
     if (SPIFFS.exists(ConfigurationFilename))
@@ -123,9 +123,10 @@ void ConfigurationProvider::saveToFlash()
 
     // Open file for writing
     File file = SPIFFS.open(ConfigurationFilename, FILE_WRITE);
-    if (!file) {
+    if (!file) 
+    {
         Serial.println(F("Failed to create file"));
-        return;
+        return false;
     }
     
     //we browse the tree to generate the json
@@ -150,14 +151,15 @@ void ConfigurationProvider::saveToFlash()
     serializeJson(doc, file);
     file.close();
     Serial.println("Configuration file saved");
+    return true;
 }
 
-void ConfigurationProvider::load(const String & data)
+bool ConfigurationProvider::load(const String & data)
 {
-    parseJson(data);
+    return parseJson(data);
 }
 
-void ConfigurationProvider::parseJson(const String & data)
+bool ConfigurationProvider::parseJson(const String & data)
 {
     //deserializeJson
     DynamicJsonDocument doc(DynamicJsonDocumentMaxSize);
@@ -168,7 +170,7 @@ void ConfigurationProvider::parseJson(const String & data)
     {
         Serial.print("deserializeJson() failed: ");
         Serial.println(error.c_str());
-        return;
+        return false;
     }
 
     //iterate and create structure
@@ -188,6 +190,7 @@ void ConfigurationProvider::parseJson(const String & data)
     _parameters.animationMethod = parameters["animationMethod"] | "random";
 
     _parameters.animationList = parameters["staticAnimation"] | "";
+    return true;
 }
 
 Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject & jsonObject, Shape * parent)

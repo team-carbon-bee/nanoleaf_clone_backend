@@ -31,11 +31,11 @@ public:
 
   void sendJson(const uint16_t code, JsonDocument& doc);
 
-protected:
-  static void get_config();
-  static void set_config();
-
 private:
+  void sendCors();
+  void setConfig();
+  void getAnimationList();
+
 #ifdef ESP32
   WebServer                 _webServer;
   ESP32HTTPUpdateServer     _httpUpdater;

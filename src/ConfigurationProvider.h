@@ -46,8 +46,8 @@ class ConfigurationProvider
         void setup();
 
         void loadFromFlash();
-        void saveToFlash();
-        void load(const String & data);
+        bool saveToFlash();
+        bool load(const String & data);
 
         void createDefaultConfiguration();
 
@@ -56,7 +56,7 @@ class ConfigurationProvider
 
         Shape * assembly();
     private:
-        void parseJson(const String & data);
+        bool parseJson(const String & data);
         Shape *createShapeFromJSon(const JsonObject & jsonObject, Shape * parent = NULL);
         void createJsonFromShape(JsonObject & targetedObject, Shape * shape);
 

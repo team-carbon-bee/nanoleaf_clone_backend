@@ -28,6 +28,11 @@ class RandomColoredShapes : public IAnimation
             return "Random colored shapes";
         }
 
+        uint8_t id() const
+        {
+            return 16;
+        }
+
         void setup()
         {
         }

@@ -27,6 +27,11 @@ class PaintingLight : public IAnimation
             return "Painting lights";
         }
 
+        uint8_t id() const
+        {
+            return 14;
+        }
+
         void setup()
         {
         }
