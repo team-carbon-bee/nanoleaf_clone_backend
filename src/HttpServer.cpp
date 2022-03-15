@@ -14,6 +14,8 @@
 #include "HttpServer.h"
 #include "tools/Logger.h"
 
+#include "web_autogen.h"
+
 /********************************************************/
 /******************** Public Method *********************/
 /********************************************************/
@@ -62,7 +64,7 @@ void HttpServer::setup(void)
     }
   });
 
-  _httpUpdater.setup(&_webServer, String("/"));
+  _httpUpdater.setup(&_webServer, String("/update"));
   _webServer.begin();
 }
 
@@ -92,10 +94,18 @@ String HttpServer::getContentType(String filename)
 // send the right file to the client (if it exists)
 bool HttpServer::handleFileRead(String path)
 {
-  Log.println("handleFileRead: " + path);
   if (path.endsWith("/")) {
     path += "index.html";                                     // If a folder is requested, send the index file
   }
+
+  Log.println("handleFileRead: " + path);
+
+  // Check if file is on flash and send it
+  if (checkAndSendFile(path, HTTPServer.webServer()))
+  {
+    return true;
+  }
+
   String contentType = HTTPServer.getContentType(path);       // Get the MIME type
   String pathWithGz = path + ".gz";
   if (SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) {     // If the file exists, either as a compressed archive, or normal
