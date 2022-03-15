@@ -159,6 +159,10 @@ body {
   fill:rgb(212, 212, 212); stroke-width:3; stroke:rgb(0,0,0)
 }
 
+.connection {
+  fill:rgb(94, 94, 94); stroke-width:1; stroke:rgb(0, 0, 0)
+}
+
 .base {
-  fill:rgb(230, 230, 230); stroke-width:3; stroke:rgb(0,0,0)
+  fill:rgb(157, 240, 240); stroke-width:3; stroke:rgb(0, 0, 0)
 }
