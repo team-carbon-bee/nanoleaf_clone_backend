@@ -35,7 +35,7 @@ private:
   void sendCors();
   void setConfig();
   void getAnimationList();
-
+  void getInformations();
 #ifdef ESP32
   WebServer                 _webServer;
   ESP32HTTPUpdateServer     _httpUpdater;
