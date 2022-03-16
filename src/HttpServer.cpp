@@ -117,19 +117,21 @@ void HttpServer::getAnimationList()
     if (GlobalAnimationFactory.animations().moveToStart())
     {
         DynamicJsonDocument doc(3 * 1024);
-        JsonObject animationsList = doc.createNestedObject();
+        //JsonObject animationsList = doc.createNestedObject("animations");
         do
         {
             auto animation = GlobalAnimationFactory.animations().getCurrent();
-            JsonObject currentAnimation = animationsList.createNestedObject(String(animation->id()));
+            //JsonObject currentAnimation = animationsList.createNestedObject(String(animation->id()));
+            JsonObject currentAnimation = doc.createNestedObject(String(animation->id()));
             currentAnimation["name"] = animation->name();
             currentAnimation["canFinish"] = animation->canFinish();
         } 
         while (GlobalAnimationFactory.animations().next());
 
         WiFiClient client = _webServer.client();
-        serializeJson(doc, Serial);
-        serializeJson(doc, client);
+        String s;
+        serializeJson(doc, s);
+        _webServer.send(200, "application/json", s);
     }
     else
     {
