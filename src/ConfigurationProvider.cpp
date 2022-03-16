@@ -2,6 +2,7 @@
 #include "SPIFFS.h"
 #include "ConfigurationProvider.h"
 #include "PixelHelper.h"
+#include "tools/Logger.h"
 
 const String ConfigurationProvider::ConfigurationFilename = "/configuration.json";
 
@@ -192,8 +193,6 @@ bool ConfigurationProvider::parseJson(const String & data)
 {
     //deserializeJson
     DynamicJsonDocument doc(DynamicJsonDocumentMaxSize);
-    Serial.print("parseJson : ");
-    Serial.println(data);
     DeserializationError error = deserializeJson(doc, data);
     if (error) 
     {
@@ -221,7 +220,9 @@ bool ConfigurationProvider::parseJson(const String & data)
     _parameters.animationList.clear();
     JsonArray jsonAnimation = parameters["animationList"].as<JsonArray>();
     for(JsonVariant id : jsonAnimation) 
+    {
         _parameters.animationList.push_back(id.as<int>());
+    }
 
     return true;
 }
