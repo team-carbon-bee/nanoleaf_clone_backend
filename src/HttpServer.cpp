@@ -92,7 +92,7 @@ void HttpServer::setConfig()
     {
         Log.println("Received new configuration !");
         Log.println(_webServer.arg("plain"));
-        if (!Configuration.load(_webServer.arg("plain").c_str()))
+        if (Configuration.load(_webServer.arg("plain").c_str()))
         {
             if (Configuration.saveToFlash())
             {
@@ -106,7 +106,7 @@ void HttpServer::setConfig()
         else
         {
             Log.println("Error, parsing JSON !");
-            _webServer.send(400, "text/plain", "Error with parsing JSON");
+            _webServer.send(400, "text/plain", "Error during parsing JSON");
         }
     }
 }
@@ -128,6 +128,7 @@ void HttpServer::getAnimationList()
         while (GlobalAnimationFactory.animations().next());
 
         WiFiClient client = _webServer.client();
+        serializeJson(doc, Serial);
         serializeJson(doc, client);
     }
     else
@@ -172,6 +173,8 @@ String HttpServer::getContentType(String filename)
         return "application/x-zip";
     else if (filename.endsWith(".gz"))
         return "application/x-gzip";
+    else if (filename.endsWith(".json"))
+        return "application/json";
     return "text/plain";
 }
 
