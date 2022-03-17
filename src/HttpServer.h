@@ -38,6 +38,7 @@ private:
   void getInformations();
   void powerOn();
   void powerOff();
+  void previewAnimation();
 #ifdef ESP32
   WebServer                 _webServer;
   ESP32HTTPUpdateServer     _httpUpdater;

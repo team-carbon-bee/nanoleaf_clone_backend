@@ -13,11 +13,13 @@ class Animator
 
         void setup();
         void handle();
+        void currentAnimation(animation::IAnimation * newAnimation);
         void enabled(const bool value);
         bool enabled() const;
+        void previewAnimation(const uint8_t id);
 
     private:
-    bool _enabled;
+        bool _enabled;
         animation::IAnimation * _currentAnimation;
         ledDriver::ILedDriver * _ledDriver;
         int _timeRemaining;
@@ -27,6 +29,7 @@ class Animator
         std::vector<uint8_t> _animationList;
         animation::FadingOff _fadingOffAnimation;
 
+        void reloadConfiguration();
         animation::IAnimation * getAnimationById(const uint8_t & animationId);
         animation::IAnimation * getAnimationByMethod(const ConfigurationProvider::EAnimationSelectionMethod & animationMethod);
 

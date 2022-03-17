@@ -76,6 +76,9 @@ void HttpServer::setup(void)
     _webServer.on("/powerOn", HTTP_PUT, [&]()
                   { powerOn(); });
 
+    _webServer.on("/previewAnimation", HTTP_PUT, [&]()
+                  { previewAnimation(); });
+
 
     _webServer.onNotFound([&]()
                           {
@@ -164,11 +167,21 @@ void HttpServer::getInformations()
 void HttpServer::powerOn()
 {
     GlobalAnimator.enabled(true);
+    _webServer.send(200, "application/json", "{\"result\":true}");
 }
 
 void HttpServer::powerOff()
 {
     GlobalAnimator.enabled(false);
+    _webServer.send(200, "application/json", "{\"result\":true}");
+}
+
+void HttpServer::previewAnimation()
+{
+    
+    uint8_t id = HTTPServer.webServer().arg("id").toInt();
+    GlobalAnimator.previewAnimation(id);
+    _webServer.send(200, "application/json", "{\"result\":true}");
 }
 
 void HttpServer::sendCors()

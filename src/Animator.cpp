@@ -30,8 +30,25 @@ void Animator::setup()
     Log.println("Creating animator.");
 
     //Getting params from configuration
+    reloadConfiguration();
+}
+
+void Animator::reloadConfiguration()
+{
     _animationSelectionMethod = Configuration.parameters().animationMethod;
     _animationList = Configuration.parameters().animationList;
+}
+
+void Animator::currentAnimation(animation::IAnimation * newAnimation)
+{
+    _currentAnimation = newAnimation;
+    if (_currentAnimation != nullptr)
+    {
+        Serial.printf("Starting new animation %s (%d)\n", _currentAnimation->name().c_str(), _currentAnimation->id());
+        _currentAnimation->initialize();
+    }
+    else
+        Serial.printf("Current animation cleared\n");
 }
 
 void Animator::handle()
@@ -46,8 +63,7 @@ void Animator::handle()
                 //if there is no animation for the moment we select the first of the list
                 if (_currentAnimation == nullptr)
                 {
-                    _currentAnimation = getAnimationById(_animationList.front());
-                    _currentAnimation->initialize();
+                    currentAnimation(getAnimationById(_animationList.front()));
                 }
 
                 if ((_currentAnimation->isFinished()) || (_timeRemaining <= 0))
@@ -65,7 +81,8 @@ void Animator::handle()
             else
             {
                 _animationCanChange = false;
-                _currentAnimation = nullptr;
+                currentAnimation(nullptr);
+                
             }
         } 
         else
@@ -73,8 +90,7 @@ void Animator::handle()
             //random and sequential follow same schema
             if (_currentAnimation == nullptr)
             {
-                _currentAnimation = getAnimationByMethod(Configuration.parameters().animationMethod);
-                _currentAnimation->initialize();
+                currentAnimation(getAnimationByMethod(Configuration.parameters().animationMethod));
             }
 
             if (_currentAnimation->isFinished() || (_timeRemaining <= 0))
@@ -88,15 +104,13 @@ void Animator::handle()
                 // The last one was already fade off and we can choose anoter new animation
                 if (_currentAnimation == &_fadingOffAnimation)
                 {
-                    _currentAnimation = getAnimationByMethod(_animationSelectionMethod);
+                    currentAnimation(getAnimationByMethod(_animationSelectionMethod));
                 }
                 else
                 {
-                    _currentAnimation = &_fadingOffAnimation;
+                    currentAnimation(&_fadingOffAnimation);
                 }
             
-                Serial.printf("Starting new animation %s (%d)\n", _currentAnimation->name().c_str(), _currentAnimation->id());
-                _currentAnimation->initialize();
                 //restart timer
                 _timeRemaining = Configuration.parameters().animationDuration;
             } 
@@ -108,8 +122,7 @@ void Animator::handle()
             _timeRemaining -= Configuration.parameters().speed;
         }
     }
-
-    if ((_currentAnimation == &_fadingOffAnimation) && (not _currentAnimation->isFinished()))
+    else  if ((_currentAnimation == &_fadingOffAnimation) && (not _currentAnimation->isFinished()))
     {
         _currentAnimation->loop();
     }
@@ -120,13 +133,15 @@ void Animator::enabled(const bool value)
     if (value)
     {
         _enabled = true;
+        //we restore configuration
+        reloadConfiguration();
+        currentAnimation(nullptr);
     }
     else
     {
         _enabled = false;
         //we se animation to fadeout
-        _currentAnimation = &_fadingOffAnimation;
-        _currentAnimation->initialize();
+        currentAnimation(&_fadingOffAnimation);
     }
 }
 
@@ -176,6 +191,17 @@ animation::IAnimation * Animator::getAnimationByMethod(const ConfigurationProvid
     }
 
     return NULL;
+}
+
+void Animator::previewAnimation(const uint8_t id)
+{
+    animation::IAnimation * animation = getAnimationById(id);
+    if (animation != nullptr)
+    {
+        //we set the animation mathod as static with the requested animation
+        currentAnimation(animation);
+        _animationSelectionMethod = ConfigurationProvider::kStatic;
+    }
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) 
