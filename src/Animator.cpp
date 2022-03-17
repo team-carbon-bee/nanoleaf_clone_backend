@@ -8,7 +8,7 @@
 #include "Animator.h"
 
 Animator::Animator()
-    : _currentAnimation(NULL), _timeRemaining(0), _animationCanChange(false), _currentAnimationIndex(0)
+    : _currentAnimation(nullptr), _timeRemaining(0), _animationCanChange(false), _currentAnimationIndex(0)
 {
 }
 
@@ -29,12 +29,35 @@ void Animator::setup()
 
     Log.println("Creating animator.");
 
-    if (Configuration.parameters().animationMethod == ConfigurationProvider::kStatic)
+    //Getting params from configuration
+    _animationSelectionMethod = Configuration.parameters().animationMethod;
+    _animationList = Configuration.parameters().animationList;
+}
+
+void Animator::handle()
+{
+    if (_animationSelectionMethod == ConfigurationProvider::kStatic)
     {
-        if (not Configuration.parameters().animationList.empty())
+        if (not _animationList.empty())
         {
-            _animationCanChange = false;
-            _currentAnimation = getAnimationById(Configuration.parameters().animationList.front());
+            //if there is no animation for the moment we select the first of the list
+            if (_currentAnimation == nullptr)
+            {
+                _currentAnimation = getAnimationById(_animationList.front());
+                _currentAnimation->initialize();
+            }
+
+            if ((_currentAnimation->isFinished()) || (_timeRemaining <= 0))
+            {
+                //we are in statuc animation but a finshable animation has been selected
+                //we have to restart it
+                _timeRemaining = Configuration.parameters().animationDuration;
+                //we deinit the last run
+                _currentAnimation->deinitialize();
+                //and init the new run
+                _currentAnimation->initialize();
+            }
+            
         }
         else
         {
@@ -44,16 +67,14 @@ void Animator::setup()
     } 
     else
     {
-        _animationCanChange = true;
-        _currentAnimation = getAnimationByMethod(Configuration.parameters().animationMethod);
-    }   
-}
+        //random and sequential follow same schema
+        if (_currentAnimation == nullptr)
+        {
+            _currentAnimation = getAnimationByMethod(Configuration.parameters().animationMethod);
+            _currentAnimation->initialize();
+        }
 
-void Animator::handle()
-{
-    if (_currentAnimation != NULL)
-    {
-        if ((_animationCanChange) && ((_currentAnimation->isFinished()) || (_timeRemaining <= 0)))
+        if (_currentAnimation->isFinished() || (_timeRemaining <= 0))
         {
             //release the previous one
             _currentAnimation->deinitialize();
@@ -64,7 +85,7 @@ void Animator::handle()
             // The last one was already fade off and we can choose anoter new animation
             if (_currentAnimation == &_fadingOffAnimation)
             {
-                _currentAnimation = getAnimationByMethod(Configuration.parameters().animationMethod);
+                _currentAnimation = getAnimationByMethod(_animationSelectionMethod);
             }
             else
             {
@@ -75,11 +96,12 @@ void Animator::handle()
             _currentAnimation->initialize();
             //restart timer
             _timeRemaining = Configuration.parameters().animationDuration;
-        }
+        } 
+    }   
 
-        //Serial.println("looping animation");
+    if (_currentAnimation != nullptr)
+    {
         _currentAnimation->loop();
-
         _timeRemaining -= Configuration.parameters().speed;
     }
 }
@@ -104,16 +126,17 @@ animation::IAnimation * Animator::getAnimationByMethod(const ConfigurationProvid
 {
     if (animationMethod == ConfigurationProvider::kRandom)
     {
-        int pos = random(0, GlobalAnimationFactory.animations().size());
-        GlobalAnimationFactory.animations().at(pos);
+        //we roll a dice to choose an id in animationList
+        int pos = random(0, Configuration.parameters().animationList.size());
+        GlobalAnimationFactory.animations().at(Configuration.parameters().animationList[pos]);
         return GlobalAnimationFactory.animations().getCurrent();
     }
     else if (animationMethod == ConfigurationProvider::kSequential)
     {
-        if (GlobalAnimationFactory.animations().at(_currentAnimationIndex))
+        if (GlobalAnimationFactory.animations().at(Configuration.parameters().animationList[_currentAnimationIndex]))
         {
             _currentAnimationIndex++;
-            if (_currentAnimationIndex >= GlobalAnimationFactory.animations().size())
+            if (_currentAnimationIndex >= Configuration.parameters().animationList.size())
                 _currentAnimationIndex = 0;
             return GlobalAnimationFactory.animations().getCurrent();
         }
