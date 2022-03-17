@@ -143,28 +143,26 @@
                     </div>
                     <div>
                         <button type="submit" class="btn btn-info" onclick="onBtnRebootClick()">Reboot</button>
-                        <button type="submit" class="btn btn-danger" data-toggle="modal"
-                            data-target="#modalConfirmation">Reset Factory</button>
+                        <button type="submit" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#modalConfirmation">Reset Factory</button>
                     </div>
                 </div>
 
                 </br>
 
                 <!-- Modal -->
-                <div class="modal fade" id="modalConfirmation" tabindex="-1" role="dialog"
-                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
+                <div class="modal fade" id="modalConfirmation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
                             </div>
                             <div class="modal-body">
-                                Are you sure ?
+                                Reset all configurations, are you sure ?
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                    onclick="onBtnResetClick()">Yes</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="onBtnResetClick()">Yes</button>
                             </div>
                         </div>
                     </div>
@@ -172,8 +170,8 @@
 
                 <!-- Toast -->
                 <div aria-live="polite" aria-atomic="true" class="position-relative">
-                    <div class="toast-container position-fixed top-0 end-0">
-                        <div class="toast" id="toastError" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                        <div class="toast" id="toastError" aria-live="assertive" aria-atomic="true">
                             <div class="toast-header toast-error">
                                 <strong class="me-auto" id="toastName">Error</strong>
                                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -181,7 +179,7 @@
                             <div class="toast-body" id="toastErrorText"></div>
                         </div>
 
-                        <div class="toast" id="toastInfo" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast" id="toastInfo" aria-live="assertive" aria-atomic="true">
                             <div class="toast-header toast-info">
                                 <strong class="me-auto" id="toastName">Information</strong>
                                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>

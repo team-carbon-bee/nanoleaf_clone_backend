@@ -126,10 +126,6 @@ body {
 .toast {
   font-size: 1em;
   background-color: rgb(255, 255, 255);
-  position: fixed;
-  top: 5rem;
-  right: 1rem;
-  min-width: 300px;
 }
 
 /* Conf side */

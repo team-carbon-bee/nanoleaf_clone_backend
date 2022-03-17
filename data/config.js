@@ -98,7 +98,6 @@ function getConfig() {
     }).catch((error) => {
         console.log(error)
         /* Display Toast Error */
-        toastInfoShow("coucou les amis !!!");
         toastErrorShow("Unable to read configuration !");
         getConfig();
     })
@@ -107,8 +106,6 @@ function getConfig() {
 
 document.addEventListener('DOMContentLoaded', (function () {
     console.log("ready !");
-
-    toastInfoShow("coucou les amis !!!");
 
     getConfig();
 }));
