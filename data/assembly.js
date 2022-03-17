@@ -307,7 +307,7 @@ function parseShape(shape, parent) {
 }
 
 function parseConfig(config) {
-    if (config.assembly != null) {
+    if (config != null && config.assembly != null) {
         let parent = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
         let c = document.getElementById("mySvg");
@@ -399,5 +399,6 @@ function getFirstChildByClassName(parent, className) {
 document.addEventListener('DOMContentLoaded', (function () {
     console.log("assembly ready !");
 
+    let config = api_rest_read_configuration();
     parseConfig(config);
 }));
