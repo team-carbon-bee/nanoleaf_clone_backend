@@ -162,3 +162,11 @@ body {
 .base {
   fill:rgb(157, 240, 240); stroke-width:3; stroke:rgb(0, 0, 0)
 }
+
+.add_button {
+  fill: #15af2a;
+}
+
+.del_button {
+  fill: #ff2828;
+}

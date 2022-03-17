@@ -11,19 +11,7 @@ let config =
                             {
                                 "type": "triangle",
                                 "connections": [
-                                    {
-                                        "type": "triangle",
-                                        "connections": [
-                                            {
-                                                "type": "triangle",
-                                                "connections": [
-                                                    null,
-                                                    null
-                                                ]
-                                            },
-                                            null
-                                        ]
-                                    },
+                                    null,
                                     null
                                 ]
                             },
@@ -101,7 +89,22 @@ let config =
 let size_of_triangle = 200;
 let padding_between_triangle = 1.5;
 
+function create_json_from_svg() {
+    let base = document.getElementsByClassName("base");
+    console.log(base);
+}
+
+function add_child(child_els) {
+    appendTriangle(child_els.parentElement);
+}
+
+function remove_child(child_els) {
+    console.log(child_els.parentElement);
+    child_els.parentElement.remove();
+}
+
 function appendTriangle(parent) {
+    let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
     let h = (Math.sqrt(3) * size_of_triangle / 2);
@@ -118,8 +121,9 @@ function appendTriangle(parent) {
     triangle.setAttribute("points", points);
     // Add Class
     triangle.setAttribute("class", "triangle");
-    // Append Triangle
-    parent.appendChild(triangle);
+
+    // Append Triangle to group
+    group.appendChild(triangle);
 
     let connection = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
     let offset = size_of_triangle / 50;
@@ -136,28 +140,58 @@ function appendTriangle(parent) {
     // Add Class
     connection.setAttribute("class", "connection");
 
-    // Append connection
-    parent.appendChild(connection);
+    // Append connection to group
+    group.appendChild(connection);
+
+    // Create Del button
+    let del_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    del_button.setAttribute("d", "M11,22A11,11,0,1,0,0,11,11,11,0,0,0,11,22ZM5,10H17v2H5Z");
+    del_button.setAttribute("transform", `translate(${-22*0.75}, ${22*0.75-size_of_triangle/2}) scale(1.5, 1.5)`);
+    del_button.setAttribute("class", "del_button");
+    del_button.setAttribute("onclick", "remove_child(this)");
+
+    // Append connection to group
+    group.appendChild(del_button);
+
+    // Create Add button
+    let add_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    add_button.setAttribute("d", "M11 22A11 11 0 1 0 0 11a11 11 0 0 0 11 11zM5 10h5V5h2v5h5v2h-5v5h-2v-5H5z");
+    add_button.setAttribute("transform", `translate(${-22*0.75}, ${-size_of_triangle/4}) scale(1.5, 1.5)`);
+    add_button.setAttribute("class", "add_button");
+    add_button.setAttribute("onclick", "add_child(this)");
 
     // Create group for child 1
     let child1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
     // Add Rotation and set the origin of the child 1
     child1.setAttribute("transform", `translate(${-size_of_triangle / 4 - (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(-60)`);
-    // Append child 1
-    parent.appendChild(child1);
+    child1.setAttribute("class", "child1");
+
+    // Append Add button to child 1
+    child1.appendChild(add_button.cloneNode(true));
+
+    // Append child 1 to group
+    group.appendChild(child1);
 
     // Create group for child 2
     let child2 = document.createElementNS("http://www.w3.org/2000/svg", "g");
     // Add Rotation and set the origin of the child 2
     child2.setAttribute("transform", `translate(${size_of_triangle / 4 + (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(60)`);
-    // Append child 2
-    parent.appendChild(child2);
+    child2.setAttribute("class", "child2");
+
+    // Append Add button to child 2
+    child2.appendChild(add_button.cloneNode(true));
+
+    // Append child 2 to group
+    group.appendChild(child2);
+
+    // Append group to parent
+    parent.appendChild(group);
 }
 
 function appendBase(parent) {
-    let base = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
-    base.setAttribute("transform", `rotate(180) translate(0, ${-padding_between_triangle * 2})`);
+    group.setAttribute("transform", `rotate(180) translate(0, ${-padding_between_triangle * 2})`);
 
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
@@ -178,10 +212,30 @@ function appendBase(parent) {
     // Add Class
     triangle.setAttribute("class", "base");
 
-    base.append(triangle);
+    // Append triangle to group
+    group.appendChild(triangle);
 
-    // Append Base
-    parent.appendChild(base);
+    // Create Add button
+    let add_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    add_button.setAttribute("d", "M11 22A11 11 0 1 0 0 11a11 11 0 0 0 11 11zM5 10h5V5h2v5h5v2h-5v5h-2v-5H5z");
+    add_button.setAttribute("transform", `translate(${-22*0.75}, ${-size_of_triangle/4}) scale(1.5, 1.5)`);
+    add_button.setAttribute("class", "add_button");
+    add_button.setAttribute("onclick", "add_child(this)");
+
+    // Create group for child 1
+    let child1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    // Add Rotation and set the origin of the child 1
+    child1.setAttribute("transform", `translate(0, ${padding_between_triangle * 2}), rotate(-180)`);
+    child1.setAttribute("class", "child1");
+
+    // Append Add button to child 1
+    child1.appendChild(add_button);
+
+    // Append child 1 to group
+    group.appendChild(child1);
+
+    // Append goup to parent
+    parent.appendChild(group);
 }
 
 function parseShape(shape, parent) {
@@ -196,12 +250,15 @@ function parseShape(shape, parent) {
     appendTriangle(parent);
 
     // If first Child exist
-    if (shape.connections[0] != null && shape.connections[0].length != 0) {
-        parseShape(shape.connections[0], parent.childNodes[2]);
+    let child1 = getFirstChildByClassName(parent, "child1");
+    if (child1 != null && shape.connections[0] != null && shape.connections[0].length != 0) {
+        parseShape(shape.connections[0], child1);
     }
+
     // If second Child exist
-    if (shape.connections[1] != null && shape.connections[1].length != 0) {
-        parseShape(shape.connections[1], parent.childNodes[3]);
+    let child2 = getFirstChildByClassName(parent, "child2");
+    if (child2 != null && shape.connections[1] != null && shape.connections[1].length != 0) {
+        parseShape(shape.connections[1], child2);
     }
 }
 
@@ -214,9 +271,12 @@ function parseConfig(config) {
         // Add Rotation and set the origin of the group
         parent.setAttribute("transform", `translate(${c.clientWidth / 2}, ${c.clientHeight * 5 / 6}), rotate(0)`);
 
-        parseShape(config.assembly, parent);
-
         appendBase(parent);
+
+        let child1 = getFirstChildByClassName(parent, "child1");
+
+        if (child1 != null)
+            parseShape(config.assembly, child1);
 
         c.appendChild(parent);
     }
@@ -273,6 +333,24 @@ svgContainer.onmouseup = function (e) {
 
 svgContainer.onmouseleave = svgContainer.onmouseup;
 
+function getFirstChildByClassName(parent, className) {
+    let child = null;
+
+    if (!parent.hasChildNodes())
+        return null;
+
+    let len = parent.childElementCount;
+    let i = 0;
+    for (i=0 ; i<len ; ++i)
+    {
+        if (parent.childNodes[i].getAttribute("class") == className)
+            return parent.childNodes[i];
+        else
+            child = getFirstChildByClassName(parent.childNodes[i], className);
+    }
+
+    return child;
+}
 
 // Call it when document is ready
 document.addEventListener('DOMContentLoaded', (function () {
