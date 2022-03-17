@@ -66,7 +66,38 @@
                     <h2>Configuration</h2>
                 </div>
 
-                </br>
+                <!-- HostName -->
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Host Name</span>
+                    </div>
+                    <input type="text" class="form-control" id="hostname-text">
+                </div>
+
+                <!-- LED Model and Nb LED-->
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">LED model</span>
+                            </div>
+                            <select class="form-select" id="ledModel-select">
+                                <option selected>RGB</option>
+                                <option>RGBW</option>
+                                <option>RGBWW</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Number of LEDs</span>
+                            </div>
+                            <input type="number" value="21" min="1" max="100" class="form-control" id="led-number">
+                        </div>
+                    </div>
+                </div>
 
                 <!-- ---- -->
                 <!-- MQTT -->
