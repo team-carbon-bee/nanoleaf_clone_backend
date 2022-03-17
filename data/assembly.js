@@ -107,7 +107,7 @@ function appendTriangle(parent) {
     let h = (Math.sqrt(3) * size_of_triangle / 2);
     let l = size_of_triangle / 8;
     let hyp = (l / Math.cos(30 * Math.PI / 180));
-    let points = `${-(size_of_triangle / 2) + hyp}                                        0
+    let points = `${-(size_of_triangle / 2) + hyp}                                          0
                     ${-(size_of_triangle / 2) + (hyp / 2)}                                  ${-l}
                     ${-hyp / 2}                                                             ${-h + l}
                     ${hyp / 2}                                                              ${-h + l}
@@ -121,11 +121,15 @@ function appendTriangle(parent) {
     // Append Triangle
     parent.appendChild(triangle);
 
-    var connection = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    points =   `${-size_of_triangle/32}         ${-size_of_triangle/40}
-                ${-size_of_triangle/32}         ${size_of_triangle/40 + padding_between_triangle}
-                ${size_of_triangle/32}          ${size_of_triangle/40 + padding_between_triangle}
-                ${size_of_triangle/32}          ${-size_of_triangle/40}`
+    let connection = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    let offset = size_of_triangle / 50;
+    points = `${-size_of_triangle / 32}             ${-size_of_triangle / 40 + offset}
+                ${-size_of_triangle / 32}           ${size_of_triangle / 40 + offset}
+                ${-size_of_triangle / 32 - 3}       ${size_of_triangle / 40 + offset}
+                0                                   ${size_of_triangle / 40 + offset + 10}
+                ${size_of_triangle / 32 + 3}        ${size_of_triangle / 40 + offset}
+                ${size_of_triangle / 32}            ${size_of_triangle / 40 + offset}
+                ${size_of_triangle / 32}            ${-size_of_triangle / 40 + offset}`
 
     // Add Point
     connection.setAttribute("points", points);
@@ -135,7 +139,6 @@ function appendTriangle(parent) {
     // Append connection
     parent.appendChild(connection);
 
-    console.log("plop")
     // Create group for child 1
     let child1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
     // Add Rotation and set the origin of the child 1
@@ -154,7 +157,7 @@ function appendTriangle(parent) {
 function appendBase(parent) {
     let base = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
-    base.setAttribute("transform", `rotate(180) translate(0, ${-padding_between_triangle})`);
+    base.setAttribute("transform", `rotate(180) translate(0, ${-padding_between_triangle * 2})`);
 
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
@@ -194,12 +197,10 @@ function parseShape(shape, parent) {
 
     // If first Child exist
     if (shape.connections[0] != null && shape.connections[0].length != 0) {
-        console.log("first child");
         parseShape(shape.connections[0], parent.childNodes[2]);
     }
     // If second Child exist
     if (shape.connections[1] != null && shape.connections[1].length != 0) {
-        console.log("second child");
         parseShape(shape.connections[1], parent.childNodes[3]);
     }
 }
@@ -211,7 +212,7 @@ function parseConfig(config) {
         let c = document.getElementById("mySvg");
 
         // Add Rotation and set the origin of the group
-        parent.setAttribute("transform", `translate(${c.getAttribute('width') / 2}, ${c.getAttribute('height') * 5 / 6}), rotate(0)`);
+        parent.setAttribute("transform", `translate(${c.clientWidth / 2}, ${c.clientHeight * 5 / 6}), rotate(0)`);
 
         parseShape(config.assembly, parent);
 
@@ -222,11 +223,11 @@ function parseConfig(config) {
 }
 
 const svgContainer = document.getElementById("mySvg");
-let viewBox = { x: 0, y: 0, w: 1500, h: 750 };
-let svgSize = { w: 1500, h: 750 };
+let viewBox = { x: 0, y: 0, w: svgContainer.clientWidth, h: svgContainer.clientHeight };
+let svgSize = { w: svgContainer.clientWidth, h: svgContainer.clientHeight };
 let isPanning = false;
-let startPoint = {x:0,y:0};
-let endPoint = {x:0,y:0};
+let startPoint = { x: 0, y: 0 };
+let endPoint = { x: 0, y: 0 };
 let scale = 1;
 
 svgContainer.onmousewheel = function (e) {
@@ -275,7 +276,7 @@ svgContainer.onmouseleave = svgContainer.onmouseup;
 
 // Call it when document is ready
 document.addEventListener('DOMContentLoaded', (function () {
-    console.log("ready !");
+    console.log("assembly ready !");
 
     parseConfig(config);
 }));
