@@ -19,7 +19,9 @@ class Animator
         ledDriver::ILedDriver * _ledDriver;
         int _timeRemaining;
         bool _animationCanChange;
+        ConfigurationProvider::EAnimationSelectionMethod _animationSelectionMethod;
         int _currentAnimationIndex;
+        std::vector<uint8_t> _animationList;
         animation::FadingOff _fadingOffAnimation;
 
         animation::IAnimation * getAnimationById(const uint8_t & animationId);

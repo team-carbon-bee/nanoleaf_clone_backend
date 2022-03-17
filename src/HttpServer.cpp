@@ -14,6 +14,7 @@
 #include "AnimationFactory.h"
 #include "HttpServer.h"
 #include "tools/Logger.h"
+#include "Constants.h"
 
 #include "web_autogen.h"
 
@@ -64,6 +65,9 @@ void HttpServer::setup(void)
 
     _webServer.on("/animations", [&]()
                   { getAnimationList(); });
+
+    _webServer.on("/informations", [&]()
+                  { getInformations(); });
 
     _webServer.onNotFound([&]()
                           {
@@ -117,24 +121,36 @@ void HttpServer::getAnimationList()
     if (GlobalAnimationFactory.animations().moveToStart())
     {
         DynamicJsonDocument doc(3 * 1024);
-        JsonObject animationsList = doc.createNestedObject();
+        //JsonObject animationsList = doc.createNestedObject("animations");
         do
         {
             auto animation = GlobalAnimationFactory.animations().getCurrent();
-            JsonObject currentAnimation = animationsList.createNestedObject(String(animation->id()));
+            //JsonObject currentAnimation = animationsList.createNestedObject(String(animation->id()));
+            JsonObject currentAnimation = doc.createNestedObject(String(animation->id()));
             currentAnimation["name"] = animation->name();
             currentAnimation["canFinish"] = animation->canFinish();
         } 
         while (GlobalAnimationFactory.animations().next());
 
-        WiFiClient client = _webServer.client();
-        serializeJson(doc, Serial);
-        serializeJson(doc, client);
+        String s;
+        serializeJson(doc, s);
+        _webServer.send(200, "application/json", s);
     }
     else
     {
         _webServer.send(400, "text/plain", "Body not received");
     }
+}
+
+void HttpServer::getInformations()
+{
+    sendCors();
+    DynamicJsonDocument doc(3 * 1024);
+    doc["buildDate"] = __DATE__ " " __TIME__;
+    doc["version"] = Constants::ApplicationVersion;
+    String s;
+    serializeJson(doc, s);
+    _webServer.send(200, "application/json", s);
 }
 
 void HttpServer::sendCors()
