@@ -86,12 +86,57 @@ let config =
     }
 };
 
+function onBtSaveClick() {
+    let json = create_json_from_svg();
+    console.log(json);
+}
+
 let size_of_triangle = 200;
 let padding_between_triangle = 1.5;
 
 function create_json_from_svg() {
-    let base = document.getElementsByClassName("base");
-    console.log(base);
+    let parent = getFirstChildByClassName(svgContainer, "child1");
+    let triangle = getFirstChildByClassName(parent, "triangle");
+    let json = {};
+
+    // If we have one or more triangle
+    if (triangle != null) {
+        json = {
+            "type": "triangle",
+            "connections": []
+        };
+        parent = triangle.parentElement;
+        let child1 = getFirstChildByClassName(parent, "child1");
+        if (child1 != null)
+            add_child_to_json(json.connections, child1);
+        let child2 = getFirstChildByClassName(parent, "child2");
+        if (child2 != null)
+            add_child_to_json(json.connections, child2);
+    }
+
+    return json;
+}
+
+function add_child_to_json(json_data, child) {
+    let triangle = getFirstChildByClassName(child, "triangle");
+
+    // If we have one or more triangle
+    if (triangle != null) {
+        json_data.push({
+            "type": "triangle",
+            "connections": []
+        });
+
+        let parent = triangle.parentElement;
+        let child1 = getFirstChildByClassName(parent, "child1");
+        if (child1 != null)
+            add_child_to_json(json_data[json_data.length - 1].connections, child1);
+        let child2 = getFirstChildByClassName(parent, "child2");
+        if (child2 != null)
+            add_child_to_json(json_data[json_data.length - 1].connections, child2);
+    }
+    else
+        json_data.push(null);
 }
 
 function add_child(child_els) {
@@ -99,7 +144,6 @@ function add_child(child_els) {
 }
 
 function remove_child(child_els) {
-    console.log(child_els.parentElement);
     child_els.parentElement.remove();
 }
 
@@ -146,7 +190,7 @@ function appendTriangle(parent) {
     // Create Del button
     let del_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
     del_button.setAttribute("d", "M11,22A11,11,0,1,0,0,11,11,11,0,0,0,11,22ZM5,10H17v2H5Z");
-    del_button.setAttribute("transform", `translate(${-22*0.75}, ${22*0.75-size_of_triangle/2}) scale(1.5, 1.5)`);
+    del_button.setAttribute("transform", `translate(${-22 * 0.75}, ${22 * 0.75 - size_of_triangle / 2}) scale(1.5, 1.5)`);
     del_button.setAttribute("class", "del_button");
     del_button.setAttribute("onclick", "remove_child(this)");
 
@@ -156,7 +200,7 @@ function appendTriangle(parent) {
     // Create Add button
     let add_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
     add_button.setAttribute("d", "M11 22A11 11 0 1 0 0 11a11 11 0 0 0 11 11zM5 10h5V5h2v5h5v2h-5v5h-2v-5H5z");
-    add_button.setAttribute("transform", `translate(${-22*0.75}, ${-size_of_triangle/4}) scale(1.5, 1.5)`);
+    add_button.setAttribute("transform", `translate(${-22 * 0.75}, ${-size_of_triangle / 4}) scale(1.5, 1.5)`);
     add_button.setAttribute("class", "add_button");
     add_button.setAttribute("onclick", "add_child(this)");
 
@@ -218,7 +262,7 @@ function appendBase(parent) {
     // Create Add button
     let add_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
     add_button.setAttribute("d", "M11 22A11 11 0 1 0 0 11a11 11 0 0 0 11 11zM5 10h5V5h2v5h5v2h-5v5h-2v-5H5z");
-    add_button.setAttribute("transform", `translate(${-22*0.75}, ${-size_of_triangle/4}) scale(1.5, 1.5)`);
+    add_button.setAttribute("transform", `translate(${-22 * 0.75}, ${-size_of_triangle / 4}) scale(1.5, 1.5)`);
     add_button.setAttribute("class", "add_button");
     add_button.setAttribute("onclick", "add_child(this)");
 
@@ -341,8 +385,7 @@ function getFirstChildByClassName(parent, className) {
 
     let len = parent.childElementCount;
     let i = 0;
-    for (i=0 ; i<len ; ++i)
-    {
+    for (i = 0; i < len; ++i) {
         if (parent.childNodes[i].getAttribute("class") == className)
             return parent.childNodes[i];
         else

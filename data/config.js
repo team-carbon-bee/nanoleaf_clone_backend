@@ -105,7 +105,7 @@ function getConfig() {
 }
 
 document.addEventListener('DOMContentLoaded', (function () {
-    console.log("ready !");
+    console.log("config ready !");
 
     getConfig();
 }));
