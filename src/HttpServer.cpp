@@ -12,6 +12,7 @@
 
 #include "ConfigurationProvider.h"
 #include "AnimationFactory.h"
+#include "Animator.h"
 #include "HttpServer.h"
 #include "tools/Logger.h"
 #include "Constants.h"
@@ -68,6 +69,13 @@ void HttpServer::setup(void)
 
     _webServer.on("/informations", [&]()
                   { getInformations(); });
+
+    _webServer.on("/powerOff", HTTP_PUT, [&]()
+                  { powerOff(); });
+
+    _webServer.on("/powerOn", HTTP_PUT, [&]()
+                  { powerOn(); });
+
 
     _webServer.onNotFound([&]()
                           {
@@ -153,6 +161,16 @@ void HttpServer::getInformations()
     _webServer.send(200, "application/json", s);
 }
 
+void HttpServer::powerOn()
+{
+    GlobalAnimator.enabled(true);
+}
+
+void HttpServer::powerOff()
+{
+    GlobalAnimator.enabled(false);
+}
+
 void HttpServer::sendCors()
 {
   _webServer.sendHeader("Access-Control-Allow-Origin", "*");
@@ -206,9 +224,7 @@ bool HttpServer::handleFileRead(String path)
 
     // Check if file is on flash and send it
     if (checkAndSendFile(path, HTTPServer.webServer()))
-    {
         return true;
-    }
 
     String contentType = HTTPServer.getContentType(path); // Get the MIME type
     String pathWithGz = path + ".gz";

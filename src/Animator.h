@@ -13,8 +13,11 @@ class Animator
 
         void setup();
         void handle();
+        void enabled(const bool value);
+        bool enabled() const;
 
     private:
+    bool _enabled;
         animation::IAnimation * _currentAnimation;
         ledDriver::ILedDriver * _ledDriver;
         int _timeRemaining;

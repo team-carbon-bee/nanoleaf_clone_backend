@@ -8,7 +8,7 @@
 #include "Animator.h"
 
 Animator::Animator()
-    : _currentAnimation(nullptr), _timeRemaining(0), _animationCanChange(false), _currentAnimationIndex(0)
+    : _enabled(true), _currentAnimation(nullptr), _timeRemaining(0), _animationCanChange(false), _currentAnimationIndex(0)
 {
 }
 
@@ -36,74 +36,103 @@ void Animator::setup()
 
 void Animator::handle()
 {
-    if (_animationSelectionMethod == ConfigurationProvider::kStatic)
+    //if animation is enabled
+    if (_enabled)
     {
-        if (not _animationList.empty())
+        if (_animationSelectionMethod == ConfigurationProvider::kStatic)
         {
-            //if there is no animation for the moment we select the first of the list
-            if (_currentAnimation == nullptr)
+            if (not _animationList.empty())
             {
-                _currentAnimation = getAnimationById(_animationList.front());
-                _currentAnimation->initialize();
-            }
+                //if there is no animation for the moment we select the first of the list
+                if (_currentAnimation == nullptr)
+                {
+                    _currentAnimation = getAnimationById(_animationList.front());
+                    _currentAnimation->initialize();
+                }
 
-            if ((_currentAnimation->isFinished()) || (_timeRemaining <= 0))
-            {
-                //we are in statuc animation but a finshable animation has been selected
-                //we have to restart it
-                _timeRemaining = Configuration.parameters().animationDuration;
-                //we deinit the last run
-                _currentAnimation->deinitialize();
-                //and init the new run
-                _currentAnimation->initialize();
-            }
-            
-        }
-        else
-        {
-            _animationCanChange = false;
-            _currentAnimation = nullptr;
-        }
-    } 
-    else
-    {
-        //random and sequential follow same schema
-        if (_currentAnimation == nullptr)
-        {
-            _currentAnimation = getAnimationByMethod(Configuration.parameters().animationMethod);
-            _currentAnimation->initialize();
-        }
-
-        if (_currentAnimation->isFinished() || (_timeRemaining <= 0))
-        {
-            //release the previous one
-            _currentAnimation->deinitialize();
-            //Before init animation, we have to remove all previously malloc objects
-            GlobalAnimationFactory.clearAnimationObject();
-            
-            //Two possibilities, the last one was a "non system animation" and the next one has to be fade off
-            // The last one was already fade off and we can choose anoter new animation
-            if (_currentAnimation == &_fadingOffAnimation)
-            {
-                _currentAnimation = getAnimationByMethod(_animationSelectionMethod);
+                if ((_currentAnimation->isFinished()) || (_timeRemaining <= 0))
+                {
+                    //we are in statuc animation but a finshable animation has been selected
+                    //we have to restart it
+                    _timeRemaining = Configuration.parameters().animationDuration;
+                    //we deinit the last run
+                    _currentAnimation->deinitialize();
+                    //and init the new run
+                    _currentAnimation->initialize();
+                }
+                
             }
             else
             {
-                _currentAnimation = &_fadingOffAnimation;
+                _animationCanChange = false;
+                _currentAnimation = nullptr;
             }
-           
-            Serial.printf("Starting new animation %s (%d)\n", _currentAnimation->name().c_str(), _currentAnimation->id());
-            _currentAnimation->initialize();
-            //restart timer
-            _timeRemaining = Configuration.parameters().animationDuration;
         } 
-    }   
+        else
+        {
+            //random and sequential follow same schema
+            if (_currentAnimation == nullptr)
+            {
+                _currentAnimation = getAnimationByMethod(Configuration.parameters().animationMethod);
+                _currentAnimation->initialize();
+            }
 
-    if (_currentAnimation != nullptr)
+            if (_currentAnimation->isFinished() || (_timeRemaining <= 0))
+            {
+                //release the previous one
+                _currentAnimation->deinitialize();
+                //Before init animation, we have to remove all previously malloc objects
+                GlobalAnimationFactory.clearAnimationObject();
+                
+                //Two possibilities, the last one was a "non system animation" and the next one has to be fade off
+                // The last one was already fade off and we can choose anoter new animation
+                if (_currentAnimation == &_fadingOffAnimation)
+                {
+                    _currentAnimation = getAnimationByMethod(_animationSelectionMethod);
+                }
+                else
+                {
+                    _currentAnimation = &_fadingOffAnimation;
+                }
+            
+                Serial.printf("Starting new animation %s (%d)\n", _currentAnimation->name().c_str(), _currentAnimation->id());
+                _currentAnimation->initialize();
+                //restart timer
+                _timeRemaining = Configuration.parameters().animationDuration;
+            } 
+        }   
+
+        if (_currentAnimation != nullptr)
+        {
+            _currentAnimation->loop();
+            _timeRemaining -= Configuration.parameters().speed;
+        }
+    }
+
+    if ((_currentAnimation == &_fadingOffAnimation) && (not _currentAnimation->isFinished()))
     {
         _currentAnimation->loop();
-        _timeRemaining -= Configuration.parameters().speed;
     }
+}
+
+void Animator::enabled(const bool value)
+{
+    if (value)
+    {
+        _enabled = true;
+    }
+    else
+    {
+        _enabled = false;
+        //we se animation to fadeout
+        _currentAnimation = &_fadingOffAnimation;
+        _currentAnimation->initialize();
+    }
+}
+
+bool Animator::enabled() const
+{
+    return _enabled;
 }
 
 animation::IAnimation * Animator::getAnimationById(const uint8_t & animationId)

@@ -36,6 +36,8 @@ private:
   void setConfig();
   void getAnimationList();
   void getInformations();
+  void powerOn();
+  void powerOff();
 #ifdef ESP32
   WebServer                 _webServer;
   ESP32HTTPUpdateServer     _httpUpdater;

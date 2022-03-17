@@ -38,12 +38,12 @@ class FadingOff : public IAnimation
 
         void setup()
         {
-            _finished = false;
         }
 
         //Called each time before starting animation
         void initialize()
         {
+            _finished = false;
             _backgroundColor = 0;
         }
 
