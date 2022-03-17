@@ -2,63 +2,45 @@ let config = {};
 
 
 function onBtnSaveClick() {
-    sendConfig();
+    setConfig();
 }
 
 function onBtnRebootClick() {
-    $.post("http://" + URI + "/restart")
-        .done(function (res) {
-            /* Display Toast Info */
-            toastInfoShow("Restart in progress...");
-        })
-        .fail(function () {
-            /* Display Toast Error */
-            toastErrorShow("Unable to communicate with device !");
-        })
-        .always(function () {
-        });
+    api_rest_reboot();
 }
 
 function onBtnResetClick() {
-    $.post("http://" + URI + "/reset")
-        .done(function (res) {
-            /* Display Toast Info */
-            toastInfoShow("Reset to factory mode...");
-            getConfig();
-        })
-        .fail(function () {
-            /* Display Toast Error */
-            toastErrorShow("Unable to communicate with device !");
-        })
-        .always(function () {
-        });
+    api_rest_reset_configuration();
 }
 
-function toastInfoShow(text) {
-    /* Display Toast Info */
-    document.getElementById('toastInfoText').textContent = text;
-    let toast = document.getElementById('toastInfo');
-    bootstrap.Toast.getOrCreateInstance(toast).show();
-}
+function setConfig() {
+    // Get all information
+    let config = {
+        'parameters' : {
+            'ledPerTriangle': document.getElementById('led-number').value,
+            'ledModel': document.getElementById('ledModel-select').select,
+            'hostname': document.getElementById('hostname-text'),
+            'mqtt': {
+                'enable': document.getElementById('mqtt-enable').checked,
+                'hostname': document.getElementById('mqtt-hostname').value,
+                'port': document.getElementById('mqtt-port').value,
+                'username': document.getElementById('mqtt-username').value,
+                'password': document.getElementById('mqtt-password').value,
+                'topic': document.getElementById('mqtt-topic').value,
+            }
+        }
+    }
 
-function toastErrorShow(text) {
-    /* Display Toast Error */
-    document.getElementById('toastErrorText').textContent = text;
-    let toast = document.getElementById('toastError');
-    bootstrap.Toast.getOrCreateInstance(toast).show();
+    // Send config
+    api_rest_send_configuration(config);
 }
 
 function getConfig() {
     console.log("try to read config...")
-    fetch("http://" + URI + "/configuration.json", {
-        method: 'get',
-        // headers: {
-        //     'Accept': 'application/json',
-        //     'Content-Type': 'application/json'
-        // }
-    }).then((response) => {
-        return response.json()
-    }).then((res) => {
+    let config = api_rest_read_configuration();
+    console.log(config);
+    if (config != null) {
+        // Exemple of configuration
         // "parameters": {
         //     "ledPerTriangle": 21,
         //     "ledModel": "rgb",
@@ -73,35 +55,37 @@ function getConfig() {
         //     "animationMethod": "random",
         //     "animationList": [10, 11, 13, 15]
         // }
-        if (res.status === 200) {
-            console.log("Get successfully !")
-            console.log("data receive: " + JSON.stringify(res));
 
-            /* Get Data */
-            let params = res.parameters;
+        /* Get Data */
+        let params = config.parameters;
 
-            // Get MQTT informations
-            document.getElementById('mqtt-enable').checked = params.mqttEnable;
-            if (params.mqttEnable == true)
-                $('#card-mqtt').collapse('show');
-            else
-                $('#card-mqtt').collapse('hide');
-            document.getElementById('mqtt-hostname').value = params.mqttIpServer;
-            document.getElementById('mqtt-port').value = params.mqttPortServer;
-            document.getElementById('mqtt-username').value = params.mqttUsername;
-            document.getElementById('mqtt-password').value = params.mqttPassword;
-            document.getElementById('mqtt-topic').value = params.mqttTopic;
+        // Get Hostname
+        document.getElementById('hostname-text').value = params.hostname;
 
-            document.getElementById('version-text').value = params.version;
-            document.getElementById('buildDate-text').value = params.buildDate;
-        }
-    }).catch((error) => {
-        console.log(error)
-        /* Display Toast Error */
-        toastErrorShow("Unable to read configuration !");
-        getConfig();
-    })
+        // Get led Model and Led Number
+        document.getElementById('ledModel-select').select = params.ledModel;
+        document.getElementById('led-number').value = params.ledPerTriangle;
 
+        // Get MQTT informations
+        document.getElementById('mqtt-enable').checked = params.mqttEnable;
+        if (params.mqttEnable == true)
+            document.getElementById('card-mqtt').setAttribute('collapse', 'show');
+            // $('#card-mqtt').collapse('show');
+        else
+            document.getElementById('card-mqtt').setAttribute('collapse', 'hide');
+            // $('#card-mqtt').collapse('hide');
+        document.getElementById('mqtt-hostname').value = params.mqttIpServer;
+        document.getElementById('mqtt-port').value = params.mqttPortServer;
+        document.getElementById('mqtt-username').value = params.mqttUsername;
+        document.getElementById('mqtt-password').value = params.mqttPassword;
+        document.getElementById('mqtt-topic').value = params.mqttTopic;
+
+        document.getElementById('version-text').value = params.version;
+        document.getElementById('buildDate-text').value = params.buildDate;
+    }
+    else {
+        // getConfig();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', (function () {
