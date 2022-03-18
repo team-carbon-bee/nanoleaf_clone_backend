@@ -189,7 +189,7 @@ function appendTriangle(parent) {
 
     // Create Del button
     let del_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    del_button.setAttribute("d", "M11,22A11,11,0,1,0,0,11,11,11,0,0,0,11,22ZM5,10H17v2H5Z");
+    del_button.setAttribute("d", "M 10.806641 2 C 10.289641 2 9.7956875 2.2043125 9.4296875 2.5703125 L 9 3 L 4 3 A 1.0001 1.0001 0 1 0 4 5 L 20 5 A 1.0001 1.0001 0 1 0 20 3 L 15 3 L 14.570312 2.5703125 C 14.205312 2.2043125 13.710359 2 13.193359 2 L 10.806641 2 z M 4.3652344 7 L 5.8925781 20.263672 C 6.0245781 21.253672 6.877 22 7.875 22 L 16.123047 22 C 17.121047 22 17.974422 21.254859 18.107422 20.255859 L 19.634766 7 L 4.3652344 7 z");
     del_button.setAttribute("transform", `translate(${-22 * 0.75}, ${22 * 0.75 - size_of_triangle / 2}) scale(1.5, 1.5)`);
     del_button.setAttribute("class", "del_button");
     del_button.setAttribute("onclick", "remove_child(this)");
@@ -198,9 +198,9 @@ function appendTriangle(parent) {
     group.appendChild(del_button);
 
     // Create Add button
-    let add_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    add_button.setAttribute("d", "M11 22A11 11 0 1 0 0 11a11 11 0 0 0 11 11zM5 10h5V5h2v5h5v2h-5v5h-2v-5H5z");
-    add_button.setAttribute("transform", `translate(${-22 * 0.75}, ${-size_of_triangle / 4}) scale(1.5, 1.5)`);
+    let add_button = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    add_button.setAttribute("points", `${-size_of_triangle/2} 0 0 ${-h} ${size_of_triangle/2} 0`);
+    add_button.setAttribute("transform", `translate(0, ${-padding_between_triangle * 2}) scale(0.2, 0.2)`);
     add_button.setAttribute("class", "add_button");
     add_button.setAttribute("onclick", "add_child(this)");
 
@@ -260,9 +260,9 @@ function appendBase(parent) {
     group.appendChild(triangle);
 
     // Create Add button
-    let add_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    add_button.setAttribute("d", "M11 22A11 11 0 1 0 0 11a11 11 0 0 0 11 11zM5 10h5V5h2v5h5v2h-5v5h-2v-5H5z");
-    add_button.setAttribute("transform", `translate(${-22 * 0.75}, ${-size_of_triangle / 4}) scale(1.5, 1.5)`);
+    let add_button = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    add_button.setAttribute("points", `${-size_of_triangle/2} 0 0 ${-h} ${size_of_triangle/2} 0`);
+    add_button.setAttribute("transform", `translate(0, ${-padding_between_triangle * 2}) scale(0.2, 0.2)`);
     add_button.setAttribute("class", "add_button");
     add_button.setAttribute("onclick", "add_child(this)");
 
