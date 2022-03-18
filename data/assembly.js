@@ -1,4 +1,4 @@
-let config =
+let default_config =
 {
     "assembly": {
         "type": "triangle",
@@ -307,23 +307,23 @@ function parseShape(shape, parent) {
 }
 
 function parseConfig(config) {
+    let parent = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+    let c = document.getElementById("mySvg");
+
+    // Add Rotation and set the origin of the group
+    parent.setAttribute("transform", `translate(${c.clientWidth / 2}, ${c.clientHeight * 5 / 6}), rotate(0)`);
+
+    appendBase(parent);
+
     if (config != null && config.assembly != null) {
-        let parent = document.createElementNS("http://www.w3.org/2000/svg", "g");
-
-        let c = document.getElementById("mySvg");
-
-        // Add Rotation and set the origin of the group
-        parent.setAttribute("transform", `translate(${c.clientWidth / 2}, ${c.clientHeight * 5 / 6}), rotate(0)`);
-
-        appendBase(parent);
-
         let child1 = getFirstChildByClassName(parent, "child1");
 
         if (child1 != null)
             parseShape(config.assembly, child1);
-
-        c.appendChild(parent);
     }
+
+    c.appendChild(parent);
 }
 
 const svgContainer = document.getElementById("mySvg");
