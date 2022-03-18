@@ -90,20 +90,31 @@ function onBtnResetClick() {
     let parent = getFirstChildByClassName(svgContainer, "child1");
     let triangle = getFirstChildByClassName(parent, "triangle");
     triangle.parentElement.remove();
+
+    // Update IHM
+    count_nb_triangle();
 }
 
 function onBtnSaveClick() {
     let json = create_json_from_svg();
-    console.log(json);
 }
 
 let size_of_triangle = 200;
 let padding_between_triangle = 1.5;
+let nb_triangle = 0;
+
+function count_nb_triangle() {
+    // Call this for count nb triangle
+    create_json_from_svg();
+    document.getElementById("nbTriangleText").innerText = "number of triangle: " + nb_triangle;
+}
 
 function create_json_from_svg() {
     let parent = getFirstChildByClassName(svgContainer, "child1");
     let triangle = getFirstChildByClassName(parent, "triangle");
     let json = {};
+
+    nb_triangle = 0;
 
     // If we have one or more triangle
     if (triangle != null) {
@@ -111,6 +122,9 @@ function create_json_from_svg() {
             "type": "triangle",
             "connections": []
         };
+
+        nb_triangle++;
+
         parent = triangle.parentElement;
         let child1 = getFirstChildByClassName(parent, "child1");
         if (child1 != null)
@@ -133,6 +147,8 @@ function add_child_to_json(json_data, child) {
             "connections": []
         });
 
+        nb_triangle++;
+
         let parent = triangle.parentElement;
         let child1 = getFirstChildByClassName(parent, "child1");
         if (child1 != null)
@@ -147,10 +163,16 @@ function add_child_to_json(json_data, child) {
 
 function add_child(child_els) {
     appendTriangle(child_els.parentElement);
+
+    // Update IHM
+    count_nb_triangle();
 }
 
 function remove_child(child_els) {
     child_els.parentElement.remove();
+
+    // Update IHM
+    count_nb_triangle();
 }
 
 function appendTriangle(parent) {
