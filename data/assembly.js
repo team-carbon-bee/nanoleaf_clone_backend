@@ -96,7 +96,12 @@ function onBtnResetClick() {
 }
 
 function onBtnSaveClick() {
-    let json = create_json_from_svg();
+    let config = {
+        'assembly': create_json_from_svg()
+    }
+
+    // Send config
+    api_rest_set_assembly_configuration(config);
 }
 
 let size_of_triangle = 200;
