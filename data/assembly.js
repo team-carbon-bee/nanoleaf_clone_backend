@@ -86,7 +86,13 @@ let default_config =
     }
 };
 
-function onBtSaveClick() {
+function onBtnResetClick() {
+    let parent = getFirstChildByClassName(svgContainer, "child1");
+    let triangle = getFirstChildByClassName(parent, "triangle");
+    triangle.parentElement.remove();
+}
+
+function onBtnSaveClick() {
     let json = create_json_from_svg();
     console.log(json);
 }
