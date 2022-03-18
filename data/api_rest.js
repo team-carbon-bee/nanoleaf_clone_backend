@@ -37,7 +37,57 @@ function api_rest_reset_configuration() {
     });
 }
 
-function api_rest_send_configuration(config) {
+function api_rest_set_animation_configuration(config) {
+    fetch("http://" + URI + "/setAnimationConfiguration", {
+        method: 'PUT',
+        body: JSON.stringify(config),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((response) => {
+        return response.json()
+    }).then((res) => {
+        if (res.status === 200) {
+            toastInfoShow("Save the configuration successfully !");
+        }
+        else {
+            /* Display Toast Error */
+            toastErrorShow("Unable to save the configuration !");
+        }
+    }).catch((error) => {
+        console.log(error)
+
+        /* Display Toast Error */
+        toastErrorShow("Unable to save the configuration !");
+    });
+}
+
+function api_rest_set_assembly_configuration(config) {
+    fetch("http://" + URI + "/setAssemblyConfiguration", {
+        method: 'PUT',
+        body: JSON.stringify(config),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((response) => {
+        return response.json()
+    }).then((res) => {
+        if (res.status === 200) {
+            toastInfoShow("Save the configuration successfully !");
+        }
+        else {
+            /* Display Toast Error */
+            toastErrorShow("Unable to save the configuration !");
+        }
+    }).catch((error) => {
+        console.log(error)
+
+        /* Display Toast Error */
+        toastErrorShow("Unable to save the configuration !");
+    });
+}
+
+function api_rest_set_general_configuration(config) {
     fetch("http://" + URI + "/setGeneralConfiguration", {
         method: 'PUT',
         body: JSON.stringify(config),
@@ -51,10 +101,12 @@ function api_rest_send_configuration(config) {
             toastInfoShow("Save the configuration successfully !");
         }
         else {
+            /* Display Toast Error */
             toastErrorShow("Unable to save the configuration !");
         }
     }).catch((error) => {
         console.log(error)
+
         /* Display Toast Error */
         toastErrorShow("Unable to save the configuration !");
     });
