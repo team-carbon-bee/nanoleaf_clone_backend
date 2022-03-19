@@ -1,95 +1,10 @@
-let default_config =
-{
-    "assembly": {
-        "type": "triangle",
-        "connections":
-            [
-                {
-                    "type": "triangle",
-                    "connections":
-                        [
-                            {
-                                "type": "triangle",
-                                "connections": [
-                                    null,
-                                    null
-                                ]
-                            },
-                            null
-                        ]
-                },
-                {
-                    "type": "triangle",
-                    "connections":
-                        [
-                            {
-                                "type": "triangle",
-                                "connections": [
-                                    {
-                                        "type": "triangle",
-                                        "connections": [
-                                            {
-                                                "type": "triangle",
-                                                "connections": [
-                                                    null,
-                                                    null
-                                                ]
-                                            },
-                                            null
-                                        ]
-                                    },
-                                    {
-                                        "type": "triangle",
-                                        "connections": [
-                                            null,
-                                            {
-                                                "type": "triangle",
-                                                "connections": [
-                                                    null,
-                                                    {
-                                                        "type": "triangle",
-                                                        "connections": [
-                                                            null,
-                                                            null
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "triangle",
-                                "connections": [
-                                    null,
-                                    null
-                                ]
-                            }
-                        ]
-                }
-            ]
-    },
-    "parameters": {
-        "ledPerTriangle": 21,
-        "ledModel": "rgb",
-        "hostname": "nanoleaf_clone",
-        "maxBrightness": 0.5,
-        "speed": 50,
-        "mainColorRandom": true,
-        "mainColor": 16711935,
-        "backgroundColorRandom": false,
-        "backgroundColor": 0,
-        "animationDuration": 5000,
-        "animationMethod": "random",
-        "animationList": [10, 11, 13, 15]
-    }
-};
 
 function onBtnResetClick() {
     let parent = getFirstChildByClassName(svgContainer, "child1");
     let triangle = getFirstChildByClassName(parent, "triangle");
-    triangle.parentElement.remove();
+
+    if (triangle != null)
+        triangle.parentElement.remove();
 
     // Update IHM
     count_nb_triangle();
