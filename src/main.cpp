@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "tools/WiFiManager.h"
-//#include "tools/WifiManager.h"
 #include "AnimationFactory.h"
 #include "Animator.h"
 #include "ConfigurationProvider.h"
@@ -10,32 +9,32 @@
 #include "NetworkManager.h"
 #include "tools/Logger.h"
 
-void setup() 
+void setup()
 {
-  Log.setup();
-  Log.println("setup...");
+    Log.setup();
+    Log.println("setup...");
 
-  Configuration.setup();
-  Configuration.loadFromFlash();
+    Configuration.setup();
+    Configuration.loadFromFlash();
 
-  Network.setup();
+    Network.setup();
 
-  GlobalAnimator.setup();
+    GlobalAnimator.setup();
 
-  Log.println("setup finished.");
+    Log.println("setup finished.");
 }
 
 int l = 0;
 
-void loop() 
+void loop()
 {
-  if (l >= Configuration.parameters().speed)
-  {
-    GlobalAnimator.handle();
-    l = 0;
-  }
-  Network.handle();
+    if (l >= Configuration.parameters().speed)
+    {
+        GlobalAnimator.handle();
+        l = 0;
+    }
+    Network.handle();
 
-  ++l;
-  delay(1);
+    ++l;
+    delay(1);
 }

@@ -3,27 +3,24 @@
 #include <inttypes.h>
 
 #ifdef ESP32
-  #include "tools/WiFiManager.h"
-  #include <ESP8266FtpServer.h>
+	#include "tools/WiFiManager.h"
 #else // ESP8266
-  #include <WiFiManager.h>
+	#include <WiFiManager.h>
 #endif
 
 class NetworkManager
 {
 public:
-	NetworkManager() ;
+	NetworkManager();
 	virtual ~NetworkManager();
 
 	void setup();
 	void handle();
 
 private:
-  WiFiManager _wifiManager;
-  FtpServer _ftpServer;
+	WiFiManager _wifiManager;
 };
 
 #if !defined(NO_GLOBAL_INSTANCES)
 extern NetworkManager Network;
 #endif
-
