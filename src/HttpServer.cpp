@@ -79,7 +79,6 @@ void HttpServer::setup(void)
     _webServer.on("/previewAnimation", HTTP_PUT, [&]()
                   { previewAnimation(); });
 
-
     _webServer.onNotFound([&]()
                           {
     if (!handleFileRead(_webServer.uri())) {
@@ -128,27 +127,27 @@ void HttpServer::setConfig()
 
 void HttpServer::getAnimationList()
 {
-    sendCors();
     if (GlobalAnimationFactory.animations().moveToStart())
     {
         DynamicJsonDocument doc(3 * 1024);
-        //JsonObject animationsList = doc.createNestedObject("animations");
+        // JsonObject animationsList = doc.createNestedObject("animations");
         do
         {
             auto animation = GlobalAnimationFactory.animations().getCurrent();
-            //JsonObject currentAnimation = animationsList.createNestedObject(String(animation->id()));
+            // JsonObject currentAnimation = animationsList.createNestedObject(String(animation->id()));
             JsonObject currentAnimation = doc.createNestedObject(String(animation->id()));
             currentAnimation["name"] = animation->name();
             currentAnimation["canFinish"] = animation->canFinish();
-        } 
-        while (GlobalAnimationFactory.animations().next());
+        } while (GlobalAnimationFactory.animations().next());
 
         String s;
         serializeJson(doc, s);
+        sendCors();
         _webServer.send(200, "application/json", s);
     }
     else
     {
+        sendCors();
         _webServer.send(400, "text/plain", "Body not received");
     }
 }
@@ -167,29 +166,32 @@ void HttpServer::getInformations()
 void HttpServer::powerOn()
 {
     GlobalAnimator.enabled(true);
+    sendCors();
     _webServer.send(200, "application/json", "{\"result\":true}");
 }
 
 void HttpServer::powerOff()
 {
     GlobalAnimator.enabled(false);
+    sendCors();
     _webServer.send(200, "application/json", "{\"result\":true}");
 }
 
 void HttpServer::previewAnimation()
 {
-    
+
     uint8_t id = HTTPServer.webServer().arg("id").toInt();
     GlobalAnimator.previewAnimation(id);
+    sendCors();
     _webServer.send(200, "application/json", "{\"result\":true}");
 }
 
 void HttpServer::sendCors()
 {
-  _webServer.sendHeader("Access-Control-Allow-Origin", "*");
-  _webServer.sendHeader("Access-Control-Max-Age", "10000");
-  _webServer.sendHeader("Access-Control-Allow-Methods", "PUT,POST,GET,OPTIONS");
-  _webServer.sendHeader("Access-Control-Allow-Headers", "*");
+    _webServer.sendHeader("Access-Control-Allow-Origin", "*");
+    _webServer.sendHeader("Access-Control-Max-Age", "10000");
+    _webServer.sendHeader("Access-Control-Allow-Methods", "PUT,POST,GET,OPTIONS");
+    _webServer.sendHeader("Access-Control-Allow-Headers", "*");
 }
 
 String HttpServer::getContentType(String filename)
@@ -242,10 +244,11 @@ bool HttpServer::handleFileRead(String path)
     String contentType = HTTPServer.getContentType(path); // Get the MIME type
     String pathWithGz = path + ".gz";
     if (SPIFFS.exists(pathWithGz) || SPIFFS.exists(path))
-    {                                                         // If the file exists, either as a compressed archive, or normal
-        if (SPIFFS.exists(pathWithGz))                        // If there's a compressed version available
-            path += ".gz";                                    // Use the compressed verion
-        File file = SPIFFS.open(path, "r");                   // Open the file
+    {                                       // If the file exists, either as a compressed archive, or normal
+        if (SPIFFS.exists(pathWithGz))      // If there's a compressed version available
+            path += ".gz";                  // Use the compressed verion
+        File file = SPIFFS.open(path, "r"); // Open the file
+        sendCors();
         HTTPServer.webServer().streamFile(file, contentType); // Send it to the client
         file.close();                                         // Close the file again
         Log.println(String("\tSent file: ") + path);
