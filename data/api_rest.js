@@ -196,9 +196,8 @@ async function api_rest_power_on() {
 }
 
 async function api_rest_preview_animation(animation_id) {
-    const response = await fetch("http://" + URI + "/previewAnimation", {
+    const response = await fetch("http://" + URI + "/previewAnimation?id=" + animation_id, {
         method: 'PUT',
-        body: "id=" + animation_id
     }).catch((error) => {
         throw "<b>Unable to send command !</b><br/>" + error;
     });
