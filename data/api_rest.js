@@ -112,26 +112,21 @@ function api_rest_set_general_configuration(config) {
     });
 }
 
-function api_rest_read_configuration() {
-    fetch("http://" + URI + "/configuration.json", {
+async function api_rest_read_configuration() {
+    const result = await fetch("http://" + URI + "/configuration.json", {
         method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
     }).then((response) => {
-        response.json()
-    }).then((res) => {
-        if (res.status === 200) {
-            console.log("Get successfully !")
-            console.log("data receive: " + JSON.stringify(res));
-            return res;
+        if (response.status === 200) {
+            return response.json()
+        }
+        else {
+            return null;
         }
     }).catch((error) => {
-        console.log(error)
-        /* Display Toast Error */
-        toastErrorShow("Unable to read the configuration !");
-        return null;
+        throw new Error(error);
     });
+
+    return result;
 }
 
 // **************
@@ -147,4 +142,8 @@ function toastErrorShow(text) {
     /* Display Toast Error */
     document.getElementById('toastErrorText').textContent = text;
     new bootstrap.Toast(document.getElementById('toastError')).show();
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
