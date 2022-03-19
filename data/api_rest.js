@@ -1,132 +1,140 @@
 
-function api_rest_reboot() {
-    fetch("http://" + URI + "/reboot", {
-        method: 'PUT'
-    }).then((response) => {
-        return response.json()
-    }).then((res) => {
-        if (res.status === 200) {
-            toastInfoShow("Restart in progress...");
-        }
-        else {
-            toastErrorShow("Unable to send the restart command !");
-        }
+async function api_rest_reboot() {
+    const response = await fetch("http://" + URI + "/reboot", {
+        method: 'PUT',
     }).catch((error) => {
-        console.log(error)
-        /* Display Toast Error */
-        toastErrorShow("Unable to send the restart command !");
+        throw "<b>Unable to send command !</b><br/>" + error;
     });
+
+    if (response.status === 200) {
+        if (response.headers.get('Content-Type') == 'application/json')
+            return await response.json();
+        else
+            return await response.text();
+    }
+    else {
+        throw "<b>Response Error !</b><br/>" + "message: " + await response.text() + "<br/>status: " + response.status;
+    }
 }
 
-function api_rest_reset_configuration() {
-    fetch("http://" + URI + "/resetConfiguration", {
-        method: 'PUT'
-    }).then((response) => {
-        return response.json()
-    }).then((res) => {
-        if (res.status === 200) {
-            toastInfoShow("Reset the configuration to factory");
-        }
-        else {
-            toastErrorShow("Unable to reset the configuration !");
-        }
+async function api_rest_get_informations() {
+    const response = await fetch("http://" + URI + "/informations", {
+        method: 'GET'
     }).catch((error) => {
-        console.log(error)
-        /* Display Toast Error */
-        toastErrorShow("Unable to reset the configuration !");
+        throw "<b>Unable to send command !</b><br/>" + error;
     });
+
+    if (response.status === 200) {
+        if (response.headers.get('Content-Type') == 'application/json')
+            return await response.json();
+        else
+            return await response.text();
+    }
+    else {
+        throw "<b>Response Error !</b><br/>" + "message: " + await response.text() + "<br/>status: " + response.status;
+    }
 }
 
-function api_rest_set_animation_configuration(config) {
-    fetch("http://" + URI + "/setAnimationConfiguration", {
+async function api_rest_reset_configuration() {
+    const response = await fetch("http://" + URI + "/resetConfiguration", {
+        method: 'GET',
+    }).catch((error) => {
+        throw "<b>Unable to send command !</b><br/>" + error;
+    });
+
+    if (response.status === 200) {
+        if (response.headers.get('Content-Type') == 'application/json')
+            return await response.json();
+        else
+            return await response.text();
+    }
+    else {
+        throw "<b>Response Error !</b><br/>" + "message: " + await response.text() + "<br/>status: " + response.status;
+    }
+}
+
+async function api_rest_set_animation_configuration(config) {
+    const response = await fetch("http://" + URI + "/setAnimationConfiguration", {
         method: 'PUT',
         body: JSON.stringify(config),
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then((response) => {
-        return response.json()
-    }).then((res) => {
-        if (res.status === 200) {
-            toastInfoShow("Save the configuration successfully !");
-        }
-        else {
-            /* Display Toast Error */
-            toastErrorShow("Unable to save the configuration !");
-        }
     }).catch((error) => {
-        console.log(error)
-
-        /* Display Toast Error */
-        toastErrorShow("Unable to save the configuration !");
+        throw "<b>Unable to send command !</b><br/>" + error;
     });
+
+    if (response.status === 200) {
+        if (response.headers.get('Content-Type') == 'application/json')
+            return await response.json();
+        else
+            return await response.text();
+    }
+    else {
+        throw "<b>Response Error !</b><br/>" + "message: " + await response.text() + "<br/>status: " + response.status;
+    }
 }
 
-function api_rest_set_assembly_configuration(config) {
-    fetch("http://" + URI + "/setAssemblyConfiguration", {
+async function api_rest_set_assembly_configuration(config) {
+    const response = await fetch("http://" + URI + "/setAssemblyConfiguration", {
         method: 'PUT',
         body: JSON.stringify(config),
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then((response) => {
-        return response.json()
-    }).then((res) => {
-        if (res.status === 200) {
-            toastInfoShow("Save the configuration successfully !");
-        }
-        else {
-            /* Display Toast Error */
-            toastErrorShow("Unable to save the configuration !");
-        }
     }).catch((error) => {
-        console.log(error)
-
-        /* Display Toast Error */
-        toastErrorShow("Unable to save the configuration !");
+        throw "<b>Unable to send command !</b><br/>" + error;
     });
+
+    if (response.status === 200) {
+        if (response.headers.get('Content-Type') == 'application/json')
+            return await response.json();
+        else
+            return await response.text();
+    }
+    else {
+        throw "<b>Response Error !</b><br/>" + "message: " + await response.text() + "<br/>status: " + response.status;
+    }
 }
 
-function api_rest_set_general_configuration(config) {
-    fetch("http://" + URI + "/setGeneralConfiguration", {
+async function api_rest_set_general_configuration(config) {
+    const response = await fetch("http://" + URI + "/setGeneralConfiguration", {
         method: 'PUT',
         body: JSON.stringify(config),
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then((response) => {
-        return response.json()
-    }).then((res) => {
-        if (res.status === 200) {
-            toastInfoShow("Save the configuration successfully !");
-        }
-        else {
-            /* Display Toast Error */
-            toastErrorShow("Unable to save the configuration !");
-        }
     }).catch((error) => {
-        console.log(error)
-
-        /* Display Toast Error */
-        toastErrorShow("Unable to save the configuration !");
+        throw "<b>Unable to send command !</b><br/>" + error;
     });
+
+    if (response.status === 200) {
+        if (response.headers.get('Content-Type') == 'application/json')
+            return await response.json();
+        else
+            return await response.text();
+    }
+    else {
+        throw "<b>Response Error !</b><br/>" + "message: " + await response.text() + "<br/>status: " + response.status;
+    }
 }
 
 async function api_rest_read_configuration() {
-    const result = await fetch("http://" + URI + "/configuration.json", {
+    const response = await fetch("http://" + URI + "/configuration.json", {
         method: 'GET',
-    }).then((response) => {
-        if (response.status === 200) {
-            return response.json()
-        }
-        else {
-            return null;
-        }
     }).catch((error) => {
-        throw new Error(error);
+        throw "<b>Unable to send command !</b><br/>" + error;
     });
 
-    return result;
+    if (response.status === 200) {
+        if (response.headers.get('Content-Type') == 'application/json')
+            return await response.json();
+        else
+            return await response.text();
+    }
+    else {
+        throw "<b>Response Error !</b><br/>" + "message: " + await response.text() + "<br/>status: " + response.status;
+    }
 }
 
 // **************
@@ -134,13 +142,13 @@ async function api_rest_read_configuration() {
 // **************
 function toastInfoShow(text) {
     /* Display Toast Info */
-    document.getElementById('toastInfoText').textContent = text;
+    document.getElementById('toastInfoText').innerHTML = text;
     new bootstrap.Toast(document.getElementById('toastInfo')).show();
 }
 
 function toastErrorShow(text) {
     /* Display Toast Error */
-    document.getElementById('toastErrorText').textContent = text;
+    document.getElementById('toastErrorText').innerHTML = text;
     new bootstrap.Toast(document.getElementById('toastError')).show();
 }
 
