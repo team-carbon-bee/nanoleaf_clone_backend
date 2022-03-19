@@ -16,7 +16,13 @@ function onBtnSaveClick() {
     }
 
     // Send config
-    api_rest_set_assembly_configuration(config);
+    api_rest_set_assembly_configuration(config)
+        .then((response) => {
+            toastInfoShow("Save configuration successfully");
+        })
+        .catch((error) => {
+            toastErrorShow(error);
+        });
 }
 
 let size_of_triangle = 200;
@@ -147,7 +153,7 @@ function appendTriangle(parent) {
 
     // Create Add button
     let add_button = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    add_button.setAttribute("points", `${-size_of_triangle/2} 0 0 ${-h} ${size_of_triangle/2} 0`);
+    add_button.setAttribute("points", `${-size_of_triangle / 2} 0 0 ${-h} ${size_of_triangle / 2} 0`);
     add_button.setAttribute("transform", `translate(0, ${-padding_between_triangle * 2}) scale(0.2, 0.2)`);
     add_button.setAttribute("class", "add_button");
     add_button.setAttribute("onclick", "add_child(this)");
@@ -209,7 +215,7 @@ function appendBase(parent) {
 
     // Create Add button
     let add_button = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    add_button.setAttribute("points", `${-size_of_triangle/2} 0 0 ${-h} ${size_of_triangle/2} 0`);
+    add_button.setAttribute("points", `${-size_of_triangle / 2} 0 0 ${-h} ${size_of_triangle / 2} 0`);
     add_button.setAttribute("transform", `translate(0, ${-padding_between_triangle * 2}) scale(0.2, 0.2)`);
     add_button.setAttribute("class", "add_button");
     add_button.setAttribute("onclick", "add_child(this)");

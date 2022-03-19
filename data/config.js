@@ -6,11 +6,23 @@ function onBtnSaveClick() {
 }
 
 function onBtnRebootClick() {
-    api_rest_reboot();
+    api_rest_reboot()
+        .then((response) => {
+            toastInfoShow("Reboot in progress: " + response);
+        })
+        .catch((error) => {
+            toastErrorShow(error);
+        });
 }
 
 function onBtnResetClick() {
-    api_rest_reset_configuration();
+    api_rest_reset_configuration()
+        .then((response) => {
+            toastInfoShow("Reboot in progress: " + response);
+        })
+        .catch((error) => {
+            toastErrorShow(error);
+        });
 }
 
 function setConfig() {
@@ -32,19 +44,34 @@ function setConfig() {
     }
 
     // Send config
-    api_rest_set_general_configuration(config);
+    api_rest_set_general_configuration(config)
+        .then((response) => {
+            toastInfoShow("Save configuration successfully");
+        })
+        .catch((error) => {
+            toastErrorShow(error);
+        });
 }
 
 function getConfig() {
-    console.log("try to read config...")
+    console.log("try to read informations...");
+    api_rest_get_informations()
+        .then((info) => {
+            if (info != null) {
+                // Get Version
+                if (info.version != null)
+                    document.getElementById('version-text').value = info.version;
+                // Get Build Date
+                if (info.buildDate != null)
+                    document.getElementById('buildDate-text').value = info.buildDate;
+            }
+        });
 
+    console.log("try to read config...");
     api_rest_read_configuration()
-        .then(config => {
-            toastInfoShow("Read the configuration successfully !");
+        .then((config) => {
             if (config != null && config.parameters != null) {
-                console.log(config);
-
-                /* Get Data */
+                // Get Data
                 let params = config.parameters;
 
                 // Get Hostname
@@ -75,20 +102,12 @@ function getConfig() {
                     document.getElementById('mqtt-password').value = params.mqttPassword;
                 if (params.mqttTopic != null)
                     document.getElementById('mqtt-topic').value = params.mqttTopic;
-
-                // Get Version
-                if (params.version != null)
-                    document.getElementById('version-text').value = params.version;
-                // Get Build Date
-                if (params.buildDate != null)
-                    document.getElementById('buildDate-text').value = params.buildDate;
             }
         }).catch((error) => {
             toastErrorShow("Unable to read the configuration !");
             console.error(error);
             sleep(5000).then(() => getConfig());
         });
-
 }
 
 document.addEventListener('DOMContentLoaded', (function () {
