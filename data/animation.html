@@ -63,8 +63,9 @@
                         <div class="input-group">
                             <span class="input-group-text">Method</span>
                             <select class="form-select" id="method-select">
-                                <option selected>fixed</option>
+                                <option selected>static</option>
                                 <option>random</option>
+                                <option>sequential</option>
                             </select>
                         </div>
                     </div>
@@ -82,14 +83,19 @@
                 <div class="row">
                     <!-- List group for all animation -->
                     <div class="col">
-                        <div class="list-group" id="all-animation-list">
+                        <div class="d-flex justify-content-between pt-3 pb-2 mb-3 border-bottom">
+                            <div class="fs-4">All animations</div>
                         </div>
+                        <div class="list-group" id="all-animations-list"></div>
                     </div>
 
                     <!-- List group for custom animation -->
                     <div class="col">
-                        <div class="list-group" id="custom-animation-list">
+                        <div class="d-flex justify-content-between pt-3 pb-2 mb-3 border-bottom">
+                            <div class="fs-4">Your animations</div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="onBtnClearClick()">Clear</button>
                         </div>
+                        <div class="list-group" id="custom-animations-list"></div>
                     </div>
                 </div>
 

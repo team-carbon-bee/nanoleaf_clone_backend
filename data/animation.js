@@ -1,6 +1,6 @@
-let config = {};
+let all_animations = {};
 
-new Sortable(document.getElementById('all-animation-list'), {
+new Sortable(document.getElementById('all-animations-list'), {
     group: {
         name: 'shared',
         pull: 'clone',
@@ -9,9 +9,15 @@ new Sortable(document.getElementById('all-animation-list'), {
     animation: 150,
     handle: '.handle',
     sort: false,
+    onEnd: function (evt) {
+        // Add trash icons only if drag and drop on other list
+        if (evt.from != evt.to) {
+            add_trash_icons_to_animation_item(evt.item);
+        }
+    }
 });
 
-new Sortable(document.getElementById('custom-animation-list'), {
+new Sortable(document.getElementById('custom-animations-list'), {
     group: 'shared',
     animation: 150,
     handle: '.handle'
@@ -21,86 +27,185 @@ function onBtnSaveClick() {
     setConfig();
 }
 
-function append_animation_to_list(animation_name) {
-    let list = document.getElementById('all-animation-list');
+function onBtnClearClick() {
+    clear_list_of_custom_animations();
+}
 
-    // Create icons for handle move
-    let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("class", "handle me-2");
-    svg.setAttribute("width", "24");
-    svg.setAttribute("height", "24");
-    svg.setAttribute("viewBox", "0 0 16 16");
-    let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", "M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z");
-    svg.appendChild(path);
+function create_list_from_custom_animation_list() {
+    const regex = new RegExp('([0-9]+) *-?');
+
+    let list = document.getElementById('custom-animations-list');
+    let json = [];
+
+    list.childNodes.forEach(element => {
+        let match = element.innerText.match(regex);
+        if (match) {
+            json.push(match[1]);
+        }
+    });
+
+    return json;
+}
+
+function clear_list_of_custom_animations() {
+    let list = document.getElementById('custom-animations-list');
+    while (list.lastChild) {
+        list.removeChild(list.lastChild);
+    }
+}
+
+function remove_animation_item(child_els) {
+    child_els.closest(".list-group-item").remove();
+}
+
+function update_list_of_all_animations() {
+    // Clear all animations
+    clear_list_of_all_animations();
+
+    // for each animation add it to list
+    for(let key in all_animations) {
+        let name = all_animations[key].name;
+        append_animation_to_all_animations_list(key + " - " + name);
+    }
+}
+
+function clear_list_of_all_animations() {
+    let list = document.getElementById('all-animations-list');
+    while (list.lastChild) {
+        list.removeChild(list.lastChild);
+    }
+}
+
+function add_trash_icons_to_animation_item(item) {
+    // Create trash icons for remove it
+    let trash_svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    trash_svg.setAttribute("width", "24");
+    trash_svg.setAttribute("height", "24");
+    let trash_path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    trash_path.setAttribute("d", "M 10.806641 2 C 10.289641 2 9.7956875 2.2043125 9.4296875 2.5703125 L 9 3 L 4 3 A 1.0001 1.0001 0 1 0 4 5 L 20 5 A 1.0001 1.0001 0 1 0 20 3 L 15 3 L 14.570312 2.5703125 C 14.205312 2.2043125 13.710359 2 13.193359 2 L 10.806641 2 z M 4.3652344 7 L 5.8925781 20.263672 C 6.0245781 21.253672 6.877 22 7.875 22 L 16.123047 22 C 17.121047 22 17.974422 21.254859 18.107422 20.255859 L 19.634766 7 L 4.3652344 7 z");
+    trash_path.setAttribute("class", "del_button");
+    trash_path.setAttribute("onclick", "remove_animation_item(this)");
+    trash_svg.appendChild(trash_path);
+
+    // Add trash icons to item
+    item.lastChild.insertAdjacentElement("afterbegin", trash_svg);
+}
+
+function create_animation_item(animation_name) {
+    // Create div for all icons
+    let icons = document.createElement("div");
+
+    // Create handle icons for drag and drop
+    let handle_svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    handle_svg.setAttribute("class", "handle ms-2");
+    handle_svg.setAttribute("width", "24");
+    handle_svg.setAttribute("height", "24");
+    let handle_path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    handle_path.setAttribute("transform", "scale(1.9, 1.9)");
+    handle_path.setAttribute("d", "M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z");
+    handle_svg.appendChild(handle_path);
+    icons.appendChild(handle_svg);
 
     // Create group item
     let item = document.createElement("div");
     item.setAttribute("class", "list-group-item d-flex justify-content-between");
 
     // Insert text of animation
-    item.innerText = animation_name;
+    item.innerHTML = animation_name;
 
-    // Add svg to item
-    item.appendChild(svg);
+    // Add icons to item
+    item.appendChild(icons);
 
-    // Add item to list
+    return item;
+}
+
+function append_animation_to_all_animations_list(animation_name) {
+    let list = document.getElementById('all-animations-list');
+
+    // Create animation item
+    let item = create_animation_item(animation_name);
+
+    // Append item to list
+    list.appendChild(item);
+}
+
+function append_animation_to_custom_list(animation_name) {
+    let list = document.getElementById('custom-animations-list');
+
+    // Create animation item
+    let item = create_animation_item(animation_name);
+
+    // Add trash icons (for remove it)
+    add_trash_icons_to_animation_item(item);
+
+    // Append item to list
     list.appendChild(item);
 }
 
 function setConfig() {
     // Get all information
     let config = {
-        'animation' : {
+        'animation': {
             'animationDuration': document.getElementById('duration-number').value,
             'animationMethod': document.getElementById('method-select').select,
-            'animationList': [],
+            'animationList': create_list_from_custom_animation_list(),
         }
     }
 
     // Send config
-    api_rest_set_general_configuration(config);
+    api_rest_set_animation_configuration(config)
+        .then((response) => {
+            toastInfoShow("Save animation successfully");
+        })
+        .catch((error) => {
+            toastErrorShow(error);
+        });
+}
+
+function getAnimations() {
+    console.log("try to get all animations...");
+    api_rest_get_animations()
+        .then((animations) => {
+            // Save all animations
+            all_animations = animations;
+            // Update list of animations
+            update_list_of_all_animations();
+        })
+        .catch((error) => {
+            toastErrorShow("Unable to get all animations !");
+            console.error(error);
+        });
 }
 
 function getConfig() {
-    console.log("try to read config...")
+    console.log("try to read config...");
+    api_rest_read_configuration()
+        .then((config) => {
+            if (config != null && config.parameters != null) {
+                /* Get Data */
+                let params = config.parameters;
 
-    let config = api_rest_read_configuration();
 
-    console.log(config);
-
-    if (config != null && config.animation != null) {
-        // Exemple of configuration
-        // "animation": {
-        //     "maxBrightness": 0.5,
-        //     "speed": 50,
-        //     "mainColorRandom": true,
-        //     "mainColor": 16711935,
-        //     "backgroundColorRandom": false,
-        //     "backgroundColor": 0,
-        //     "animationDuration": 5000,
-        //     "animationMethod": "random",
-        //     "animationList": [10, 11, 13, 15]
-        // }
-
-        /* Get Data */
-        let params = config.animation;
-
-        document.getElementById('duration-number').value = params.animationDuration;
-        document.getElementById('method-select').select = params.animationMethod;
-        // document.getElementById('buildDate-text').value = params.animationList;
-    }
-    else {
-        // getConfig();
-    }
+                if (params.animationDuration != null)
+                    document.getElementById('duration-number').value = params.animationDuration;
+                if (params.animationMethod != null)
+                    document.getElementById('method-select').select = params.animationMethod;
+                if (params.animationList != null)
+                    for(let key in params.animationList) {
+                        append_animation_to_custom_list(key);
+                    }
+                //     document.getElementById('buildDate-text').value = params.animationList;
+            }
+        }).catch((error) => {
+            toastErrorShow("Unable to read the configuration !");
+            console.error(error);
+            sleep(5000).then(() => getConfig());
+        });
 }
 
 document.addEventListener('DOMContentLoaded', (function () {
     console.log("animation ready !");
 
-    append_animation_to_list("coucou les amis");
-    append_animation_to_list("c'était pas simple...");
-    append_animation_to_list("mais j'ai réussi");
-    append_animation_to_list("Je suis trop fort !");
-    // getConfig();
+    getAnimations();
+    getConfig();
 }));
