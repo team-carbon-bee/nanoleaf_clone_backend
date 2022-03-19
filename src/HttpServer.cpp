@@ -37,53 +37,58 @@ void HttpServer::setup(void)
     MDNS.begin(Configuration.parameters().hostname.c_str());
     MDNS.addService("http", "tcp", 80);
 
-    _webServer.on("/reboot", [&]()
-                  {
-    _webServer.send(200, "text/plain", "ESP reboot now !");
-    delay(200);
-    ESP.restart(); });
+    _webServer.on("/reboot", HTTP_PUT, [&]() {
+        sendCors();
+        _webServer.send(200, "text/plain", "ESP reboot now !");
+        delay(200);
+        ESP.restart();
+    });
 
-    _webServer.on("/wifimanager", [&]()
-                  {
-    _webServer.send(200, "text/plain", "Reset settings of WifiManager, the card reboot now in AP mode");
-    delay(200);
-    WiFiManager wifiManager;
-    wifiManager.startConfigPortal();
-    delay(200);
-    ESP.restart(); });
+    _webServer.on("/wifimanager", [&]() {
+        sendCors();
+        _webServer.send(200, "text/plain", "Reset settings of WifiManager, the card reboot now in AP mode");
+        delay(200);
+        WiFiManager wifiManager;
+        wifiManager.startConfigPortal();
+        delay(200);
+        ESP.restart();
+    });
 
-    _webServer.on("/resetConfiguration", [&]()
-                  {
-    _webServer.send(200, "text/plain", "Resetting all parameters, the card reboot now.");
-    delay(200);
-    Configuration.createDefaultConfiguration();
-    Configuration.saveToFlash();
-    delay(200);
-    ESP.restart(); });
+    _webServer.on("/resetConfiguration", [&]() {
+        sendCors();
+        _webServer.send(200, "text/plain", "Resetting all parameters, you must reboot for apply it !");
+        delay(200);
+        Configuration.createDefaultConfiguration();
+        Configuration.saveToFlash();
+    });
 
-    _webServer.on("/setConfiguration", HTTP_PUT, [&]()
-                  { setConfig(); });
+    _webServer.on("/setConfiguration", HTTP_PUT, [&]() {
+        setConfig();
+    });
 
-    _webServer.on("/animations", [&]()
-                  { getAnimationList(); });
+    _webServer.on("/animations", [&]() {
+        getAnimationList();
+    });
 
-    _webServer.on("/informations", [&]()
-                  { getInformations(); });
+    _webServer.on("/informations", [&]() {
+        getInformations();
+    });
 
-    _webServer.on("/powerOff", HTTP_PUT, [&]()
-                  { powerOff(); });
+    _webServer.on("/powerOff", HTTP_PUT, [&]() {
+        powerOff();
+    });
 
-    _webServer.on("/powerOn", HTTP_PUT, [&]()
-                  { powerOn(); });
+    _webServer.on("/powerOn", HTTP_PUT, [&]() {
+        powerOn();
+    });
 
-    _webServer.on("/previewAnimation", HTTP_PUT, [&]()
-                  { previewAnimation(); });
+    _webServer.on("/previewAnimation", HTTP_PUT, [&]() {
+        previewAnimation();
+    });
 
-    _webServer.onNotFound([&]()
-                          {
-    if (!handleFileRead(_webServer.uri())) {
-      _webServer.send(404, "text/plain", "File Not Found !");
-    } });
+    _webServer.onNotFound([&]() {
+        handleFileRead(_webServer.uri());
+    });
 
     _httpUpdater.setup(&_webServer, String("/update"));
     _webServer.begin();
@@ -154,12 +159,12 @@ void HttpServer::getAnimationList()
 
 void HttpServer::getInformations()
 {
-    sendCors();
     DynamicJsonDocument doc(3 * 1024);
     doc["buildDate"] = __DATE__ " " __TIME__;
     doc["version"] = Constants::ApplicationVersion;
     String s;
     serializeJson(doc, s);
+    sendCors();
     _webServer.send(200, "application/json", s);
 }
 
@@ -188,10 +193,10 @@ void HttpServer::previewAnimation()
 
 void HttpServer::sendCors()
 {
-    _webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    _webServer.sendHeader("Access-Control-Max-Age", "10000");
-    _webServer.sendHeader("Access-Control-Allow-Methods", "PUT,POST,GET,OPTIONS");
-    _webServer.sendHeader("Access-Control-Allow-Headers", "*");
+    _webServer.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
+    _webServer.sendHeader(F("Access-Control-Max-Age"), F("10000"));
+    _webServer.sendHeader(F("Access-Control-Allow-Methods"), F("PUT,POST,GET,OPTIONS"));
+    _webServer.sendHeader(F("Access-Control-Allow-Headers"), F("*"));
 }
 
 String HttpServer::getContentType(String filename)
@@ -230,6 +235,15 @@ String HttpServer::getContentType(String filename)
 // send the right file to the client (if it exists)
 bool HttpServer::handleFileRead(String path)
 {
+    sendCors();
+
+    // Send cors and exit properly when method OPTIONS
+    if (_webServer.method() == HTTP_OPTIONS)
+    {
+        _webServer.send(204);
+        return true;
+    }
+
     if (path.endsWith("/"))
     {
         path += "index.html"; // If a folder is requested, send the index file
@@ -238,7 +252,7 @@ bool HttpServer::handleFileRead(String path)
     Log.println("handleFileRead: " + path);
 
     // Check if file is on flash and send it
-    if (checkAndSendFile(path, HTTPServer.webServer()))
+    if (checkAndSendFile(path, _webServer))
         return true;
 
     String contentType = HTTPServer.getContentType(path); // Get the MIME type
@@ -248,14 +262,16 @@ bool HttpServer::handleFileRead(String path)
         if (SPIFFS.exists(pathWithGz))      // If there's a compressed version available
             path += ".gz";                  // Use the compressed verion
         File file = SPIFFS.open(path, "r"); // Open the file
-        sendCors();
-        HTTPServer.webServer().streamFile(file, contentType); // Send it to the client
+        _webServer.streamFile(file, contentType); // Send it to the client
         file.close();                                         // Close the file again
         Log.println(String("\tSent file: ") + path);
         return true;
     }
-    Log.println(String("\tFile Not Found: ") + path); // If the file doesn't exist, return false
-    return false;
+    else{
+        Log.println(String("\tFile Not Found: ") + path); // If the file doesn't exist, return false
+        _webServer.send(404, "text/plain", "File Not Found !");
+        return false;
+    }
 }
 
 #ifdef ESP32
