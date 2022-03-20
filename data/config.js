@@ -36,7 +36,7 @@ function onBtnRebootClick() {
 function onBtnResetClick() {
     api_rest_reset_configuration()
         .then((response) => {
-            toastInfoShow("Reboot in progress: " + response);
+            toastInfoShow(response);
         })
         .catch((error) => {
             toastErrorShow(error);
