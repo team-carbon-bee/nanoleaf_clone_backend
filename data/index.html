@@ -53,6 +53,12 @@
             <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h2>Real Time</h2>
+                    <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" onclick="onBtnStartClick()" checked>
+                        <label class="btn btn-outline-secondary" for="btnradio1">Start</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" onclick="onBtnStopClick()">
+                        <label class="btn btn-outline-secondary" for="btnradio2">Stop</label>
+                    </div>
                 </div>
 
                 <div id="svgContainer">

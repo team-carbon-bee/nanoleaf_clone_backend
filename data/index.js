@@ -1,4 +1,17 @@
 
+function onBtnStartClick() {
+    api_rest_power_on()
+        .catch((error) => {
+            toastErrorShow(error);
+        });
+}
+
+function onBtnStopClick() {
+    api_rest_power_off()
+        .catch((error) => {
+            toastErrorShow(error);
+        });
+}
 
 let size_of_triangle = 200;
 let padding_between_triangle = 1.5;
