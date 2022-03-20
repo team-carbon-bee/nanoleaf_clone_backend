@@ -73,7 +73,7 @@ function update_list_of_all_animations() {
     clear_list_of_all_animations();
 
     // for each animation add it to list
-    for(let key in all_animations) {
+    for (let key in all_animations) {
         let name = all_animations[key].name;
         append_animation_to_all_animations_list(key + " - " + name);
     }
@@ -81,6 +81,13 @@ function update_list_of_all_animations() {
 
 function clear_list_of_all_animations() {
     let list = document.getElementById('all-animations-list');
+    while (list.lastChild) {
+        list.removeChild(list.lastChild);
+    }
+}
+
+function clear_list_of_custom_animations() {
+    let list = document.getElementById('custom-animations-list');
     while (list.lastChild) {
         list.removeChild(list.lastChild);
     }
@@ -158,11 +165,19 @@ function append_animation_to_all_animations_list(animation_name) {
     list.appendChild(item);
 }
 
-function append_animation_to_custom_list(animation_name) {
+function append_animation_to_custom_list(animation_id) {
     let list = document.getElementById('custom-animations-list');
 
+    // Get the name of animation on all animation list
+    let name = "Unknown"
+    if (all_animations[animation_id] != null)
+        name = all_animations[animation_id].name;
+
     // Create animation item
-    let item = create_animation_item(animation_name);
+    let item = create_animation_item(animation_id + ' - ' + name);
+
+    // Add play icons
+    add_play_icons_to_animation_item(item);
 
     // Add trash icons (for remove it)
     add_trash_icons_to_animation_item(item);
@@ -176,14 +191,14 @@ function setConfig() {
     let config = {
         'animation': {
             'animationDuration': document.getElementById('duration-number').value,
-            'animationMethod': document.getElementById('method-select').select,
+            'animationMethod': document.getElementById('method-select').value,
             'animationList': create_list_from_custom_animation_list(),
         }
     }
 
     // Send config
     api_rest_set_configuration(config)
-        .then((response) => {
+        .then(() => {
             toastInfoShow("Save animation successfully");
         })
         .catch((error) => {
@@ -191,50 +206,59 @@ function setConfig() {
         });
 }
 
-function getAnimations() {
+async function getAnimations() {
     console.log("try to get all animations...");
-    api_rest_get_animations()
+    await api_rest_get_animations()
         .then((animations) => {
             // Save all animations
             all_animations = animations;
+
+            console.log("Received list of all animations:");
+            console.log(all_animations);
+
             // Update list of animations
             update_list_of_all_animations();
         })
         .catch((error) => {
-            toastErrorShow("Unable to get all animations !");
-            console.error(error);
+            toastErrorShow(error);
+            throw new Error(error);
         });
 }
 
-function getConfig() {
+async function getConfig() {
     console.log("try to read config...");
-    api_rest_read_configuration()
+    await api_rest_read_configuration()
         .then((config) => {
-            if (config != null && config.parameters != null) {
+            if (config != null && config.animation != null) {
                 /* Get Data */
-                let params = config.parameters;
+                let params = config.animation;
 
+                console.log(params);
 
                 if (params.animationDuration != null)
                     document.getElementById('duration-number').value = params.animationDuration;
                 if (params.animationMethod != null)
-                    document.getElementById('method-select').select = params.animationMethod;
-                if (params.animationList != null)
-                    for(let key in params.animationList) {
-                        append_animation_to_custom_list(key);
-                    }
-                //     document.getElementById('buildDate-text').value = params.animationList;
+                    document.getElementById('method-select').value = params.animationMethod;
+                if (params.animationList != null) {
+                    clear_list_of_custom_animations();
+                    params.animationList.forEach(anim_id => {
+                        append_animation_to_custom_list(anim_id);
+                    });
+                }
             }
         }).catch((error) => {
-            toastErrorShow("Unable to read the configuration !");
-            console.error(error);
-            sleep(5000).then(() => getConfig());
+            toastErrorShow(error);
+            throw new Error(error);
+            // sleep(5000).then(() => getConfig));
         });
 }
 
 document.addEventListener('DOMContentLoaded', (function () {
     console.log("animation ready !");
 
-    getAnimations();
-    getConfig();
+    getAnimations()
+        .then(() => {
+            getConfig();
+        });
+
 }));

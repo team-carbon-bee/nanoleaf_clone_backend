@@ -30,7 +30,7 @@ function setConfig() {
     let config = {
         'parameters': {
             'ledPerTriangle': document.getElementById('led-number').value,
-            'ledModel': document.getElementById('ledModel-select').select,
+            'ledModel': document.getElementById('ledModel-select').value,
             'hostname': document.getElementById('hostname-text'),
             'mqtt': {
                 'enable': document.getElementById('mqtt-enable').checked,
@@ -80,7 +80,7 @@ function getConfig() {
 
                 // Get led Model
                 if (params.ledModel != null)
-                    document.getElementById('ledModel-select').select = params.ledModel;
+                    document.getElementById('ledModel-select').value = params.ledModel;
                 // Get Led Number
                 if (params.ledPerTriangle != null)
                     document.getElementById('led-number').value = params.ledPerTriangle;
