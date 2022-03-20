@@ -15,6 +15,8 @@ function onBtnSaveClick() {
         'assembly': create_json_from_svg()
     }
 
+    console.log(config);
+
     // Send config
     api_rest_set_assembly_configuration(config)
         .then((response) => {
@@ -45,8 +47,10 @@ function create_json_from_svg() {
     // If we have one or more triangle
     if (triangle != null) {
         json = {
-            "type": "triangle",
-            "connections": []
+            "shape": {
+                "type": "triangle",
+                "connections": []
+            }
         };
 
         nb_triangle++;
@@ -54,10 +58,10 @@ function create_json_from_svg() {
         parent = triangle.parentElement;
         let child1 = getFirstChildByClassName(parent, "child1");
         if (child1 != null)
-            add_child_to_json(json.connections, child1);
+            add_child_to_json(json.shape.connections, child1);
         let child2 = getFirstChildByClassName(parent, "child2");
         if (child2 != null)
-            add_child_to_json(json.connections, child2);
+            add_child_to_json(json.shape.connections, child2);
     }
 
     return json;
@@ -69,8 +73,10 @@ function add_child_to_json(json_data, child) {
     // If we have one or more triangle
     if (triangle != null) {
         json_data.push({
-            "type": "triangle",
-            "connections": []
+            "shape": {
+                "type": "triangle",
+                "connections": []
+            }
         });
 
         nb_triangle++;
@@ -78,10 +84,10 @@ function add_child_to_json(json_data, child) {
         let parent = triangle.parentElement;
         let child1 = getFirstChildByClassName(parent, "child1");
         if (child1 != null)
-            add_child_to_json(json_data[json_data.length - 1].connections, child1);
+            add_child_to_json(json_data[json_data.length - 1].shape.connections, child1);
         let child2 = getFirstChildByClassName(parent, "child2");
         if (child2 != null)
-            add_child_to_json(json_data[json_data.length - 1].connections, child2);
+            add_child_to_json(json_data[json_data.length - 1].shape.connections, child2);
     }
     else
         json_data.push(null);
@@ -249,14 +255,14 @@ function parseShape(shape, parent) {
 
     // If first Child exist
     let child1 = getFirstChildByClassName(parent, "child1");
-    if (child1 != null && shape.connections[0] != null && shape.connections[0].length != 0) {
-        parseShape(shape.connections[0], child1);
+    if (child1 != null && shape.connections[0] != null && shape.connections[0].shape != null) {
+        parseShape(shape.connections[0].shape, child1);
     }
 
     // If second Child exist
     let child2 = getFirstChildByClassName(parent, "child2");
-    if (child2 != null && shape.connections[1] != null && shape.connections[1].length != 0) {
-        parseShape(shape.connections[1], child2);
+    if (child2 != null && shape.connections[1] != null && shape.connections[1].shape != null) {
+        parseShape(shape.connections[1].shape, child2);
     }
 }
 
@@ -270,11 +276,11 @@ function parseConfig(config) {
 
     appendBase(parent);
 
-    if (config != null && config.assembly != null) {
+    if (config != null && config.assembly != null && config.assembly.shape != null) {
         let child1 = getFirstChildByClassName(parent, "child1");
 
         if (child1 != null)
-            parseShape(config.assembly, child1);
+            parseShape(config.assembly.shape, child1);
     }
 
     c.appendChild(parent);
@@ -353,6 +359,11 @@ function getFirstChildByClassName(parent, className) {
 document.addEventListener('DOMContentLoaded', (function () {
     console.log("assembly ready !");
 
-    let config = api_rest_read_configuration();
-    parseConfig(config);
+    api_rest_read_configuration()
+        .then((config) => {
+            parseConfig(config);
+        })
+        .catch((error) => {
+            toastErrorShow(error);
+        })
 }));
