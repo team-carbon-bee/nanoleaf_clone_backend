@@ -19,6 +19,144 @@ const cut_size_of_triangle = 16;
 const cut_size_of_base = 90;
 const padding_between_triangle = 1.5;
 
+const leds_position = {
+    '0': {
+        'x': 11.5,
+        'y': -4,
+        'r': 0
+    },
+    '1': {
+        'x': 28.2,
+        'y': -4,
+        'r': 0
+    },
+    '2': {
+        'x': 44.9,
+        'y': -4,
+        'r': 0
+    },
+    '3': {
+        'x': 58.2,
+        'y': -11,
+        'r': -60
+    },
+    '4': {
+        'x': 57.5,
+        'y': -26.7,
+        'r': -120
+    },
+    '5': {
+        'x': 49.5,
+        'y': -40.8,
+        'r': -120
+    },
+    '6': {
+        'x': 41.2,
+        'y': -55.1,
+        'r': -120
+    },
+    '7': {
+        'x': 29.6,
+        'y': -75.2,
+        'r': -120
+    },
+    '8': {
+        'x': 21.3,
+        'y': -89.6,
+        'r': -120
+    },
+    '9': {
+        'x': 13.2,
+        'y': -103.6,
+        'r': -120
+    },
+    '10': {
+        'x': 0,
+        'y': -112.4,
+        'r': 180
+    },
+    '11': {
+        'x': -13.2,
+        'y': -103.6,
+        'r': -240
+    },
+    '12': {
+        'x': -21.3,
+        'y': -89.6,
+        'r': -240
+    },
+    '13': {
+        'x': -29.6,
+        'y': -75.2,
+        'r': -240
+    },
+    '14': {
+        'x': -41.2,
+        'y': -55.1,
+        'r': -240
+    },
+    '15': {
+        'x': -49.5,
+        'y': -40.8,
+        'r': -240
+    },
+    '16': {
+        'x': -57.5,
+        'y': -26.7,
+        'r': -240
+    },
+    '17': {
+        'x': -58.2,
+        'y': -11,
+        'r': -300
+    },
+    '18': {
+        'x': -44.9,
+        'y': -4,
+        'r': 0
+    },
+    '19': {
+        'x': -28.2,
+        'y': -4,
+        'r': 0
+    },
+    '20': {
+        'x': -11.5,
+        'y': -4,
+        'r': 0
+    }
+};
+
+function appendLedToTriangle(led_elm) {
+    let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    let filter = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+    filter.setAttribute("id", "f1");
+
+    let fe_gausian = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur");
+    fe_gausian.setAttribute("stdDeviation", 5);
+
+    filter.appendChild(fe_gausian);
+
+    defs.appendChild(filter);
+
+    led_elm.appendChild(defs);
+
+    for (let pos in leds_position) {
+        const led = leds_position[pos];
+        // let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        // circle.setAttribute("transform", `translate(${led.x}, ${led.y}), rotate(${led.r})`);
+        // circle.setAttribute("r", 5);
+        let circle = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        circle.setAttribute("transform", `translate(${led.x}, ${led.y}), rotate(${led.r})`);
+        circle.setAttribute("x", -5);
+        circle.setAttribute("y", 5);
+        circle.innerHTML = '^';
+        // circle.setAttribute("filter", "url(#f1)");
+
+        led_elm.appendChild(circle);
+    }
+}
+
 function appendTriangle(parent) {
     let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
@@ -43,7 +181,8 @@ function appendTriangle(parent) {
 
     // Create group for LED
     let led = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    led.setAttribute("class", "led");
+    led.setAttribute("class", "leds");
+    appendLedToTriangle(led);
 
     // Append LED to group
     group.appendChild(led);
