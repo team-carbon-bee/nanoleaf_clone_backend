@@ -37,15 +37,16 @@ void HttpServer::setup(void)
     MDNS.begin(Configuration.parameters().hostname.c_str());
     MDNS.addService("http", "tcp", 80);
 
+    // Enable global CORS
+    _webServer.enableCORS();
+
     _webServer.on("/reboot", HTTP_PUT, [&]() {
-        sendCors();
         _webServer.send(200, "text/plain", "ESP reboot now !");
         delay(200);
         ESP.restart();
     });
 
     _webServer.on("/wifimanager", [&]() {
-        sendCors();
         _webServer.send(200, "text/plain", "Reset settings of WifiManager, the card reboot now in AP mode");
         delay(200);
         WiFiManager wifiManager;
@@ -55,7 +56,6 @@ void HttpServer::setup(void)
     });
 
     _webServer.on("/resetConfiguration", [&]() {
-        sendCors();
         _webServer.send(200, "text/plain", "Resetting all parameters, you must reboot for apply it !");
         delay(200);
         Configuration.createDefaultConfiguration();
@@ -101,7 +101,6 @@ void HttpServer::handle(void)
 
 void HttpServer::setConfig()
 {
-    sendCors();
     if (_webServer.hasArg("plain") == false)
     {
         Log.println("Error, no body received !");
@@ -147,12 +146,10 @@ void HttpServer::getAnimationList()
 
         String s;
         serializeJson(doc, s);
-        sendCors();
         _webServer.send(200, "application/json", s);
     }
     else
     {
-        sendCors();
         _webServer.send(400, "text/plain", "Body not received");
     }
 }
@@ -164,21 +161,18 @@ void HttpServer::getInformations()
     doc["version"] = Constants::ApplicationVersion;
     String s;
     serializeJson(doc, s);
-    sendCors();
     _webServer.send(200, "application/json", s);
 }
 
 void HttpServer::powerOn()
 {
     GlobalAnimator.enabled(true);
-    sendCors();
     _webServer.send(200, "application/json", "{\"result\":true}");
 }
 
 void HttpServer::powerOff()
 {
     GlobalAnimator.enabled(false);
-    sendCors();
     _webServer.send(200, "application/json", "{\"result\":true}");
 }
 
@@ -187,16 +181,7 @@ void HttpServer::previewAnimation()
 
     uint8_t id = HTTPServer.webServer().arg("id").toInt();
     GlobalAnimator.previewAnimation(id);
-    sendCors();
     _webServer.send(200, "application/json", "{\"result\":true}");
-}
-
-void HttpServer::sendCors()
-{
-    _webServer.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
-    _webServer.sendHeader(F("Access-Control-Max-Age"), F("10000"));
-    _webServer.sendHeader(F("Access-Control-Allow-Methods"), F("PUT,POST,GET,OPTIONS"));
-    _webServer.sendHeader(F("Access-Control-Allow-Headers"), F("*"));
 }
 
 String HttpServer::getContentType(String filename)
@@ -235,14 +220,6 @@ String HttpServer::getContentType(String filename)
 // send the right file to the client (if it exists)
 bool HttpServer::handleFileRead(String path)
 {
-    sendCors();
-
-    // Send cors and exit properly when method OPTIONS
-    if (_webServer.method() == HTTP_OPTIONS)
-    {
-        _webServer.send(204);
-        return true;
-    }
 
     if (path.endsWith("/"))
     {

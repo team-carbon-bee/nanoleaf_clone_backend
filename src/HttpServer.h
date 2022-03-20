@@ -32,7 +32,6 @@ public:
   void sendJson(const uint16_t code, JsonDocument& doc);
 
 private:
-  void sendCors();
   void setConfig();
   void getAnimationList();
   void getInformations();
