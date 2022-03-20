@@ -165,6 +165,25 @@ async function api_rest_read_configuration() {
     }
 }
 
+async function api_rest_upload_firmware(file) {
+    const response = await fetch("http://" + URI + "/update", {
+        method: 'POST',
+        body: file,
+    }).catch((error) => {
+        throw "<b>Unable to send command !</b><br/>" + error;
+    });
+
+    if (response.status === 200) {
+        if (response.headers.get('Content-Type') == 'application/json')
+            return await response.json();
+        else
+            return await response.text();
+    }
+    else {
+        throw "<b>Response Error !</b><br/>" + "message: " + await response.text() + "<br/>status: " + response.status;
+    }
+}
+
 // **************
 // *** Others ***
 // **************
