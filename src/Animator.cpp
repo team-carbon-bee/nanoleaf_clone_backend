@@ -22,14 +22,14 @@ void Animator::setup()
     _ledDriver->setup();
     _ledDriver->setBrightness(Configuration.parameters().maxBrightness);
     _ledDriver->clear();
-    
+
     Log.println("Creating animations.");
 
     GlobalAnimationFactory.setup(_ledDriver);
 
     Log.println("Creating animator.");
 
-    //Getting params from configuration
+    // Getting params from configuration
     reloadConfiguration();
 }
 
@@ -39,28 +39,31 @@ void Animator::reloadConfiguration()
     _animationList = Configuration.parameters().animationList;
 }
 
-void Animator::currentAnimation(animation::IAnimation * newAnimation)
+void Animator::currentAnimation(animation::IAnimation *newAnimation)
 {
     _currentAnimation = newAnimation;
     if (_currentAnimation != nullptr)
     {
-        Serial.printf("Starting new animation %s (%d)\n", _currentAnimation->name().c_str(), _currentAnimation->id());
+        Log.print("Starting new animation ");
+        Log.print(_currentAnimation->name());
+        Log.print(", id: ");
+        Log.println(String(_currentAnimation->id()));
         _currentAnimation->initialize();
     }
     else
-        Serial.printf("Current animation cleared\n");
+        Log.println("Current animation cleared");
 }
 
 void Animator::handle()
 {
-    //if animation is enabled
+    // if animation is enabled
     if (_enabled)
     {
         if (_animationSelectionMethod == ConfigurationProvider::kStatic)
         {
             if (not _animationList.empty())
             {
-                //if there is no animation for the moment we select the first of the list
+                // if there is no animation for the moment we select the first of the list
                 if (_currentAnimation == nullptr)
                 {
                     currentAnimation(getAnimationById(_animationList.front()));
@@ -68,26 +71,24 @@ void Animator::handle()
 
                 if ((_currentAnimation->isFinished()) || (_timeRemaining <= 0))
                 {
-                    //we are in statuc animation but a finshable animation has been selected
-                    //we have to restart it
+                    // we are in statuc animation but a finshable animation has been selected
+                    // we have to restart it
                     _timeRemaining = Configuration.parameters().animationDuration;
-                    //we deinit the last run
+                    // we deinit the last run
                     _currentAnimation->deinitialize();
-                    //and init the new run
+                    // and init the new run
                     _currentAnimation->initialize();
                 }
-                
             }
             else
             {
                 _animationCanChange = false;
                 currentAnimation(nullptr);
-                
             }
-        } 
+        }
         else
         {
-            //random and sequential follow same schema
+            // random and sequential follow same schema
             if (_currentAnimation == nullptr)
             {
                 currentAnimation(getAnimationByMethod(Configuration.parameters().animationMethod));
@@ -95,13 +96,13 @@ void Animator::handle()
 
             if (_currentAnimation->isFinished() || (_timeRemaining <= 0))
             {
-                //release the previous one
+                // release the previous one
                 _currentAnimation->deinitialize();
-                //Before init animation, we have to remove all previously malloc objects
+                // Before init animation, we have to remove all previously malloc objects
                 GlobalAnimationFactory.clearAnimationObject();
-                
-                //Two possibilities, the last one was a "non system animation" and the next one has to be fade off
-                // The last one was already fade off and we can choose anoter new animation
+
+                // Two possibilities, the last one was a "non system animation" and the next one has to be fade off
+                //  The last one was already fade off and we can choose anoter new animation
                 if (_currentAnimation == &_fadingOffAnimation)
                 {
                     currentAnimation(getAnimationByMethod(_animationSelectionMethod));
@@ -110,11 +111,11 @@ void Animator::handle()
                 {
                     currentAnimation(&_fadingOffAnimation);
                 }
-            
-                //restart timer
+
+                // restart timer
                 _timeRemaining = Configuration.parameters().animationDuration;
-            } 
-        }   
+            }
+        }
 
         if (_currentAnimation != nullptr)
         {
@@ -122,7 +123,7 @@ void Animator::handle()
             _timeRemaining -= Configuration.parameters().speed;
         }
     }
-    else  if ((_currentAnimation == &_fadingOffAnimation) && (not _currentAnimation->isFinished()))
+    else if ((_currentAnimation == &_fadingOffAnimation) && (not _currentAnimation->isFinished()))
     {
         _currentAnimation->loop();
     }
@@ -133,14 +134,14 @@ void Animator::enabled(const bool value)
     if (value)
     {
         _enabled = true;
-        //we restore configuration
+        // we restore configuration
         reloadConfiguration();
         currentAnimation(nullptr);
     }
     else
     {
         _enabled = false;
-        //we se animation to fadeout
+        // we se animation to fadeout
         currentAnimation(&_fadingOffAnimation);
     }
 }
@@ -150,7 +151,7 @@ bool Animator::enabled() const
     return _enabled;
 }
 
-animation::IAnimation * Animator::getAnimationById(const uint8_t & animationId)
+animation::IAnimation *Animator::getAnimationById(const uint8_t &animationId)
 {
     if (GlobalAnimationFactory.animations().moveToStart())
     {
@@ -158,19 +159,20 @@ animation::IAnimation * Animator::getAnimationById(const uint8_t & animationId)
         {
             if (GlobalAnimationFactory.animations().getCurrent()->id() == animationId)
             {
-               return GlobalAnimationFactory.animations().getCurrent();
+                return GlobalAnimationFactory.animations().getCurrent();
             }
         } while (GlobalAnimationFactory.animations().next());
     }
-    Serial.printf("Unable to find animation with id %d\n", animationId);
+    Log.print("Unable to find animation with id ");
+    Log.println(String(animationId));
     return NULL;
 }
 
-animation::IAnimation * Animator::getAnimationByMethod(const ConfigurationProvider::EAnimationSelectionMethod & animationMethod)
+animation::IAnimation *Animator::getAnimationByMethod(const ConfigurationProvider::EAnimationSelectionMethod &animationMethod)
 {
     if (animationMethod == ConfigurationProvider::kRandom)
     {
-        //we roll a dice to choose an id in animationList
+        // we roll a dice to choose an id in animationList
         int pos = random(0, Configuration.parameters().animationList.size());
         GlobalAnimationFactory.animations().at(Configuration.parameters().animationList[pos]);
         return GlobalAnimationFactory.animations().getCurrent();
@@ -187,7 +189,7 @@ animation::IAnimation * Animator::getAnimationByMethod(const ConfigurationProvid
     }
     else
     {
-        Serial.printf("Unable to find animation method\n");
+        Log.println("Unable to find animation method");
     }
 
     return NULL;
@@ -195,15 +197,15 @@ animation::IAnimation * Animator::getAnimationByMethod(const ConfigurationProvid
 
 void Animator::previewAnimation(const uint8_t id)
 {
-    animation::IAnimation * animation = getAnimationById(id);
+    animation::IAnimation *animation = getAnimationById(id);
     if (animation != nullptr)
     {
-        //we set the animation mathod as static with the requested animation
+        // we set the animation mathod as static with the requested animation
         currentAnimation(animation);
         _animationSelectionMethod = ConfigurationProvider::kStatic;
     }
 }
 
-#if !defined(NO_GLOBAL_INSTANCES) 
+#if !defined(NO_GLOBAL_INSTANCES)
 Animator GlobalAnimator;
 #endif
