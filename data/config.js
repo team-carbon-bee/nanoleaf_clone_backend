@@ -5,10 +5,28 @@ function onBtnSaveClick() {
     setConfig();
 }
 
+function onBtnUpdateClick() {
+    const files = document.getElementById('url-file').files[0];
+    const formData = new FormData();
+    console.log();
+
+    if (files) {
+        formData.append('image', files);
+
+        api_rest_upload_firmware(formData)
+            .then((response) => {
+                toastInfoShow(response);
+            })
+            .catch((error) => {
+                toastErrorShow(error);
+            });
+    }
+}
+
 function onBtnRebootClick() {
     api_rest_reboot()
         .then((response) => {
-            toastInfoShow("Reboot in progress: " + response);
+            toastInfoShow(response);
         })
         .catch((error) => {
             toastErrorShow(error);
