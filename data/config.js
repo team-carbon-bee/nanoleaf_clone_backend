@@ -44,7 +44,7 @@ function setConfig() {
     }
 
     // Send config
-    api_rest_set_general_configuration(config)
+    api_rest_set_configuration(config)
         .then((response) => {
             toastInfoShow("Save configuration successfully");
         })

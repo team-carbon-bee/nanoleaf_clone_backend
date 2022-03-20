@@ -182,7 +182,7 @@ function setConfig() {
     }
 
     // Send config
-    api_rest_set_animation_configuration(config)
+    api_rest_set_configuration(config)
         .then((response) => {
             toastInfoShow("Save animation successfully");
         })

@@ -18,7 +18,7 @@ function onBtnSaveClick() {
     console.log(config);
 
     // Send config
-    api_rest_set_assembly_configuration(config)
+    api_rest_set_configuration(config)
         .then((response) => {
             toastInfoShow("Save configuration successfully");
         })
