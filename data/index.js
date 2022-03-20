@@ -13,22 +13,25 @@ function onBtnStopClick() {
         });
 }
 
-let size_of_triangle = 200;
-let padding_between_triangle = 1.5;
+// Base on real dimension
+const base_size_of_triangle = 155;
+const cut_size_of_triangle = 16;
+const cut_size_of_base = 90;
+const padding_between_triangle = 1.5;
 
 function appendTriangle(parent) {
     let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
-    let h = (Math.sqrt(3) * size_of_triangle / 2);
-    let l = size_of_triangle / 8;
+    let h = (Math.sqrt(3) * base_size_of_triangle / 2);
+    let l = cut_size_of_triangle;
     let hyp = (l / Math.cos(30 * Math.PI / 180));
-    let points = `${-(size_of_triangle / 2) + hyp}                                          0
-                    ${-(size_of_triangle / 2) + (hyp / 2)}                                  ${-l}
+    let points = `${-(base_size_of_triangle / 2) + hyp}                                     0
+                    ${-(base_size_of_triangle / 2) + (hyp / 2)}                             ${-l}
                     ${-hyp / 2}                                                             ${-h + l}
                     ${hyp / 2}                                                              ${-h + l}
-                    ${(size_of_triangle / 2) - (hyp / 2)}                                   ${-l}
-                    ${(size_of_triangle / 2) - hyp}                                         0`
+                    ${(base_size_of_triangle / 2) - (hyp / 2)}                              ${-l}
+                    ${(base_size_of_triangle / 2) - hyp}                                    0`
 
     // Add Point
     triangle.setAttribute("points", points);
@@ -38,10 +41,17 @@ function appendTriangle(parent) {
     // Append Triangle to group
     group.appendChild(triangle);
 
+    // Create group for LED
+    let led = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    led.setAttribute("class", "led");
+
+    // Append LED to group
+    group.appendChild(led);
+
     // Create group for child 1
     let child1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
     // Add Rotation and set the origin of the child 1
-    child1.setAttribute("transform", `translate(${-size_of_triangle / 4 - (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(-60)`);
+    child1.setAttribute("transform", `translate(${-base_size_of_triangle / 4 - (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(-60)`);
     child1.setAttribute("class", "child1");
 
     // Append child 1 to group
@@ -50,7 +60,7 @@ function appendTriangle(parent) {
     // Create group for child 2
     let child2 = document.createElementNS("http://www.w3.org/2000/svg", "g");
     // Add Rotation and set the origin of the child 2
-    child2.setAttribute("transform", `translate(${size_of_triangle / 4 + (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(60)`);
+    child2.setAttribute("transform", `translate(${base_size_of_triangle / 4 + (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(60)`);
     child2.setAttribute("class", "child2");
 
     // Append child 2 to group
@@ -67,17 +77,17 @@ function appendBase(parent) {
 
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
-    let h = (Math.sqrt(3) * size_of_triangle / 2);
-    let l = size_of_triangle / 8;
+    let h = (Math.sqrt(3) * base_size_of_triangle / 2);
+    let l = cut_size_of_triangle;
     let hyp = (l / Math.cos(30 * Math.PI / 180));
-    let l2 = size_of_triangle / 1.7;
+    let l2 = cut_size_of_base;
     let hyp2 = (l2 / Math.cos(30 * Math.PI / 180));
-    let points = `${-(size_of_triangle / 2) + hyp}                                        0
-                    ${-(size_of_triangle / 2) + (hyp / 2)}                                  ${-l}
+    let points = `${-(base_size_of_triangle / 2) + hyp}                                     0
+                    ${-(base_size_of_triangle / 2) + (hyp / 2)}                             ${-l}
                     ${-hyp2 / 2}                                                            ${-h + l2}
                     ${hyp2 / 2}                                                             ${-h + l2}
-                    ${(size_of_triangle / 2) - (hyp / 2)}                                   ${-l}
-                    ${(size_of_triangle / 2) - hyp}                                         0`
+                    ${(base_size_of_triangle / 2) - (hyp / 2)}                              ${-l}
+                    ${(base_size_of_triangle / 2) - hyp}                                    0`
 
     // Add Point
     triangle.setAttribute("points", points);
