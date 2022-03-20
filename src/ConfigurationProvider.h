@@ -72,7 +72,7 @@ class ConfigurationProvider
         Shape * _assembly;
         Parameters _parameters;
 
-        static const int DynamicJsonDocumentMaxSize = 3 * 1024;
+        static const int DynamicJsonDocumentMaxSize = 4 * 1024;
 
 };
 

@@ -6,27 +6,27 @@
 
 const String ConfigurationProvider::ConfigurationFilename = "/configuration.json";
 
-const String ConfigurationProvider::animationSelectionMethodToString(const ConfigurationProvider::EAnimationSelectionMethod & method)
+const String ConfigurationProvider::animationSelectionMethodToString(const ConfigurationProvider::EAnimationSelectionMethod &method)
 {
     switch (method)
     {
-        case kStatic : 
-            return "static";
-        default:
-        case kRandom : 
-            return "random";
-        case kSequential : 
-            return "sequential";
-    }  
+    case kStatic:
+        return "static";
+    default:
+    case kRandom:
+        return "random";
+    case kSequential:
+        return "sequential";
+    }
 }
 
-ConfigurationProvider::EAnimationSelectionMethod ConfigurationProvider::parseAnimationSelectionMethod(const String & method)
+ConfigurationProvider::EAnimationSelectionMethod ConfigurationProvider::parseAnimationSelectionMethod(const String &method)
 {
-    if (method == "static") 
+    if (method == "static")
         return kStatic;
-    if (method == "random") 
+    if (method == "random")
         return kRandom;
-    if (method == "sequential") 
+    if (method == "sequential")
         return kSequential;
     return kRandom;
 }
@@ -42,7 +42,7 @@ ConfigurationProvider::~ConfigurationProvider()
 
 void ConfigurationProvider::setup()
 {
-    if (!SPIFFS.begin(true)) 
+    if (!SPIFFS.begin(true))
     {
         Serial.println("Unable to begin SPIFFS");
     }
@@ -54,10 +54,10 @@ void ConfigurationProvider::setup()
 
 void ConfigurationProvider::loadFromFlash()
 {
-    //TODO : restore when wifi ok and validated
+    // TODO : restore when wifi ok and validated
     // createDefaultConfiguration();
     // saveToFlash();
-    if(SPIFFS.exists(ConfigurationFilename))
+    if (SPIFFS.exists(ConfigurationFilename))
     {
         File file = SPIFFS.open(ConfigurationFilename, "r");
         if (!file)
@@ -73,7 +73,7 @@ void ConfigurationProvider::loadFromFlash()
         String configurationFileAsString = "";
         while (file.available())
         {
-            configurationFileAsString +=(char)file.read();
+            configurationFileAsString += (char)file.read();
         }
         Serial.println("Configuration file read.");
         parseJson(configurationFileAsString);
@@ -91,40 +91,40 @@ void ConfigurationProvider::createDefaultConfiguration()
     Shape *rightSecond = new Shape();
     rightSecond->kind = triangle;
     rightSecond->content = NULL;
-    rightSecond->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    rightSecond->connections = (Shape **)malloc(sizeof(Shape *) * 2);
     rightSecond->connections[0] = NULL;
     rightSecond->connections[1] = NULL;
-    
+
     Shape *second = new Shape();
     second->kind = triangle;
     second->content = NULL;
-    second->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    second->connections = (Shape **)malloc(sizeof(Shape *) * 2);
     second->connections[0] = NULL;
     second->connections[1] = NULL;
 
     Shape *rightThird = new Shape();
     rightThird->kind = triangle;
     rightThird->content = NULL;
-    rightThird->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    rightThird->connections = (Shape **)malloc(sizeof(Shape *) * 2);
     rightThird->connections[0] = NULL;
     rightThird->connections[1] = NULL;
 
     Shape *third = new Shape();
     third->kind = triangle;
     third->content = NULL;
-    third->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    third->connections = (Shape **)malloc(sizeof(Shape *) * 2);
     third->connections[0] = NULL;
     third->connections[1] = NULL;
 
     _assembly = new Shape();
     _assembly->kind = triangle;
     _assembly->content = NULL;
-    _assembly->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+    _assembly->connections = (Shape **)malloc(sizeof(Shape *) * 2);
     _assembly->connections[0] = second;
     _assembly->connections[1] = third;
     _assembly->parent = NULL;
 
-    //we affect parent to second and third
+    // we affect parent to second and third
     second->parent = _assembly;
     third->parent = _assembly;
 
@@ -138,7 +138,7 @@ void ConfigurationProvider::createDefaultConfiguration()
     _parameters.backgroundColor = 0;
     _parameters.animationDuration = 20 * 1000;
     _parameters.animationMethod = kRandom;
-    //TODO : make better
+    // TODO : make better
     _parameters.animationList = {10, 11, 12, 13, 14, 15, 16, 17, 18};
 }
 
@@ -150,13 +150,13 @@ bool ConfigurationProvider::saveToFlash()
 
     // Open file for writing
     File file = SPIFFS.open(ConfigurationFilename, FILE_WRITE);
-    if (!file) 
+    if (!file)
     {
         Serial.println(F("Failed to create file"));
         return false;
     }
-    
-    //we browse the tree to generate the json
+
+    // we browse the tree to generate the json
     DynamicJsonDocument doc(DynamicJsonDocumentMaxSize);
     JsonObject assemblyNode = doc.createNestedObject("assembly");
     createJsonFromShape(assemblyNode, _assembly);
@@ -170,13 +170,16 @@ bool ConfigurationProvider::saveToFlash()
     parameters["mainColor"] = _parameters.mainColor;
     parameters["backgroundColorRandom"] = _parameters.backgroundColorRandom;
     parameters["backgroundColor"] = _parameters.backgroundColor;
-    parameters["animationDuration"] = _parameters.animationDuration;
-    parameters["animationMethod"] = animationSelectionMethodToString(_parameters.animationMethod);
 
-    JsonArray animationList = parameters.createNestedArray("animationList");
-    for (const auto & id : _parameters.animationList)
+
+    JsonObject animation = doc.createNestedObject("animation");
+    animation["animationDuration"] = _parameters.animationDuration;
+    animation["animationMethod"] = animationSelectionMethodToString(_parameters.animationMethod);
+
+    JsonArray animationList = animation.createNestedArray("animationList");
+    for (const auto &id : _parameters.animationList)
         animationList.add(id);
-    
+
     serializeJson(doc, Serial);
     serializeJson(doc, file);
     file.close();
@@ -184,50 +187,59 @@ bool ConfigurationProvider::saveToFlash()
     return true;
 }
 
-bool ConfigurationProvider::load(const String & data)
+bool ConfigurationProvider::load(const String &data)
 {
     return parseJson(data);
 }
 
-bool ConfigurationProvider::parseJson(const String & data)
+bool ConfigurationProvider::parseJson(const String &data)
 {
-    //deserializeJson
+    // deserializeJson
     DynamicJsonDocument doc(DynamicJsonDocumentMaxSize);
-    DeserializationError error = deserializeJson(doc, data);
-    if (error) 
+    DeserializationError error = deserializeJson(doc, data, DeserializationOption::NestingLimit(40));
+    if (error)
     {
         Serial.print("deserializeJson() failed: ");
         Serial.println(error.c_str());
         return false;
     }
 
-    //iterate and create structure
-    JsonObject obj = doc["assembly"]["shape"];
-    _assembly = createShapeFromJSon(obj);
-    
-    JsonObject parameters = doc["parameters"];
-    _parameters.ledPerTriangle = parameters["ledPerTriangle"] | 21;
-    _parameters.hostname = parameters["hostname"] | "nanoleaf_clone";
-    _parameters.maxBrightness = parameters["maxBrightness"] | 1.0;
-    _parameters.speed = parameters["speed"] | 50;
-    _parameters.mainColorRandom = parameters["mainColorRandom"] | true;
-    _parameters.mainColor = parameters["mainColor"] | 0;
-    _parameters.backgroundColorRandom = parameters["backgroundColorRandom"] | true;
-    _parameters.backgroundColor = parameters["backgroundColor"] | 0;
-    _parameters.animationDuration = parameters["animationDuration"] | 20 * 1000;
-    _parameters.animationMethod = parseAnimationSelectionMethod(parameters["animationMethod"] | "random");
+    // iterate and create structure
+    JsonObject assembly = doc["assembly"];
+    if (!assembly.isNull())
+        _assembly = createShapeFromJSon(assembly["shape"]);
 
-    _parameters.animationList.clear();
-    JsonArray jsonAnimation = parameters["animationList"].as<JsonArray>();
-    for(JsonVariant id : jsonAnimation) 
+    JsonObject parameters = doc["parameters"];
+    if (!parameters.isNull())
     {
-        _parameters.animationList.push_back(id.as<int>());
+        _parameters.ledPerTriangle = parameters["ledPerTriangle"] | 21;
+        _parameters.hostname = parameters["hostname"] | "nanoleaf_clone";
+        _parameters.maxBrightness = parameters["maxBrightness"] | 1.0;
+        _parameters.speed = parameters["speed"] | 50;
+        _parameters.mainColorRandom = parameters["mainColorRandom"] | true;
+        _parameters.mainColor = parameters["mainColor"] | 0;
+        _parameters.backgroundColorRandom = parameters["backgroundColorRandom"] | true;
+        _parameters.backgroundColor = parameters["backgroundColor"] | 0;
+    }
+
+    JsonObject animation = doc["animation"];
+    if (!animation.isNull())
+    {
+        _parameters.animationDuration = animation["animationDuration"] | 20 * 1000;
+        _parameters.animationMethod = parseAnimationSelectionMethod(animation["animationMethod"] | "random");
+
+        _parameters.animationList.clear();
+        JsonArray jsonAnimation = animation["animationList"].as<JsonArray>();
+        for (JsonVariant id : jsonAnimation)
+        {
+            _parameters.animationList.push_back(id.as<int>());
+        }
     }
 
     return true;
 }
 
-Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject & jsonObject, Shape * parent)
+Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject &jsonObject, Shape *parent)
 {
     if (jsonObject.isNull())
         return NULL;
@@ -235,11 +247,11 @@ Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject & jsonObject,
     String shapeType = jsonObject["type"];
     if (shapeType == "triangle")
     {
-        Shape * current = new Shape();
+        Shape *current = new Shape();
         current->kind = triangle;
-        current->connections = (Shape**)malloc(sizeof(Shape *) * 2);
+        current->connections = (Shape **)malloc(sizeof(Shape *) * 2);
         JsonArray array = jsonObject["connections"];
-        for(int i = 0; i < array.size(); ++i) 
+        for (int i = 0; i < array.size(); ++i)
         {
             current->connections[i] = createShapeFromJSon(array[i]["shape"], current);
         }
@@ -255,7 +267,7 @@ Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject & jsonObject,
     }
 }
 
-void ConfigurationProvider::createJsonFromShape(JsonObject & targetedObject, Shape * shape)
+void ConfigurationProvider::createJsonFromShape(JsonObject &targetedObject, Shape *shape)
 {
     if (shape == NULL)
         return;
@@ -271,7 +283,7 @@ void ConfigurationProvider::createJsonFromShape(JsonObject & targetedObject, Sha
             {
                 if (shape->connections[0] == NULL)
                 {
-                    //add "null" element to json
+                    // add "null" element to json
                     array.add(JsonObject());
                 }
                 else
@@ -284,22 +296,22 @@ void ConfigurationProvider::createJsonFromShape(JsonObject & targetedObject, Sha
         }
 
         case unknown:
-            //nothing to do
-        break;
+            // nothing to do
+            break;
     }
 }
 
-const ConfigurationProvider::Parameters & ConfigurationProvider::parameters() const
+const ConfigurationProvider::Parameters &ConfigurationProvider::parameters() const
 {
     return _parameters;
 }
 
-ConfigurationProvider::Parameters & ConfigurationProvider::parameters()
+ConfigurationProvider::Parameters &ConfigurationProvider::parameters()
 {
     return _parameters;
 }
 
-Shape * ConfigurationProvider::assembly()
+Shape *ConfigurationProvider::assembly()
 {
     return _assembly;
 }
