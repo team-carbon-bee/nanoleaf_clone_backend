@@ -27,6 +27,13 @@ function onBtnSaveClick() {
     setConfig();
 }
 
+function onBtnAddAllClick() {
+    // for each animation add it to list
+    for (let key in all_animations) {
+        append_animation_to_custom_list(key);
+    }
+}
+
 function onBtnClearClick() {
     clear_list_of_custom_animations();
 }
