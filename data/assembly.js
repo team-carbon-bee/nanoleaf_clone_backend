@@ -27,8 +27,12 @@ function onBtnSaveClick() {
         });
 }
 
-let size_of_triangle = 200;
-let padding_between_triangle = 1.5;
+// Base on real dimension
+const base_size_of_triangle = 155;
+const cut_size_of_triangle = 16;
+const cut_size_of_base = 90;
+const padding_between_triangle = 1.5;
+
 let nb_triangle = 0;
 
 function count_nb_triangle() {
@@ -111,15 +115,15 @@ function appendTriangle(parent) {
     let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
-    let h = (Math.sqrt(3) * size_of_triangle / 2);
-    let l = size_of_triangle / 8;
+    let h = (Math.sqrt(3) * base_size_of_triangle / 2);
+    let l = cut_size_of_triangle;
     let hyp = (l / Math.cos(30 * Math.PI / 180));
-    let points = `${-(size_of_triangle / 2) + hyp}                                          0
-                    ${-(size_of_triangle / 2) + (hyp / 2)}                                  ${-l}
-                    ${-hyp / 2}                                                             ${-h + l}
-                    ${hyp / 2}                                                              ${-h + l}
-                    ${(size_of_triangle / 2) - (hyp / 2)}                                   ${-l}
-                    ${(size_of_triangle / 2) - hyp}                                         0`
+    let points = `${-(base_size_of_triangle / 2) + hyp}                 0
+                    ${-(base_size_of_triangle / 2) + (hyp / 2)}         ${-l}
+                    ${-hyp / 2}                                         ${-h + l}
+                    ${hyp / 2}                                          ${-h + l}
+                    ${(base_size_of_triangle / 2) - (hyp / 2)}          ${-l}
+                    ${(base_size_of_triangle / 2) - hyp}                0`
 
     // Add Point
     triangle.setAttribute("points", points);
@@ -130,14 +134,14 @@ function appendTriangle(parent) {
     group.appendChild(triangle);
 
     let connection = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    let offset = size_of_triangle / 50;
-    points = `${-size_of_triangle / 32}             ${-size_of_triangle / 40 + offset}
-                ${-size_of_triangle / 32}           ${size_of_triangle / 40 + offset}
-                ${-size_of_triangle / 32 - 3}       ${size_of_triangle / 40 + offset}
-                0                                   ${size_of_triangle / 40 + offset + 10}
-                ${size_of_triangle / 32 + 3}        ${size_of_triangle / 40 + offset}
-                ${size_of_triangle / 32}            ${size_of_triangle / 40 + offset}
-                ${size_of_triangle / 32}            ${-size_of_triangle / 40 + offset}`
+    let offset = base_size_of_triangle / 50;
+    points = `${-base_size_of_triangle / 32}            ${-base_size_of_triangle / 40 + offset}
+                ${-base_size_of_triangle / 32}          ${base_size_of_triangle / 40 + offset}
+                ${-base_size_of_triangle / 32 - 3}      ${base_size_of_triangle / 40 + offset}
+                0                                       ${base_size_of_triangle / 40 + offset + 10}
+                ${base_size_of_triangle / 32 + 3}       ${base_size_of_triangle / 40 + offset}
+                ${base_size_of_triangle / 32}           ${base_size_of_triangle / 40 + offset}
+                ${base_size_of_triangle / 32}           ${-base_size_of_triangle / 40 + offset}`
 
     // Add Point
     connection.setAttribute("points", points);
@@ -150,7 +154,7 @@ function appendTriangle(parent) {
     // Create Del button
     let del_button = document.createElementNS("http://www.w3.org/2000/svg", "path");
     del_button.setAttribute("d", "M 10.806641 2 C 10.289641 2 9.7956875 2.2043125 9.4296875 2.5703125 L 9 3 L 4 3 A 1.0001 1.0001 0 1 0 4 5 L 20 5 A 1.0001 1.0001 0 1 0 20 3 L 15 3 L 14.570312 2.5703125 C 14.205312 2.2043125 13.710359 2 13.193359 2 L 10.806641 2 z M 4.3652344 7 L 5.8925781 20.263672 C 6.0245781 21.253672 6.877 22 7.875 22 L 16.123047 22 C 17.121047 22 17.974422 21.254859 18.107422 20.255859 L 19.634766 7 L 4.3652344 7 z");
-    del_button.setAttribute("transform", `translate(${-22 * 0.75}, ${22 * 0.75 - size_of_triangle / 2}) scale(1.5, 1.5)`);
+    del_button.setAttribute("transform", `translate(${-22 * 0.75}, ${22 * 0.75 - base_size_of_triangle / 2}) scale(1.5, 1.5)`);
     del_button.setAttribute("class", "del_button");
     del_button.setAttribute("onclick", "remove_child(this)");
 
@@ -159,7 +163,7 @@ function appendTriangle(parent) {
 
     // Create Add button
     let add_button = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    add_button.setAttribute("points", `${-size_of_triangle / 2} 0 0 ${-h} ${size_of_triangle / 2} 0`);
+    add_button.setAttribute("points", `${-base_size_of_triangle / 2} 0 0 ${-h} ${base_size_of_triangle / 2} 0`);
     add_button.setAttribute("transform", `translate(0, ${-padding_between_triangle * 2}) scale(0.2, 0.2)`);
     add_button.setAttribute("class", "add_button");
     add_button.setAttribute("onclick", "add_child(this)");
@@ -167,7 +171,7 @@ function appendTriangle(parent) {
     // Create group for child 1
     let child1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
     // Add Rotation and set the origin of the child 1
-    child1.setAttribute("transform", `translate(${-size_of_triangle / 4 - (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(-60)`);
+    child1.setAttribute("transform", `translate(${-base_size_of_triangle / 4 - (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(-60)`);
     child1.setAttribute("class", "child1");
 
     // Append Add button to child 1
@@ -179,7 +183,7 @@ function appendTriangle(parent) {
     // Create group for child 2
     let child2 = document.createElementNS("http://www.w3.org/2000/svg", "g");
     // Add Rotation and set the origin of the child 2
-    child2.setAttribute("transform", `translate(${size_of_triangle / 4 + (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(60)`);
+    child2.setAttribute("transform", `translate(${base_size_of_triangle / 4 + (padding_between_triangle / Math.tan(30 * Math.PI / 180))}, ${-h / 2 - padding_between_triangle}), rotate(60)`);
     child2.setAttribute("class", "child2");
 
     // Append Add button to child 2
@@ -199,17 +203,17 @@ function appendBase(parent) {
 
     let triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
-    let h = (Math.sqrt(3) * size_of_triangle / 2);
-    let l = size_of_triangle / 8;
+    let h = (Math.sqrt(3) * base_size_of_triangle / 2);
+    let l = cut_size_of_triangle;
     let hyp = (l / Math.cos(30 * Math.PI / 180));
-    let l2 = size_of_triangle / 1.7;
+    let l2 = cut_size_of_base;
     let hyp2 = (l2 / Math.cos(30 * Math.PI / 180));
-    let points = `${-(size_of_triangle / 2) + hyp}                                        0
-                    ${-(size_of_triangle / 2) + (hyp / 2)}                                  ${-l}
-                    ${-hyp2 / 2}                                                            ${-h + l2}
-                    ${hyp2 / 2}                                                             ${-h + l2}
-                    ${(size_of_triangle / 2) - (hyp / 2)}                                   ${-l}
-                    ${(size_of_triangle / 2) - hyp}                                         0`
+    let points = `${-(base_size_of_triangle / 2) + hyp}                 0
+                    ${-(base_size_of_triangle / 2) + (hyp / 2)}         ${-l}
+                    ${-hyp2 / 2}                                        ${-h + l2}
+                    ${hyp2 / 2}                                         ${-h + l2}
+                    ${(base_size_of_triangle / 2) - (hyp / 2)}          ${-l}
+                    ${(base_size_of_triangle / 2) - hyp}                0`
 
     // Add Point
     triangle.setAttribute("points", points);
@@ -221,7 +225,7 @@ function appendBase(parent) {
 
     // Create Add button
     let add_button = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    add_button.setAttribute("points", `${-size_of_triangle / 2} 0 0 ${-h} ${size_of_triangle / 2} 0`);
+    add_button.setAttribute("points", `${-base_size_of_triangle / 2} 0 0 ${-h} ${base_size_of_triangle / 2} 0`);
     add_button.setAttribute("transform", `translate(0, ${-padding_between_triangle * 2}) scale(0.2, 0.2)`);
     add_button.setAttribute("class", "add_button");
     add_button.setAttribute("onclick", "add_child(this)");
@@ -364,6 +368,7 @@ document.addEventListener('DOMContentLoaded', (function () {
             parseConfig(config);
         })
         .catch((error) => {
+            parseConfig(null);
             toastErrorShow(error);
         })
 }));
