@@ -288,6 +288,8 @@ function parseConfig(config) {
     }
 
     c.appendChild(parent);
+
+    count_nb_triangle();
 }
 
 const svgContainer = document.getElementById("mySvg");
