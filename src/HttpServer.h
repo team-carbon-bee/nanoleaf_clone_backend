@@ -11,6 +11,8 @@
   #include <ESP8266HTTPUpdateServer.h>
 #endif
 
+#include <WebSocketsServer.h>
+
 class HttpServer
 {
 public:
@@ -20,24 +22,26 @@ public:
 	void setup(void);
 	void handle(void);
 
-	String getContentType(String filename);
-  bool handleFileRead(String path);
+  void sendDataToWebSocket();
 
 #ifdef ESP32
-  WebServer&          webServer();
+  WebServer&          webServer() { return _webServer; }
 #else
-  ESP8266WebServer&   webServer();
+  ESP8266WebServer&   webServer()  { return _webServer; }
 #endif
 
-  void sendJson(const uint16_t code, JsonDocument& doc);
-
 private:
+  void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length);
   void setConfig();
   void getAnimationList();
   void getInformations();
   void powerOn();
   void powerOff();
   void previewAnimation();
+	String getContentType(String filename);
+  bool handleFileRead(String path);
+  void sendJson(const uint16_t code, JsonDocument& doc);
+
 #ifdef ESP32
   WebServer                 _webServer;
   ESP32HTTPUpdateServer     _httpUpdater;
@@ -45,6 +49,7 @@ private:
   ESP8266WebServer          _webServer;
   ESP8266HTTPUpdateServer   _httpUpdater;
 #endif
+  WebSocketsServer          _webSocketServer;
 };
 
 #if !defined(NO_GLOBAL_INSTANCES)

@@ -24,7 +24,7 @@
 /********************************************************/
 
 HttpServer::HttpServer()
-    : _webServer(80), _httpUpdater(true)
+    : _webServer(80), _httpUpdater(true), _webSocketServer(8080)
 {
 }
 
@@ -91,12 +91,67 @@ void HttpServer::setup(void)
     });
 
     _httpUpdater.setup(&_webServer, String("/update"));
+
     _webServer.begin();
+
+    _webSocketServer.onEvent([&](uint8_t num, WStype_t type, uint8_t *payload, size_t length) {
+        webSocketEvent(num, type, payload, length);
+    });
+
+
+    _webSocketServer.begin();
 }
 
 void HttpServer::handle(void)
 {
     _webServer.handleClient();
+    _webSocketServer.loop();
+}
+
+void HttpServer::sendDataToWebSocket()
+{
+    String data;
+
+    if (_webSocketServer.connectedClients())
+    {
+
+    }
+}
+
+
+/********************************************************/
+/******************** Private Method ********************/
+/********************************************************/
+
+void HttpServer::webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
+{
+    switch (type) {
+        case WStype_DISCONNECTED:
+            Log.println(String(num) + " Disconnected !");
+        break;
+
+        case WStype_CONNECTED:
+        {
+            IPAddress ip = _webSocketServer.remoteIP(num);
+            Log.println(String(num) + " Connected from " + String(ip[0]) + "." + String(ip[1]) + "." + String(ip[2]) + "." + String(ip[3]) + " url: " + String((char *)payload));
+        }
+        break;
+
+        case WStype_TEXT:
+        break;
+
+        case WStype_BIN:
+        break;
+
+        case WStype_ERROR:
+        case WStype_FRAGMENT_TEXT_START:
+        case WStype_FRAGMENT_BIN_START:
+        case WStype_FRAGMENT:
+        case WStype_FRAGMENT_FIN:
+        case WStype_PING:
+        case WStype_PONG:
+        break;
+    }
 }
 
 void HttpServer::setConfig()
@@ -220,7 +275,6 @@ String HttpServer::getContentType(String filename)
 // send the right file to the client (if it exists)
 bool HttpServer::handleFileRead(String path)
 {
-
     if (path.endsWith("/"))
     {
         path += "index.html"; // If a folder is requested, send the index file
@@ -250,19 +304,6 @@ bool HttpServer::handleFileRead(String path)
         return false;
     }
 }
-
-#ifdef ESP32
-WebServer &HttpServer::webServer()
-#else // ESP8266
-ESP8266WebServer &HttpServer::webServer()
-#endif
-{
-    return _webServer;
-}
-
-/********************************************************/
-/******************** Private Method ********************/
-/********************************************************/
 
 void HttpServer::sendJson(const uint16_t code, JsonDocument &doc)
 {
