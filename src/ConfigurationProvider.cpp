@@ -44,11 +44,11 @@ void ConfigurationProvider::setup()
 {
     if (!SPIFFS.begin(true))
     {
-        Serial.println("Unable to begin SPIFFS");
+        Log.println("Unable to begin SPIFFS");
     }
     else
     {
-        Serial.println("SPIFFS initialized.");
+        Log.println("SPIFFS initialized.");
     }
 }
 
@@ -62,25 +62,25 @@ void ConfigurationProvider::loadFromFlash()
         File file = SPIFFS.open(ConfigurationFilename, "r");
         if (!file)
         {
-            Serial.println("Exception during opening system configuration, resetting to factory settings");
+            Log.println("Exception during opening system configuration, resetting to factory settings");
             createDefaultConfiguration();
             saveToFlash();
         }
         else
         {
-            Serial.println("Configuration file opened.");
+            Log.println("Configuration file opened.");
         }
         String configurationFileAsString = "";
         while (file.available())
         {
             configurationFileAsString += (char)file.read();
         }
-        Serial.println("Configuration file read.");
+        Log.println("Configuration file read.");
         parseJson(configurationFileAsString);
     }
     else
     {
-        Serial.println("Configuration file doesn't exists, resetting to factory settings");
+        Log.println("Configuration file doesn't exists, resetting to factory settings");
         createDefaultConfiguration();
         saveToFlash();
     }
@@ -152,7 +152,7 @@ bool ConfigurationProvider::saveToFlash()
     File file = SPIFFS.open(ConfigurationFilename, FILE_WRITE);
     if (!file)
     {
-        Serial.println(F("Failed to create file"));
+        Log.println(F("Failed to create file"));
         return false;
     }
 
@@ -180,10 +180,11 @@ bool ConfigurationProvider::saveToFlash()
     for (const auto &id : _parameters.animationList)
         animationList.add(id);
 
-    serializeJson(doc, Serial);
     serializeJson(doc, file);
     file.close();
-    Serial.println("Configuration file saved");
+    serializeJson(doc, Serial);
+    Serial.println();
+    Log.println("Configuration file saved");
     return true;
 }
 
@@ -199,8 +200,8 @@ bool ConfigurationProvider::parseJson(const String &data)
     DeserializationError error = deserializeJson(doc, data, DeserializationOption::NestingLimit(40));
     if (error)
     {
-        Serial.print("deserializeJson() failed: ");
-        Serial.println(error.c_str());
+        Log.print("deserializeJson() failed: ");
+        Log.println(error.c_str());
         return false;
     }
 
@@ -261,8 +262,8 @@ Shape *ConfigurationProvider::createShapeFromJSon(const JsonObject &jsonObject, 
     }
     else
     {
-        Serial.print("unknown shape type: ");
-        Serial.println(shapeType);
+        Log.print("unknown shape type: ");
+        Log.println(shapeType);
         return NULL;
     }
 }
