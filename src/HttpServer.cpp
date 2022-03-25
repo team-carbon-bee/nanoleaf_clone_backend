@@ -220,6 +220,12 @@ String HttpServer::getContentType(String filename)
 // send the right file to the client (if it exists)
 bool HttpServer::handleFileRead(String path)
 {
+    // Send cors and exit properly when method OPTIONS
+    if (_webServer.method() == HTTP_OPTIONS)
+    {
+        _webServer.send(204);
+        return true;
+    }
 
     if (path.endsWith("/"))
     {
