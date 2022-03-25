@@ -69,7 +69,7 @@ void Animator::handle()
                     currentAnimation(getAnimationById(_animationList.front()));
                 }
 
-                if ((_currentAnimation->isFinished()) || (_timeRemaining <= 0))
+                else if ((_currentAnimation->isFinished()) || (_timeRemaining <= 0))
                 {
                     // we are in statuc animation but a finshable animation has been selected
                     // we have to restart it
@@ -94,7 +94,7 @@ void Animator::handle()
                 currentAnimation(getAnimationByMethod(Configuration.parameters().animationMethod));
             }
 
-            if (_currentAnimation->isFinished() || (_timeRemaining <= 0))
+            else if (_currentAnimation->isFinished() || (_timeRemaining <= 0))
             {
                 // release the previous one
                 _currentAnimation->deinitialize();
