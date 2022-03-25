@@ -197,7 +197,7 @@ function setConfig() {
     // Get all information
     let config = {
         'animation': {
-            'animationDuration': document.getElementById('duration-number').value,
+            'animationDuration': document.getElementById('duration-number').value * 1000,
             'animationMethod': document.getElementById('method-select').value,
             'animationList': create_list_from_custom_animation_list(),
         }
@@ -243,7 +243,7 @@ async function getConfig() {
                 console.log(params);
 
                 if (params.animationDuration != null)
-                    document.getElementById('duration-number').value = params.animationDuration;
+                    document.getElementById('duration-number').value = params.animationDuration / 1000;
                 if (params.animationMethod != null)
                     document.getElementById('method-select').value = params.animationMethod;
                 if (params.animationList != null) {
