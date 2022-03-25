@@ -172,19 +172,25 @@ animation::IAnimation *Animator::getAnimationByMethod(const ConfigurationProvide
 {
     if (animationMethod == ConfigurationProvider::kRandom)
     {
+        if (Configuration.parameters().animationList.size() == 0)
+            return NULL;
+
         // we roll a dice to choose an id in animationList
         int pos = random(0, Configuration.parameters().animationList.size());
-        GlobalAnimationFactory.animations().at(Configuration.parameters().animationList[pos]);
-        return GlobalAnimationFactory.animations().getCurrent();
+        Log.print("Choose random position: ");
+        Log.println(String(pos));
+        int id = Configuration.parameters().animationList[pos];
+        return getAnimationById(id);
     }
     else if (animationMethod == ConfigurationProvider::kSequential)
     {
-        if (GlobalAnimationFactory.animations().at(Configuration.parameters().animationList[_currentAnimationIndex]))
+        int id = Configuration.parameters().animationList[_currentAnimationIndex];
+        if (getAnimationById(id))
         {
             _currentAnimationIndex++;
             if (_currentAnimationIndex >= Configuration.parameters().animationList.size())
                 _currentAnimationIndex = 0;
-            return GlobalAnimationFactory.animations().getCurrent();
+            return getAnimationById(id);
         }
     }
     else
