@@ -3,17 +3,11 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-/******* Debug **************/
-// #define DEBUG_SERIAL
-// #define DEBUG_TELNET  // Open a read-only telnet debug port
-
-// #define USE_DST_ADJUST
-
-class Logger 
+class Logger
 {
-  public:
-	Logger() {} ;
-  	virtual ~Logger() {} ;
+public:
+	Logger(){};
+	virtual ~Logger(){};
 
 	void setup();
 	void handle();
@@ -22,9 +16,9 @@ class Logger
 	void println(const char str[]) { println(String(str)); }
 
 	void print(const String &s);
-  	void print(const char str[]) { print(String(str)); }
+	void print(const char str[]) { print(String(str)); }
 
-  private:
+private:
 	void send(String &s);
 	void addTime(String &s);
 #ifdef DEBUG_TELNET

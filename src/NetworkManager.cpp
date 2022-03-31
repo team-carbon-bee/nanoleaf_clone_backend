@@ -9,8 +9,10 @@
 /******************** Public Method *********************/
 /********************************************************/
 
+// NTP and Timezone
 #define NTP_SERVERS "0.fr.pool.ntp.org", "time.nist.gov", "pool.ntp.org"
-#define UTC_OFFSET  +1
+// List of timezone: https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv
+#define TIMEZONE "CET-1CEST,M3.5.0,M10.5.0/3"
 
 NetworkManager::NetworkManager()
 {
@@ -22,24 +24,28 @@ NetworkManager::~NetworkManager()
 
 void NetworkManager::setup()
 {
-  _wifiManager.autoConnect(Configuration.parameters().hostname.c_str(), Configuration.parameters().hostname.c_str());
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-      delay(200);
-      Log.print(".");
-  }
-  Log.println("WiFi-CONNECTED");
+    _wifiManager.autoConnect(Configuration.parameters().hostname.c_str(), Configuration.parameters().hostname.c_str());
 
-#ifdef USE_DST_ADJUST
-  configTime(UTC_OFFSET * 3600, 0, NTP_SERVERS);
-  while (!time(nullptr)) {
-    delay(50);
-  }
-#endif
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(200);
+        Log.print(".");
+    }
+    Log.println("WiFi-CONNECTED");
 
-  HTTPServer.setup();
+    Log.print("Update NTP...");
 
-      /* Initialize OTA Server */
+    struct tm timeinfo;
+    configTzTime(TIMEZONE, NTP_SERVERS);
+    getLocalTime(&timeinfo);
+
+    Log.println(" Done !");
+    Log.print("Date Time: ");
+    Log.println(asctime(&timeinfo));
+
+    HTTPServer.setup();
+
+    /* Initialize OTA Server */
     Log.println("Arduino OTA activated");
 
     // Port defaults to 3232
@@ -77,14 +83,14 @@ void NetworkManager::setup()
             Log.println("Arduino OTA: End Failed");
     });
 
-    ArduinoOTA.begin(); 
+    ArduinoOTA.begin();
 }
 
 void NetworkManager::handle()
 {
-  HTTPServer.handle();
+    HTTPServer.handle();
 }
 
-#if !defined(NO_GLOBAL_INSTANCES) 
+#if !defined(NO_GLOBAL_INSTANCES)
 NetworkManager Network;
 #endif
